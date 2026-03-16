@@ -4,5 +4,5 @@ class ApiEndpoints {
   static const String login = "/auth/login";
   static const String refresh = "/auth/refresh";
   static const String health = "/health";
-  static const String sales = "/sales";
+  static const String orders = "/orders";
 }

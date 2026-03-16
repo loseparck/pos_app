@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/orders/presentation/orders_view.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
 
@@ -54,7 +55,10 @@ class DraggableTable extends ConsumerWidget{
       left: table.x,
       top: table.y,
       child: GestureDetector(
-        onTap: () {notifer.selectTable(table.id);},
+        onTap: () {
+          notifer.selectTable(table.id);
+          Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(tableId: table.id)));
+          },
         onPanStart: (details) {
           // _lastPointerPosition = details.globalPosition;
         },

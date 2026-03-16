@@ -1,17 +1,17 @@
-import 'package:pos_app/features/sales/domain/entities/sale_item.dart';
+import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 
-class SaleItemModel extends SaleItem{
-  SaleItemModel({
+class OrderItemModel extends OrderItem{
+  OrderItemModel({
       required super.productId,
-      required super.productName,
+      required super.name,
       required super.quantity,
       required super.unitPrice,
     });
 
-  factory SaleItemModel.fromJson(Map<String, dynamic> json){
-    return SaleItemModel(
+  factory OrderItemModel.fromJson(Map<String, dynamic> json){
+    return OrderItemModel(
       productId: json['productId'], 
-      productName:  json['productName'], 
+      name:  json['name'], 
       quantity:  json['quantity'], 
       unitPrice:  json['unitPrice'],
     );
@@ -20,7 +20,7 @@ class SaleItemModel extends SaleItem{
   Map<String, dynamic> toJson(){
     return {
       "productId": productId, 
-      "productName":  productName, 
+      "name":  name, 
       "quantity":  quantity, 
       "unitPrice":  unitPrice,
     };

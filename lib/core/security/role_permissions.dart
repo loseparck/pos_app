@@ -5,7 +5,7 @@ class RolePermissions{
     return role == UserRole.admin;
   }
 
-  static bool canCreateSale(UserRole role){
+  static bool canCreateOrder(UserRole role){
     return role == UserRole.admin || role == UserRole.caisse || role == UserRole.serveur;
   }
 }
