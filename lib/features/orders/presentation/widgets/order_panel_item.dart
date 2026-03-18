@@ -8,7 +8,6 @@ class OrderPanelItem extends StatelessWidget {
   final List<OptionItem>? supplements;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
-  final VoidCallback onDelete;
 
   const OrderPanelItem({
     super.key,
@@ -18,7 +17,6 @@ class OrderPanelItem extends StatelessWidget {
     this.supplements,
     required this.onAdd,
     required this.onRemove,
-    required this.onDelete,
   });
 
   double get supplementsTotal =>
@@ -27,72 +25,78 @@ class OrderPanelItem extends StatelessWidget {
   double get totalPrice =>
       (productPrice + supplementsTotal) * quantity;
 
+  Icon getDecreaseIcon(){
+    return quantity > 1 ? const Icon(Icons.remove_circle_outline) : Icon(Icons.delete_forever_rounded);
+  } 
+
   @override
   Widget build(BuildContext context) {
     return Dismissible(
       key: Key(productName),
-      direction: DismissDirection.endToStart,
-      onDismissed: (_) => onDelete(),
-
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete, color: Colors.white),
-      ),
-
+      direction: DismissDirection.startToEnd,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           children: [
-
             /// Ligne principale produit
             Row(
               children: [
-
-                /// boutons quantité
-                Row(
-                  children: [
-
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: onRemove,
-                    ),
-
-                    Text(
-                      quantity.toString(),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: onAdd,
-                    ),
-                  ],
-                ),
-
-                const SizedBox(width: 10),
-
-                /// nom produit
+                /// Nom du produit
                 Expanded(
+                  flex: 2,
                   child: Text(
                     productName,
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 16,
                     ),
+                    overflow: TextOverflow.ellipsis, // Evite overflow si le nom est long
                   ),
                 ),
 
-                /// prix total
-                Text(
-                  "${totalPrice.toStringAsFixed(2)}€",
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                /// Quantité centrée
+                Flexible(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: getDecreaseIcon(),
+                        onPressed: onRemove,
+                        constraints: const BoxConstraints(), // réduit la taille par défaut
+                        padding: EdgeInsets.zero,
+                      ),
+                      Text(
+                        quantity.toString(),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline),
+                        onPressed: onAdd,
+                        constraints: const BoxConstraints(),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ],
+                  ),
+                ),
+
+                /// Prix à droite
+                Flexible(
+                  flex: 1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        "${totalPrice.toStringAsFixed(2)}€",
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -101,7 +105,7 @@ class OrderPanelItem extends StatelessWidget {
             /// suppléments
             if (supplements!.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.only(left: 110, top: 4),
+                padding: const EdgeInsets.only(left: 40, top: 4, right: 5),
                 child: Column(
                   children: supplements!.map((s) {
                     return Row(
