@@ -1,3 +1,9 @@
+import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'option_item.g.dart';
+
+@JsonSerializable()
 class OptionItem {
   final String? id;
   final String name;
@@ -8,4 +14,14 @@ class OptionItem {
     this.price = 0,
     this.id
   });
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+   factory OptionItem.fromJson(Map<String, dynamic> json)
+      => _$OptionItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OptionItemToJson(this);
 }

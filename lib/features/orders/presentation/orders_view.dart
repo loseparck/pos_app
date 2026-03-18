@@ -39,7 +39,7 @@ class OrdersView extends ConsumerWidget {
                   onPressed: () {
                     ref
                         .read(ordersProvider.notifier)
-                        .cancelOrder();
+                        .cancelOrder("");
 
                     Navigator.pop(context);
                   },
@@ -102,7 +102,6 @@ class OrdersView extends ConsumerWidget {
                 SizedBox(
                   width: 350,
                   child: OrderPanel(
-                    order: ordersState,
                   ),
                 ),
 

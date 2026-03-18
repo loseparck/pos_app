@@ -105,7 +105,6 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
         return group;
       }).toList(),
     );
-    print("jesuis ici - ${state.groups}");
   }
 
   void removeTable(String id){

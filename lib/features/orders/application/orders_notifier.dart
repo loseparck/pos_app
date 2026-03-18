@@ -1,39 +1,52 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/orders/application/orders_state.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
-import 'package:pos_app/features/orders/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 
 final ordersProvider =
-    StateNotifierProvider<OrdersNotifier, Order?>(
+    StateNotifierProvider<OrdersNotifier, OrdersState?>(
         (ref) => OrdersNotifier());
 
-class OrdersNotifier extends StateNotifier<Order?> {
-  OrdersNotifier() : super(null);
+class OrdersNotifier extends StateNotifier<OrdersState> {
 
-  void createDraft(String tableId) {
-    state = Order(
+  OrdersNotifier() : 
+    super(
+      OrdersState(
+        orders: [], 
+        selectedOrderId: null
+      )
+    );
+
+  /*void createDraft(String tableId) {
+    print("ici1");
+    final order = Order(
       id: UniqueKey().toString(),
       tableId: tableId,
       items: [],
       status: OrderStatus.draft,
       createdAt: DateTime.now(),
     );
-  }
+
+    final updatedOrders = [...state.orders, order];
+
+    state = OrdersState(
+      orders: updatedOrders, 
+      selectedOrderId: order.id
+    );
+  }*/
 
   void addProduct(Product product) {
-
     /// récupérer la commande actuelle
-    Order? order = state;
-
+    Order? order = state.selectedOrder;
     /// si aucune commande → créer une draft
     order ??= Order(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         items: [],
         createdAt: DateTime.now(),
       );
-
     final items = [...order.items];
 
     /// vérifier si produit déjà dans la commande
@@ -41,7 +54,6 @@ class OrdersNotifier extends StateNotifier<Order?> {
         items.indexWhere((i) => i.productId == product.id);
 
     if (index != -1) {
-
       final existing = items[index];
 
       items[index] = existing.copyWith(
@@ -49,21 +61,41 @@ class OrdersNotifier extends StateNotifier<Order?> {
       );
 
     } else {
-
+      List<OptionItem> options = [];
+      if(product.options != null) {
+        options = product.options!.expand((opt) => opt.options).toList();
+      }
       items.add(
         OrderItem(
           productId: product.id,
           name: product.name,
           quantity: 1,
           unitPrice: product.price,
+          options: options,
         ),
       );
     }
 
-    final newOrder = order.copyWith(items: items);
+    order = order.copyWith(items: items);
+    final updatedOrders = [...state.orders, order];
+    state = OrdersState(
+      orders: updatedOrders, 
+      selectedOrderId: order.id
+    );
 
-    state = newOrder;
+    _updateOrder(order);
   }
+
+  void _updateOrder(Order order){
+    final orderGroups = state.orders
+      .map((g) => g.id == order.id ? order : g).toList();
+    
+    state = OrdersState(
+      orders: orderGroups, 
+      selectedOrderId: order.id
+    );
+  }
+
   /*void addProduct(Product product) {
     final existing = state!.items
         .where((i) => i.productId == product.id)
@@ -96,16 +128,36 @@ class OrdersNotifier extends StateNotifier<Order?> {
   }*/
 
   void saveOrder() {
-    state = state!.copyWith(
-        status: OrderStatus.saved);
+    Order? order = state.selectedOrder;
+    order ??= order!.copyWith(
+      status: OrderStatus.saved
+    );
+    //state = state!.copyWith(
+      //  status: OrderStatus.saved);
   }
 
-  void cancelOrder() {
-    state = null;
+  void cancelOrder(String id) {
+    state = state.copyWith(
+      orders: state.orders.where((order) => order.id != id).toList(),
+    );
   }
 
   void payOrder() {
-    state = state!.copyWith(
-        status: OrderStatus.paid);
+    Order? order = state.selectedOrder;
+    order ??= order!.copyWith(
+      status: OrderStatus.paid
+    );
+    //state = state!.copyWith(
+      //  status: OrderStatus.paid);
+  }
+
+  void increaseQuantity(OrderItem orderItem){
+    orderItem.quantity++;
+    //orderItem = orderItem.copyWith(quantity: orderItem.quantity +1);
+  }
+
+  void decreaseQuantity(OrderItem orderItem){
+    orderItem.quantity--;
+    //orderItem = orderItem.copyWith(quantity: orderItem.quantity - 1);
   }
 }

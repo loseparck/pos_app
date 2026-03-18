@@ -1,3 +1,5 @@
+import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+
 class Product {
   final String id;
   final String name;
@@ -8,6 +10,7 @@ class Product {
   final String? groupId;
   final String? codeBarres;
   final bool status;
+  final List<ProductOption>? options;
 
   Product({
     required this.id,
@@ -19,5 +22,6 @@ class Product {
     this.codeBarres,
     this.sku,
     this.status = true,
+    this.options,
   });
 }

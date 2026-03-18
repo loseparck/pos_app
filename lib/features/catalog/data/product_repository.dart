@@ -1,15 +1,43 @@
-import 'package:pos_app/features/orders/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
 
 class ProductRepository {
 
   final List<Product> products = [
 
     Product(
-      id: "coffee",
+      id: "coffede",
       name: "Café",
       price: 2,
       groupId: "hot_drinks",
       description: "Expresso",
+      options: [
+        ProductOption(
+          name: "Base", 
+          options: [
+            OptionItem(
+              name: "Base Orange",
+              price: 5
+            ),
+            OptionItem(
+              name: "Base Lait",
+            ),
+          ]
+        ),
+        ProductOption(
+          name: "Topping", 
+          options: [
+            OptionItem(
+              name: "Creme",
+              price: 5
+            ),
+            OptionItem(
+              name: "Cannelle",
+            ),
+          ]
+        )
+      ]
     ),
 
     Product(

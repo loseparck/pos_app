@@ -1,4 +1,7 @@
-import '../domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+
+import '../../catalog/domain/entities/product.dart';
 import '../domain/entities/product_group.dart';
 
 final List<ProductGroup> demoGroups = [
@@ -36,6 +39,32 @@ final List<Product> demoProducts = [
     price: 2.0,
     groupId: "hot_drinks",
     description: "Café expresso",
+    options: [
+        ProductOption(
+          name: "Base", 
+          options: [
+            OptionItem(
+              name: "Base Orange",
+              price: 5
+            ),
+            OptionItem(
+              name: "Base Lait",
+            ),
+          ]
+        ),
+        ProductOption(
+          name: "Topping", 
+          options: [
+            OptionItem(
+              name: "Creme",
+              price: 5
+            ),
+            OptionItem(
+              name: "Cannelle",
+            ),
+          ]
+        )
+      ]
   ),
 
   Product(

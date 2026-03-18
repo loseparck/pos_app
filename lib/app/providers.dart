@@ -6,7 +6,7 @@ import 'package:pos_app/core/network/connectivity_service.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_notifier.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
 import 'package:pos_app/features/orders/data/repositories/product_repository.dart';
-import 'package:pos_app/features/orders/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
 
 final dioProvider = Provider<Dio>((ref) {
   return Dio();

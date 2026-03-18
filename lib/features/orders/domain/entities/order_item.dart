@@ -1,9 +1,16 @@
+import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'order_item.g.dart';
+
+@JsonSerializable()
 class OrderItem {
   final String productId;
   final String name;
-  final int quantity;
+  int quantity;
   final double unitPrice;
-  final List<String>? options;
+  final List<OptionItem>? options;
 
   OrderItem({
     required this.productId,
@@ -13,9 +20,16 @@ class OrderItem {
     this.options,
   });
 
-  double get subtotal => quantity * unitPrice;
+  double get subtotal{
+    final options = this.options;
+    if(options != null) {
+      return options.fold(0, (sum , item) => sum + item.price);
+    } else {
+      return 0;
+    }
+  } 
 
-  double get total => unitPrice * quantity;
+  double get total => unitPrice * quantity + subtotal;
 
   OrderItem copyWith({
     int? quantity,
@@ -28,4 +42,14 @@ class OrderItem {
       options: options,
     );
   }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+  factory OrderItem.fromJson(Map<String, dynamic> json)
+      => _$OrderItemFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OrderItemToJson(this);
 }

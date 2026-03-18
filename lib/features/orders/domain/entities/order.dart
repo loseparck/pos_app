@@ -1,7 +1,13 @@
+import 'dart:convert';
+
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
+import 'package:json_annotation/json_annotation.dart';
 
-class Order{
+part 'order.g.dart';
+
+@JsonSerializable()
+class Order {
   final String id;
   final String? tableId;
   final List<OrderItem> items;
@@ -18,7 +24,7 @@ class Order{
     this.status = OrderStatus.draft,
   });
 
-  double get total => items.fold(0, (sum , item) => sum + item.subtotal);
+  double get total => items.fold(0, (sum , item) => sum + item.total);
 
   Order copyWith({
     List<OrderItem>? items,
@@ -32,4 +38,14 @@ class Order{
       createdAt: createdAt,
     );
   }
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
+
+  factory Order.fromJson(Map<String, dynamic> json)
+      => _$OrderFromJson(json);
+
+  Map<String, dynamic> toJson() => _$OrderToJson(this);
 }

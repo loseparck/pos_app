@@ -1,5 +1,5 @@
 import 'package:pos_app/features/orders/data/demo_products.dart';
-import 'package:pos_app/features/orders/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
 
 class ProductRepository {
 
