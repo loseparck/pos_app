@@ -14,25 +14,31 @@ class ProductRepository {
       description: "Expresso",
       options: [
         ProductOption(
+          id: "IDG1",
           name: "Base", 
           options: [
             OptionItem(
+              id: "IDG1O1",
               name: "Base Orange",
               price: 5
             ),
             OptionItem(
+              id: "IDG1O2",
               name: "Base Lait",
             ),
           ]
         ),
         ProductOption(
+          id: "IDG2",
           name: "Topping", 
           options: [
             OptionItem(
+              id: "IDG2O1",
               name: "Creme",
               price: 5
             ),
             OptionItem(
+              id: "IDG2O2",
               name: "Cannelle",
             ),
           ]

@@ -38,7 +38,56 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     );
   }*/
 
-  void addProduct(Product product) {
+  void addProduct(Product product,
+      {Map<String, List<OptionItem>>? options}) {
+    /// récupérer la commande actuelle
+    Order? order = state.selectedOrder;
+    /// si aucune commande → créer une draft
+    order ??= Order(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        items: [],
+        createdAt: DateTime.now(),
+      );
+    final items = [...order.items];
+    List<OptionItem> newOptions = [];
+    if(options != null) {
+      newOptions = options.values.expand((opt) => opt).toList();
+    }
+    /// vérifier si produit déjà dans la commande
+    //final index =
+      //  items.indexWhere((i) => i.productId == product.id && i.options == newOptions);
+    final index =
+        items.indexWhere((i) => i.productId == product.id && checkSameOption(i.options, newOptions));
+    if (index != -1) {
+      final existing = items[index];
+
+      items[index] = existing.copyWith(
+        quantity: existing.quantity + 1,
+      );
+
+    } else {
+      items.add(
+        OrderItem(
+          productId: product.id,
+          name: product.name,
+          quantity: 1,
+          unitPrice: product.price,
+          options: newOptions,
+        ),
+      );
+    }
+
+    order = order.copyWith(items: items);
+    final updatedOrders = [...state.orders, order];
+    state = OrdersState(
+      orders: updatedOrders, 
+      selectedOrderId: order.id
+    );
+
+    _updateOrder(order);
+  }
+
+  void addProductO(Product product) {
     /// récupérer la commande actuelle
     Order? order = state.selectedOrder;
     /// si aucune commande → créer une draft
@@ -86,6 +135,10 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     _updateOrder(order);
   }
 
+  bool checkIfProductExist(List<OrderItem> items, OrderItem item){
+
+    return false;
+  }
   void _updateOrder(Order order){
     final orderGroups = state.orders
       .map((g) => g.id == order.id ? order : g).toList();
@@ -159,5 +212,53 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   void decreaseQuantity(OrderItem orderItem){
     orderItem.quantity--;
     //orderItem = orderItem.copyWith(quantity: orderItem.quantity - 1);
+  }
+
+  void addProductN(Product product, {Map<String, OptionItem>? options}) {
+    /*Order? order = state.selectedOrder;
+
+    if (order == null) {
+      order = Order(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        items: [],
+        createdAt: DateTime.now(),
+      );
+    }
+
+    final items = [...order.items];
+
+    final index = items.indexWhere((i) =>
+        i.productId == product.id &&
+        i.optionsKey() == optionsKey(options));
+
+    if (index != -1) {
+      final existing = items[index];
+      items[index] = existing.copyWith(
+        quantity: existing.quantity + 1,
+      );
+    } else {
+      items.add(OrderItem(
+        productId: product.id,
+        name: product.name,
+        quantity: 1,
+        unitPrice: product.price +
+            (options?.values.fold(0.0, (sum, o) => sum + o.price) ?? 0.0),
+        options: options,
+      ));
+    }*/
+
+    //state = state.copyWith(sele: order.copyWith(items: items));
+  }
+
+  /// Génère une clé unique pour comparer des options
+  String optionsKey(Map<String, OptionItem>? options) {
+    if (options == null || options.isEmpty) return "";
+    return options.entries.map((e) => "${e.key}:${e.value.id}").join("-");
+  }
+  
+  bool checkSameOption(List<OptionItem>? options, List<OptionItem> newOptions) {
+    print("Option $options");
+    print("newOptions $newOptions");
+    return false;
   }
 }

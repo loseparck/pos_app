@@ -1,7 +1,7 @@
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
 
 class ProductOption {
-  final String? id;
+  final String id;
   final String name;
   final bool isMandatory;
   final int minToSelect;
@@ -14,9 +14,9 @@ class ProductOption {
     required this.options,
     this.isMandatory = false,
     this.minToSelect = 0,
-    this.maxToSelect = 10,
+    this.maxToSelect = 0,
     this.multipleSelect = false,
-    this.id,
+    required this.id,
   });
 
   

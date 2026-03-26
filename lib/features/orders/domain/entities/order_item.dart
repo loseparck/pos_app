@@ -29,7 +29,10 @@ class OrderItem {
     }
   } 
 
-  double get total => unitPrice * quantity + subtotal;
+  double get supplementsTotal =>
+      options!.fold(0, (sum, s) => sum + s.price);
+
+  double get total => (unitPrice + supplementsTotal) * quantity;
 
   OrderItem copyWith({
     int? quantity,

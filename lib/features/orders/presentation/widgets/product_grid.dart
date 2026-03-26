@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/presentation/widgets/product_option_dialog.dart';
 
 import '../../../catalog/application/providers/group_provider.dart';
 import '../../../catalog/application/providers/product_provider.dart';
@@ -153,10 +154,24 @@ class ProductGrid extends ConsumerWidget {
                         image: p.image,
                         description: p.description,
                         onTap: () {
-                          ref
-                              .read(ordersProvider.notifier)
+                          if (p.options != null && p.options!.isNotEmpty) {
+                            // afficher le dialog pour choisir les options
+                            showDialog(
+                              context: context,
+                              builder: (_) => ProductOptionDialog(
+                                product: p,
+                                onSelected: (selectedOptions) {
+                                  ref.read(ordersProvider.notifier)
+                                    .addProduct(p, options: selectedOptions);
+                                },
+                              ),
+                            );
+                          } else {
+                            // ajout direct
+                            ref.read(ordersProvider.notifier)
                               .addProduct(p);
-                        },
+                          }
+                        }
                       );
                     },
                   ),

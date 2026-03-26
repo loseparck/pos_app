@@ -41,29 +41,81 @@ final List<Product> demoProducts = [
     description: "Café expresso",
     options: [
         ProductOption(
-          name: "Base", 
+          id: "IDG1",
+          name: "Base",
+          isMandatory: true,
+          minToSelect: 2,
+          maxToSelect: 5,
+          multipleSelect: true, 
           options: [
             OptionItem(
+              id: "IDG1O1",
               name: "Base Orange",
               price: 5
             ),
             OptionItem(
+              id: "IDG1O2",
               name: "Base Lait",
             ),
           ]
         ),
         ProductOption(
+          isMandatory: true,
+          minToSelect: 1,
+          maxToSelect: 1,
+          id: "IDG2",
           name: "Topping", 
           options: [
             OptionItem(
+              id: "IDG2O1",
               name: "Creme",
               price: 5
             ),
             OptionItem(
+              id: "IDG2O2",
               name: "Cannelle",
             ),
           ]
-        )
+        ),
+        ProductOption(
+          id: "IDG3",
+          name: "Chocolat",
+          isMandatory: true,
+          minToSelect: 2,
+          maxToSelect: 5,
+          multipleSelect: true, 
+          options: [
+            OptionItem(
+              id: "IDG3O1",
+              name: "Nutella",
+              price: 5
+            ),
+            OptionItem(
+              id: "IDG3O2",
+              name: "Mars",
+            ),
+            OptionItem(
+              id: "IDG3O3",
+              name: "Snickers",
+            ),
+            OptionItem(
+              id: "IDG3O4",
+              name: "Twix",
+            ),
+            OptionItem(
+              id: "IDG3O5",
+              name: "Oreo",
+            ),
+            OptionItem(
+              id: "IDG3O6",
+              name: "KitKat",
+            ),
+            OptionItem(
+              id: "IDG3O7",
+              name: "Milka",
+            ),
+          ]
+        ),
       ]
   ),
 

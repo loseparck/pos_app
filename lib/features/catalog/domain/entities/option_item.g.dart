@@ -9,7 +9,7 @@ part of 'option_item.dart';
 OptionItem _$OptionItemFromJson(Map<String, dynamic> json) => OptionItem(
       name: json['name'] as String,
       price: (json['price'] as num?)?.toDouble() ?? 0,
-      id: json['id'] as String?,
+      id: json['id'] as String,
     );
 
 Map<String, dynamic> _$OptionItemToJson(OptionItem instance) =>
