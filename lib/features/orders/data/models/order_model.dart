@@ -18,12 +18,12 @@ class OrderModel extends Order{
       synced:  json['synced']);
   }
 
-  Map<String, dynamic> toJson(){
+  /*Map<String, dynamic> toJson(){
     return {
       "id": id, 
       "items": items.map((e) => (e as OrderItemModel).toJson()).toList(), 
       "createdAt": createdAt.toIso8601String(),
       "synced": synced,
     };
-  }
+  }*/
 }

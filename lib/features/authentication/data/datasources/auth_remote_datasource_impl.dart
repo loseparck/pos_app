@@ -13,9 +13,10 @@ class AuthRemoteDatasourceImpl implements AuthRemoteDatasource{
       "email": email,
       "password": password,
     });
-    if(response.statusCode == 200)
+    if(response.statusCode == 200){
       return response.data;
-    else
+    } else {
       return null;
+    }
   }
 }

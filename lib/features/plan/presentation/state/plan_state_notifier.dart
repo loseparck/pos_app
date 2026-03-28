@@ -6,19 +6,25 @@ import 'package:uuid/uuid.dart';
 
 class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   List<PlanGroup>? draft;
+  RestaurantTable? draftTable;
+  double? maxX, maxY;
 
-  PlanGroupNotifier({this.draft}) : 
+  PlanGroupNotifier({this.draft, this.draftTable}) : 
   super(
     PlanGroupState(
       groups: [], 
-      selectedGroupId: null
+      selectedGroupId: null,
+      selectedTableId: null
       )
     );
-
 
   final _uuid = const Uuid();
 
   void addGroup(String name){
+    if(state.selectedTableId != null){
+      selectTable(state.selectedTableId);
+    }
+
     final group = PlanGroup(
       id: _uuid.v4(),
       name: name,
@@ -26,17 +32,20 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
 
     final updatedGroups = [...state.groups, group];
-
+    
     state = PlanGroupState(
       groups: updatedGroups, 
-      selectedGroupId: group.id
+      selectedGroupId: group.id,
+      selectedTableId: null
     );
   }
 
   void selectGroup(String groupId){
+    selectTable(state.selectedTableId);
     state = PlanGroupState(
       groups: state.groups, 
       selectedGroupId: groupId,
+      selectedTableId: null
     );
   }
 
@@ -51,12 +60,13 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
       y: 100,
       seats: seats,
       status: "available",
-      shape: TableShape.round
+      shape: TableShape.circle,
     );
 
     final updatedGroup = selected.copyWith(tables: [... selected.tables, table]);
 
     _updateGroup(updatedGroup);
+    selectTable(table.id);
   }
 
   void updateTablePosition(String tableId, double x, double y){
@@ -77,7 +87,8 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     
     state = PlanGroupState(
       groups: updatedGroups, 
-      selectedGroupId: updatedGroup.id
+      selectedGroupId: updatedGroup.id,
+      selectedTableId: state.selectedTableId
     );
   }
 
@@ -89,13 +100,13 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     state = state;
   }
 
-  void renameTable(String id, String newName, int seats){
+  void renameTable(String newName, int seats){
     state = state.copyWith(
       groups: state.groups.map((group) {
         if(group.id == state.selectedGroupId){
           return group.copyWith(
             tables: group.tables.map((table){
-              if(table.id == id){
+              if(table.id == state.selectedTableId){
                 return table.copyWith(name: newName, seats: seats);
               }
               return table;
@@ -107,28 +118,30 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
   }
 
-  void removeTable(String id){
-    state = state.copyWith(
+  void removeTable(){
+    state = PlanGroupState(
       groups: state.groups.map((group) {
         if(group.id == state.selectedGroupId){
           return group.copyWith(
             tables: group.tables
-            .where((table) => table.id != id).toList(),
+            .where((table) => table.id != state.selectedTableId).toList(),
           );
         }
         return group;
       }).toList(),
+      selectedTableId: null,
+      selectedGroupId: state.selectedGroupId
     );
   }
 
-  void rotateTable(String id){
+  void rotateTable(double value){
     state = state.copyWith(
       groups: state.groups.map((group) {
         if(group.id == state.selectedGroupId){
           return group.copyWith(
             tables: group.tables.map((table){
-              if(table.id == id){
-                return table.copyWith(roration: table.roration + 0.25);
+              if(table.id ==state.selectedTableId){
+                return table.copyWith(rotation: table.rotation + value);
               }
               return table;
             }).toList(),
@@ -139,17 +152,15 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
   }
 
-  void toggleShape(String id){
+  void toggleShape(TableShape newShape){
     state = state.copyWith(
       groups: state.groups.map((group) {
         if(group.id == state.selectedGroupId){
           return group.copyWith(
             tables: group.tables.map((table){
-              if(table.id == id){
+              if(table.id == state.selectedTableId){
                 return table.copyWith(
-                  shape: table.shape == TableShape.square
-                  ? TableShape.round
-                  : TableShape.square,
+                  shape: newShape,
                 );
               }
               return table;
@@ -161,15 +172,135 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
   }
 
-   void selectTable(String id){
+  void scaleHorizentally(double value){
     state = state.copyWith(
       groups: state.groups.map((group) {
         if(group.id == state.selectedGroupId){
           return group.copyWith(
             tables: group.tables.map((table){
-              if(table.id == id){
+              if(table.id == state.selectedTableId){
+                if(table.width + value < 100){
+                  return table.copyWith(
+                    width: 100,
+                  );
+                } else if(table.width + value > 400){
+                  return table.copyWith(
+                    width: 400,
+                  );
+                } else{
+                   return table.copyWith(
+                    width: table.width + value,
+                  );
+                }
+              }
+              return table;
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+    );
+  }
+
+  void scaleVertically(double value){
+    state = state.copyWith(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == state.selectedTableId){
+                if(table.height + value < 100){
+                  return table.copyWith(
+                    height: 100,
+                  );
+                } else if(table.height + value > 400){
+                  return table.copyWith(
+                    height: 400,
+                  );
+                } else{
+                   return table.copyWith(
+                    height: table.height + value,
+                  );
+                }
+              }
+              return table;
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+    );
+  }
+
+  void changePositionX(double value){
+    state = state.copyWith(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == state.selectedTableId){
+                if(table.x + value <0){
+                  return table.copyWith(
+                    x: 0,
+                  );
+                } else if(table.x + value > (maxX! - table.width)){
+                  return table.copyWith(
+                    x: maxX! - table.width,
+                  );
+                } else {
+                   return table.copyWith(
+                    x: table.x + value,
+                  );
+                }
+              }
+              return table;
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+    );
+  }
+
+  void changePositionY(double value){
+    state = state.copyWith(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == state.selectedTableId){
+                if(table.y + value <0){
+                  return table.copyWith(
+                    y: 0,
+                  );
+                } else if(table.y + value > maxY! - table.height){
+                  return table.copyWith(
+                    y: maxY! - table.height,
+                  );
+                } else {
+                   return table.copyWith(
+                    y: table.y + value,
+                  );
+                }
+              }
+              return table;
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+    );
+  }
+
+  void updateSeatPlaces(int value){
+    state = state.copyWith(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == state.selectedTableId){
                 return table.copyWith(
-                  isSelected: table.id == id,
+                  seats: table.seats + value,
                 );
               }
               return table;
@@ -178,6 +309,55 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
         }
         return group;
       }).toList(),
+    );
+  }
+
+  void changeSeatName(String name){
+    state = state.copyWith(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == state.selectedTableId){
+                return table.copyWith(
+                  name: name,
+                );
+              }
+              return table;
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+    );
+  }
+
+  void selectTable(String? id){
+    String? newSelectedId;
+    if(state.selectedTableId != id) {
+      newSelectedId = id;
+    }
+    state = PlanGroupState(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == id){
+                return table.copyWith(
+                  isSelected: newSelectedId != null ? true: false,
+                );
+              } else {
+                 return table.copyWith(
+                  isSelected: false,
+                );
+              }
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+      selectedGroupId: state.selectedGroupId,
+      selectedTableId: newSelectedId
     );
   }
 
@@ -206,10 +386,11 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
 
   void cancelEdition(){
      state = state.copyWith(groups: draft);
+     selectTable(state.selectedTableId);
   }
 
   void validateEdition(){
-    //draft = state.groups;
     //save to Database;
+    selectTable(state.selectedTableId);
   }
 }

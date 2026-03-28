@@ -1,5 +1,4 @@
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'order_item.g.dart';

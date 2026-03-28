@@ -257,8 +257,6 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
   
   bool checkSameOption(List<OptionItem>? options, List<OptionItem> newOptions) {
-    print("Option $options");
-    print("newOptions $newOptions");
     return false;
   }
 }

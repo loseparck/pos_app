@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
@@ -6,6 +7,7 @@ import 'package:pos_app/features/plan/domain/entities/plan_group_entity.dart';
 import 'package:pos_app/features/plan/presentation/state/plan_state_notifier.dart';
 import 'package:pos_app/features/plan/presentation/widgets/draggable_table.dart';
 import 'package:pos_app/features/plan/presentation/widgets/grid_painter.dart';
+import 'package:pos_app/features/plan/presentation/widgets/table_editor_panel.dart';
 
 final editModeProvider = StateProvider<bool>((ref) => false);
 
@@ -17,8 +19,53 @@ class PlanView extends ConsumerStatefulWidget{
 }
 
 class _PlanViewState extends ConsumerState<PlanView>{
-
+  final FocusNode _focusNode = FocusNode();
   final TransformationController _controller = TransformationController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
+  }
+
+  void _handleKeyEvent(KeyEvent event) {
+    if (event is! KeyDownEvent) return;
+    final notifier = ref.read(planGroupProvider.notifier);
+    final isEditMode = ref.read(editModeProvider);
+
+    if (!isEditMode) return;
+
+    final step = HardwareKeyboard.instance.isShiftPressed ? 20.0 : 5.0;
+    if(HardwareKeyboard.instance.isControlPressed){
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.arrowUp:
+          notifier.scaleVertically(step);
+          notifier.scaleHorizentally(step);
+          break;
+        case LogicalKeyboardKey.arrowDown:
+          notifier.scaleVertically(-step);
+          notifier.scaleHorizentally(-step);
+          break;
+      }
+    } else {
+      switch (event.logicalKey) {
+        case LogicalKeyboardKey.arrowUp:
+          notifier.changePositionY(-step);
+          break;
+        case LogicalKeyboardKey.arrowDown:
+          notifier.changePositionY(step);
+          break;
+        case LogicalKeyboardKey.arrowLeft:
+          notifier.changePositionX(-step);
+          break;
+        case LogicalKeyboardKey.arrowRight:
+          notifier.changePositionX(step);
+          break;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +75,11 @@ class _PlanViewState extends ConsumerState<PlanView>{
     final selectedGroup = groupState.selectedGroup;
 
     return Scaffold(
-      body: Column(
+      body: KeyboardListener(
+      focusNode: _focusNode,
+      autofocus: true,
+      onKeyEvent: _handleKeyEvent,
+      child: Column(
         children: [
           //Top BAR
           Container(
@@ -37,7 +88,6 @@ class _PlanViewState extends ConsumerState<PlanView>{
               color: Colors.grey.shade200,
               child: Row(
                 children: [
-                  // Tabs des groupes
                   ...groupState.groups.map((group) {
                     final isSelected = group.id == groupState.selectedGroupId;
                     return Padding(
@@ -58,13 +108,13 @@ class _PlanViewState extends ConsumerState<PlanView>{
                   const Spacer(),
 
                   if(!isEditMode)
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.edit),
-                      label: const Text("Modifier"),
+                    TextButton(
+                      style: ElevatedButton.styleFrom(backgroundColor:  Colors.orange.shade400),
                       onPressed: () {
                         notifier.startEdition();
                         ref.read(editModeProvider.notifier).state = true;
                       },
+                      child: Icon(Icons.edit),
                     ),
 
                   if(isEditMode) ...[
@@ -75,23 +125,13 @@ class _PlanViewState extends ConsumerState<PlanView>{
                             _showAddGroupDialog(context, notifier),
                     ),
                     const SizedBox(width: 8),
-
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.table_restaurant),
-                      label: const Text("Table"),
-                      onPressed: selectedGroup == null
-                        ? null
-                        : () => _showAddTableDialog(context, notifier),
-                    ),
-                    const SizedBox(width: 20),
-
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(backgroundColor:  Colors.red),
                       onPressed: () {
                         notifier.cancelEdition();
                         ref.read(editModeProvider.notifier).state = false;
                       },
-                      child: const Text("Annuler"),
+                      child:  Icon(Icons.cancel),
                     ),
                     const SizedBox(width: 8),
 
@@ -101,7 +141,7 @@ class _PlanViewState extends ConsumerState<PlanView>{
                         notifier.validateEdition();
                         ref.read(editModeProvider.notifier).state = false;
                       },
-                      child: const Text("Valider"),
+                      child:  Icon(Icons.check),
                     ),
                   ]
                 ],
@@ -116,20 +156,89 @@ class _PlanViewState extends ConsumerState<PlanView>{
                   minScale: 0.5,
                   maxScale: 3.0,
                   //boundaryMargin: const EdgeInsets.all(500),
-                  child: Stack(
-                    children: [
-                      CustomPaint(
-                        size: Size.infinite,
-                        painter: GridPainter(),
-                      ),
-                      ...selectedGroup.tables.map((t) =>
-                        DraggableTable(table: t, editMode: isEditMode),
-                      ),
-                    ],
-                  ),
-                ),
+                  child: Row(
+                  children: [
+                    Expanded(
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                        notifier.maxY = constraints.maxHeight;
+                        notifier.maxX = constraints.maxWidth;
+                        return Stack(
+                        children: [
+                          CustomPaint(
+                            size: Size.infinite,
+                            painter: GridPainter(),
+                          ),
+                          ...selectedGroup.tables.map((t) =>
+                            DraggableTable(table: t, editMode: isEditMode),
+                          ),
+                          if(isEditMode)
+                            Positioned(
+                              bottom: 20,
+                              right: 20,
+                              child: Tooltip(
+                                message: "Ajouter une Table",
+                                child: 
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    //shape: const CircleBorder(),
+                                    padding: EdgeInsets.all(10),
+                                    backgroundColor: Colors.green.shade300,
+                                   // minimumSize: const Size(80, 80),
+                                   // maximumSize: const Size(100, 100),
+                                  ),
+                                  onPressed: () => notifier.addTable("Table", 4),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.add_circle_outline_rounded),
+                                      Text(
+                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                        "Ajouter une Nouvelle Table"),
+                                    ],
+                                  )
+                                  
+                                ),
+                              )
+                            ),
+                          if(!isEditMode && selectedGroup.tables.isEmpty)
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              top: 0,
+                              child: Center(
+                                child: Tooltip(
+                                message: "Creer une Commande",
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    padding: EdgeInsets.zero,
+                                    backgroundColor: Colors.greenAccent.shade400,
+                                    minimumSize: const Size(80, 80),
+                                    maximumSize: const Size(100, 100),
+                                  ),
+                                  onPressed: () => notifier.addTable("Table", 4),
+                                  child: const Icon(Icons.assignment_add, size: 60),
+                                ),
+                              )
+                              ),
+                            ),
+                        const SizedBox(width: 20),
+                        ],
+                      );
+                      })
+                    ),
+                  if (isEditMode && groupState.selectedTableId != null)
+                        const SizedBox(
+                          width: 300,
+                          child: TableEditorPanel(),
+                        ),
+                    ]
+              ),
+              )
           ),
         ],
+      ),
       ),
     );
   }
@@ -165,61 +274,6 @@ class _PlanViewState extends ConsumerState<PlanView>{
             style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
             onPressed: () {
               notifier.addGroup(controller.text.trim());
-              Navigator.pop(context);
-            }, 
-            child: const Text("Ajouter"),
-          ),
-        ],
-       )
-    );
-  }
-
-  void _showAddTableDialog(
-    BuildContext context,
-    PlanGroupNotifier notifier
-  ) {
-    final nameController = TextEditingController();
-    final seatsController = TextEditingController();
-
-    showDialog(
-      context: context,
-       builder: (_) => AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Ajouter une Table"),
-            IconButton(
-              style: ElevatedButton.styleFrom(backgroundColor:  Colors.red.shade200),
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration:  const InputDecoration(hintText: "Nom ou Numéro"),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: seatsController,
-              keyboardType: TextInputType.number,
-              decoration:  const InputDecoration(hintText: "Nombre de Places"),
-            ),
-          ],
-        ) ,
-        actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
-            onPressed: () {
-              final seats = int.tryParse(
-                seatsController.text.trim()) ??
-                4;
-              notifier.addTable(nameController.text, seats);
               Navigator.pop(context);
             }, 
             child: const Text("Ajouter"),

@@ -88,14 +88,6 @@ class DashBoardView extends StatelessWidget{
   }
 }
 
-class SalesView extends StatelessWidget{
-  const SalesView({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("SalesView"));
-  }
-}
 class InventoryView extends StatelessWidget{
   const InventoryView({super.key});
 

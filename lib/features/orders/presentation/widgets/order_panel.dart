@@ -28,10 +28,10 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
         /// LIST ITEMS
         Expanded(
           child: ListView.builder(
-            itemCount: order!.items.length,
+            itemCount: order.items.length,
             itemBuilder: (ctext, index) {
 
-              final item = order!.items[index];
+              final item = order.items[index];
               return OrderPanelItem(
                 productName: item.name,
                 productPrice: item.unitPrice,
@@ -50,7 +50,7 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
                       item.quantity--;
                     }
                     else{
-                      order!.items.removeAt(index);
+                      order.items.removeAt(index);
                     }
                   });
                 },
@@ -75,7 +75,7 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
                     fontSize: 18),
               ),
               Text(
-                "${order!.total.toStringAsFixed(2)} €",
+                "${order.total.toStringAsFixed(2)} €",
                 style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18),

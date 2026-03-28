@@ -17,12 +17,4 @@ class OrderItemModel extends OrderItem{
     );
   }
 
-  Map<String, dynamic> toJson(){
-    return {
-      "productId": productId, 
-      "name":  name, 
-      "quantity":  quantity, 
-      "unitPrice":  unitPrice,
-    };
-  }
 }

@@ -39,7 +39,7 @@ class ConnectivityService {
   Future<bool> _checkBackend() async {
     final result = await _connectivity.checkConnectivity();
 
-    if(result == ConnectivityResult.none){
+    if(result.isNotEmpty && result.first == ConnectivityResult.none){
       return false;
     }
 
