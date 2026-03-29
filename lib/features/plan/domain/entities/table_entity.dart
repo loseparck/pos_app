@@ -2,13 +2,15 @@ import 'package:json_annotation/json_annotation.dart';
 
 enum TableShape{ square, circle}
 
+enum TableStatus{ empty, draft, validated}
+
 class RestaurantTable{
   final String id;
   final String name;
   final double x;
   final double y;
   final int seats;
-  final String? status;
+  final TableStatus status;
   final double rotation;
   final TableShape shape;
   final bool isSelected;
@@ -21,7 +23,7 @@ class RestaurantTable{
     required this.x,
     required this.y,
     required this.seats,
-    this.status,
+    this.status = TableStatus.empty,
     this.rotation = 0,
     this.shape = TableShape.square,
     this.isSelected = false,
@@ -34,7 +36,7 @@ class RestaurantTable{
     double? x,
     double? y,
     int? seats,
-    String? status,
+    TableStatus? status,
     double? rotation,
     TableShape? shape,
     bool? isSelected,
@@ -75,11 +77,6 @@ class RestaurantTable{
     return toJson().toString();
   }
 
-   //factory RestaurantTable.fromJson(Map<String, dynamic> json)
-      //=> _$RestaurantTableFromJson(json);
-
-  //Map<String, dynamic> toJson() => _$RestaurantTableToJson(this);
-
   factory RestaurantTable.fromJson(Map<String, dynamic> json){
     return RestaurantTable(
       id: json['id'] as String,
@@ -87,7 +84,8 @@ class RestaurantTable{
       x: (json['x'] as num).toDouble(),
       y: (json['y'] as num).toDouble(),
       seats: (json['seats'] as num).toInt(),
-      status: json['status'] as String,
+      status: $enumDecodeNullable(_$TableStatusEnumMap, json['status']) ??
+          TableStatus.empty,
       rotation: (json['rotation'] as num).toDouble(),
       shape: $enumDecodeNullable(_$TableShapeEnumMap, json['shape']) ??
           TableShape.circle,
@@ -104,7 +102,7 @@ class RestaurantTable{
       'x': x,
       'y': y,
       'seats': seats,
-      'status': status,
+      'status': _$TableStatusEnumMap[status],
       'rotation': rotation,
       'shape': _$TableShapeEnumMap[shape]!,
       'isSelected': isSelected,
@@ -112,39 +110,16 @@ class RestaurantTable{
       'height': height,
     };
   }
+  
 }
 
-/*RestaurantTable _$RestaurantTableFromJson(Map<String, dynamic> json) => RestaurantTable(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      x: (json['x'] as num).toDouble(),
-      y: (json['y'] as num).toDouble(),
-      seats: (json['seats'] as num).toInt(),
-      status: json['status'] as String,
-      rotation: (json['rotation'] as num).toDouble(),
-      shape: $enumDecodeNullable(_$TableShapeEnumMap, json['shape']) ??
-          TableShape.circle,
-      isSelected: json['isSelected'] as bool? ?? false,
-      width:(json['width'] as num).toDouble(),
-      height: (json['height'] as num).toDouble(),
-    );
-
-Map<String, dynamic> _$RestaurantTableToJson(RestaurantTable instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'name': instance.name,
-      'x': instance.x,
-      'y': instance.y,
-      'seats': instance.seats,
-      'status': instance.status,
-      'rotation': instance.rotation,
-      'shape': _$TableShapeEnumMap[instance.shape]!,
-      'isSelected': instance.isSelected,
-      'width': instance.width,
-      'height': instance.height,
-    };
-*/
 const _$TableShapeEnumMap = {
   TableShape.circle: 'circle',
   TableShape.square: 'square',
+};
+
+const _$TableStatusEnumMap = {
+  TableStatus.empty: 'empty',
+  TableStatus.draft: 'draft',
+  TableStatus.validated: 'validated',
 };

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/presentation/orders_view.dart';
+import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
 
@@ -10,11 +12,11 @@ class DraggableTable extends ConsumerWidget{
 
   const DraggableTable({super.key, required this.table, required this.editMode});
 
-  Color _getColor(String status){
+  Color _getColor(TableStatus status){
     switch(status){
-      case "occupied":
+      case TableStatus.draft:
         return Colors.red;
-      case "reserved":
+      case TableStatus.validated:
         return Colors.blue;
       default:
         return Colors.green;
@@ -38,7 +40,10 @@ class DraggableTable extends ConsumerWidget{
             child: tableWidget,
           ),
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(tableId: table.id)));
+            notifer.selectTable(table.id, editMode);
+            ref.read(ordersProvider.notifier).initSelectedOrderByTableOrGroupId(table.id, true);
+            ref.read(currentGroupProvider.notifier).state = null;
+            Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId: table.id, isTable: true,)));
           }
         ),
       );
@@ -49,7 +54,7 @@ class DraggableTable extends ConsumerWidget{
       top: table.y,
       child: GestureDetector(
         onTap: () {
-          notifer.selectTable(table.id);
+          notifer.selectTable(table.id,editMode);
         },
         onPanUpdate: (details){
           final newX = table.x + details.delta.dx * 20;
@@ -73,7 +78,7 @@ class DraggableTable extends ConsumerWidget{
       width: table.width,
       height: table.height,
       decoration: BoxDecoration(
-        color: _getColor(table.status!),
+        color: _getColor(table.status),
         borderRadius: BorderRadius.circular(360),
         border: Border.all(
           color: table.isSelected 
@@ -92,7 +97,7 @@ class DraggableTable extends ConsumerWidget{
       width: table.width,
       height: table.height,
       decoration: BoxDecoration(
-        color: _getColor(table.status!),
+        color: _getColor(table.status),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: table.isSelected 

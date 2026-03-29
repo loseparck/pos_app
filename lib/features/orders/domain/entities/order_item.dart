@@ -1,5 +1,6 @@
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 
 part 'order_item.g.dart';
 
@@ -10,13 +11,21 @@ class OrderItem {
   int quantity;
   final double unitPrice;
   final List<OptionItem>? options;
+  final OrderStatus status;
+  final DateTime createdAt;
+  final DateTime? validatedAt;
+  final bool synced;
 
   OrderItem({
     required this.productId,
     required this.name,
     required this.quantity,
     required this.unitPrice,
+    required this.createdAt,
+    this.synced = false,
     this.options,
+    this.status = OrderStatus.draft,
+    this.validatedAt,
   });
 
   double get subtotal{
@@ -35,13 +44,19 @@ class OrderItem {
 
   OrderItem copyWith({
     int? quantity,
+    OrderStatus? status,
+    DateTime? validatedAt,
   }) {
     return OrderItem(
       productId: productId,
       name: name,
       unitPrice: unitPrice,
       quantity: quantity ?? this.quantity,
+      createdAt: createdAt,
       options: options,
+      synced: synced,
+      status: status ?? this.status,
+      validatedAt: validatedAt ?? this.validatedAt,
     );
   }
 

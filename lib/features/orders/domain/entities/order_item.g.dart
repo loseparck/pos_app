@@ -11,6 +11,8 @@ OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
       name: json['name'] as String,
       quantity: (json['quantity'] as num).toInt(),
       unitPrice: (json['unitPrice'] as num).toDouble(),
+      createdAt: (json['createdAt'] as DateTime),
+      validatedAt: (json['validatedAt'] as DateTime),
       options: (json['options'] as List<dynamic>?)
           ?.map((e) => OptionItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -21,5 +23,8 @@ Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
       'name': instance.name,
       'quantity': instance.quantity,
       'unitPrice': instance.unitPrice,
+      'createdAt': instance.createdAt,
+      'validatedAt': instance.validatedAt,
+      'status': instance.status,
       'options': instance.options,
     };

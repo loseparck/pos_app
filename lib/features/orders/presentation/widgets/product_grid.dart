@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_option_dialog.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
+import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
 
 import '../../../catalog/application/providers/group_provider.dart';
 import '../../../catalog/application/providers/product_provider.dart';
@@ -21,7 +23,8 @@ class ProductGrid extends ConsumerWidget {
 
     final searchQuery = ref.watch(productSearchQueryProvider);
     final groupId = ref.watch(currentGroupProvider);
-
+    final orderNotifier = ref.read(ordersProvider.notifier);
+    final planNotifier = ref.read(planGroupProvider.notifier);
     /// 🔎 MODE RECHERCHE
     if (searchQuery.isNotEmpty) {
 
@@ -46,19 +49,41 @@ class ProductGrid extends ConsumerWidget {
             itemBuilder: (context, index) {
 
               final p = products[index];
-
-              return ProductCard(
-                isGroup: false,
-                name: p.name,
-                price: p.price,
-                image: p.image,
-                description: p.description,
-                onTap: () {
-                  ref
-                      .read(ordersProvider.notifier)
-                      .addProduct(p);
-                },
-              );
+              if (p.options != null && p.options!.isNotEmpty) {
+                return ProductCard(
+                  isGroup: false,
+                  name: p.name,
+                  price: p.price,
+                  image: p.image,
+                  description: p.description,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => ProductOptionDialog(
+                        product: p,
+                        onSelected: (selectedOptions) {
+                          orderNotifier.addProduct(p, options: selectedOptions);
+                          planNotifier.changeTableState(TableStatus.draft);
+                        },
+                      ),
+                    );
+                  },
+                ); 
+                // afficher le dialog pour choisir les options
+                
+              } else {
+                return ProductCard(
+                  isGroup: false,
+                  name: p.name,
+                  price: p.price,
+                  image: p.image,
+                  description: p.description,
+                  onTap: () {
+                    orderNotifier.addProduct(p);
+                    planNotifier.changeTableState(TableStatus.draft);
+                  },
+                ); 
+              }
             },
           );
         },
@@ -96,6 +121,7 @@ class ProductGrid extends ConsumerWidget {
             } else {
               totalItems = groups.length + products.length;
             }
+            
             return Column(
               children: [
                 /// GRID
@@ -161,15 +187,15 @@ class ProductGrid extends ConsumerWidget {
                               builder: (_) => ProductOptionDialog(
                                 product: p,
                                 onSelected: (selectedOptions) {
-                                  ref.read(ordersProvider.notifier)
-                                    .addProduct(p, options: selectedOptions);
+                                  orderNotifier.addProduct(p, options: selectedOptions);
+                                  planNotifier.changeTableState(TableStatus.draft);
                                 },
                               ),
                             );
                           } else {
                             // ajout direct
-                            ref.read(ordersProvider.notifier)
-                              .addProduct(p);
+                            orderNotifier.addProduct(p);
+                            planNotifier.changeTableState(TableStatus.draft);
                           }
                         }
                       );

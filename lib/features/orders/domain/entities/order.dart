@@ -8,6 +8,7 @@ part 'order.g.dart';
 class Order {
   final String id;
   final String? tableId;
+  final String? groupId;
   final List<OrderItem> items;
   final DateTime createdAt;
   final bool synced;
@@ -19,6 +20,7 @@ class Order {
     required this.createdAt,
     this.synced = false,
     this.tableId,
+    this.groupId,
     this.status = OrderStatus.draft,
   });
 

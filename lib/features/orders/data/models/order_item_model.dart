@@ -6,6 +6,7 @@ class OrderItemModel extends OrderItem{
       required super.name,
       required super.quantity,
       required super.unitPrice,
+      required super.createdAt,
     });
 
   factory OrderItemModel.fromJson(Map<String, dynamic> json){
@@ -14,6 +15,7 @@ class OrderItemModel extends OrderItem{
       name:  json['name'], 
       quantity:  json['quantity'], 
       unitPrice:  json['unitPrice'],
+      createdAt:  json['createdAt'],
     );
   }
 

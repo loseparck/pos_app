@@ -37,7 +37,7 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
                 productPrice: item.unitPrice,
                 quantity: item.quantity,
                 supplements: item.options,
-
+                status: item.status,
                 onAdd: () {
                   setState(() {
                     item.quantity++;

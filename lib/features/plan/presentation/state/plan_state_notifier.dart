@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/plan/domain/entities/plan_group_entity.dart';
 import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
 import 'package:pos_app/features/plan/presentation/state/plan_group_state.dart';
@@ -22,7 +23,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
 
   void addGroup(String name){
     if(state.selectedTableId != null){
-      selectTable(state.selectedTableId);
+      selectTable(state.selectedTableId, true);
     }
 
     final group = PlanGroup(
@@ -41,7 +42,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   }
 
   void selectGroup(String groupId){
-    selectTable(state.selectedTableId);
+    selectTable(state.selectedTableId, true);
     state = PlanGroupState(
       groups: state.groups, 
       selectedGroupId: groupId,
@@ -59,14 +60,13 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
       x: 100, 
       y: 100,
       seats: seats,
-      status: "available",
       shape: TableShape.circle,
     );
 
     final updatedGroup = selected.copyWith(tables: [... selected.tables, table]);
 
     _updateGroup(updatedGroup);
-    selectTable(table.id);
+    selectTable(table.id, true);
   }
 
   void updateTablePosition(String tableId, double x, double y){
@@ -332,7 +332,10 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
   }
 
-  void selectTable(String? id){
+  void selectTable(String? id, bool isEditMode){
+    if(!isEditMode && state.selectedTableId == id){
+      return;
+    }
     String? newSelectedId;
     if(state.selectedTableId != id) {
       newSelectedId = id;
@@ -386,11 +389,39 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
 
   void cancelEdition(){
      state = state.copyWith(groups: draft);
-     selectTable(state.selectedTableId);
+     selectTable(state.selectedTableId, true);
   }
 
   void validateEdition(){
     //save to Database;
-    selectTable(state.selectedTableId);
+    selectTable(state.selectedTableId, true);
+  }
+
+  void changeTableState(TableStatus newStatus){
+    state = state.copyWith(
+      groups: state.groups.map((group) {
+        if(group.id == state.selectedGroupId){
+          return group.copyWith(
+            tables: group.tables.map((table){
+              if(table.id == state.selectedTableId){
+                return table.copyWith(
+                  status: newStatus
+                );
+              }
+              return table;
+            }).toList(),
+          );
+        }
+        return group;
+      }).toList(),
+    );
+  }
+
+  String getName(bool isTable){
+    if(isTable){
+      return state.selectedTable!.name;
+    } else {
+      return state.selectedGroup!.name;
+    }
   }
 }
