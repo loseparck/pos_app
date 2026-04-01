@@ -5,6 +5,7 @@ import 'package:pos_app/features/orders/application/orders_state.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/orders/domain/entities/payment.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:collection/collection.dart';
 
@@ -25,11 +26,11 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   void initSelectedOrderByTableOrGroupId(String id, bool isTable) {
       String? orderId = "-1";
       for(Order order in state.orders){
-        if((isTable && order.tableId == id) || ( !isTable && order.groupId == id)) {
+        if(((isTable && order.tableId == id) || ( !isTable && order.groupId == id))  && order.status != OrderStatus.paid) {
           orderId = order.id;
         }
       }
-
+      
       if(orderId == "-1"){
         Order? order = Order(
                 id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -72,6 +73,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     } else {
       items.add(
         OrderItem(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
           productId: product.id,
           name: product.name,
           quantity: 1,
@@ -147,13 +149,24 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     Navigator.pop(context);
   }
 
-  void payOrder() {
+  void payOrder(Payment payment) {
     Order? order = state.selectedOrder;
-    order ??= order!.copyWith(
-      status: OrderStatus.paid
+    
+    order = order?.copyWith(
+      status: OrderStatus.paid,
+      payment: payment,
     );
-    //state = state!.copyWith(
-      //  status: OrderStatus.paid);
+
+    state = state.copyWith(
+      orders: state.orders.map((o) {
+        if(o.id == order?.id){
+          return order ?? o;
+        }else {
+          return o;
+        }
+      }).toList(),
+      selectedOrderId: state.selectedOrderId
+    );
   }
 
   void increaseQuantity(OrderItem orderItem){
@@ -172,5 +185,4 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     }
     return false;
   }
-
 }

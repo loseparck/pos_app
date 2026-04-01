@@ -6,10 +6,12 @@ part 'order_item.g.dart';
 
 @JsonSerializable()
 class OrderItem {
+  final String id;
   final String productId;
   final String name;
   int quantity;
   final double unitPrice;
+  final double vat;
   final List<OptionItem>? options;
   final OrderStatus status;
   final DateTime createdAt;
@@ -17,6 +19,7 @@ class OrderItem {
   final bool synced;
 
   OrderItem({
+    required this.id,
     required this.productId,
     required this.name,
     required this.quantity,
@@ -26,28 +29,27 @@ class OrderItem {
     this.options,
     this.status = OrderStatus.draft,
     this.validatedAt,
+    this.vat = 0,
   });
-
-  double get subtotal{
-    final options = this.options;
-    if(options != null) {
-      return options.fold(0, (sum , item) => sum + item.price);
-    } else {
-      return 0;
-    }
-  } 
 
   double get supplementsTotal =>
       options!.fold(0, (sum, s) => sum + s.price);
 
+  double get supplementsVAT =>
+      options!.fold(0, (sum, s) => sum + s.vat);
+
   double get total => (unitPrice + supplementsTotal) * quantity;
 
+  double get totalVAT => (vat + supplementsVAT) * quantity;
+
   OrderItem copyWith({
+    String? id,
     int? quantity,
     OrderStatus? status,
     DateTime? validatedAt,
   }) {
     return OrderItem(
+      id: id ?? this.id,
       productId: productId,
       name: name,
       unitPrice: unitPrice,

@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/plan/domain/entities/plan_group_entity.dart';
 import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
 import 'package:pos_app/features/plan/presentation/state/plan_group_state.dart';

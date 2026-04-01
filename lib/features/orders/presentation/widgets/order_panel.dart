@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/orders/presentation/widgets/order_panel_item.dart';
 
 class OrderPanel extends ConsumerStatefulWidget {
@@ -13,6 +14,21 @@ class OrderPanel extends ConsumerStatefulWidget {
 }
 
 class _OrderPanel extends ConsumerState<OrderPanel> {
+
+  Color getBackgroundColor(OrderStatus orderStatus,OrderStatus itemStatus) {
+    if(orderStatus == OrderStatus.paid)
+    {
+      return Colors.green.shade100;
+    }
+    switch (itemStatus) {
+      case OrderStatus.draft:
+        return Colors.orange.shade100;
+      case OrderStatus.paid:
+        return Colors.green.shade100;
+      default:
+        return Colors.white;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +53,7 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
                 productPrice: item.unitPrice,
                 quantity: item.quantity,
                 supplements: item.options,
-                status: item.status,
+                backgroundColor: getBackgroundColor(order.status, item.status),
                 onAdd: () {
                   setState(() {
                     item.quantity++;

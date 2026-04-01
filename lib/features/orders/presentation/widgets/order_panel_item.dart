@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 
 class OrderPanelItem extends StatelessWidget {
   final String productName;
   final double productPrice;
   final int quantity;
-  final OrderStatus status;
+  final Color backgroundColor;
   final List<OptionItem>? supplements;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
@@ -16,7 +15,7 @@ class OrderPanelItem extends StatelessWidget {
     required this.productName,
     required this.productPrice,
     required this.quantity,
-    required this.status,
+    required this.backgroundColor,
     this.supplements,
     required this.onAdd,
     required this.onRemove,
@@ -32,21 +31,10 @@ class OrderPanelItem extends StatelessWidget {
     return quantity > 1 ? const Icon(Icons.remove_circle_outline) : Icon(Icons.delete_forever_rounded);
   } 
 
-  Color getBackgroundColor() {
-    switch (status) {
-      case OrderStatus.draft:
-        return Colors.orange.shade100;
-      case OrderStatus.paid:
-        return Colors.green.shade100;
-      default:
-        return Colors.white;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: getBackgroundColor(),
+      color: backgroundColor,
       child: InkWell(
         onTap: () {
           print(productName);

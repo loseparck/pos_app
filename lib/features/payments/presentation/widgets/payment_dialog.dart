@@ -11,19 +11,18 @@ import 'package:pos_app/features/orders/domain/entities/payment_mode.dart';
 import 'package:pos_app/features/orders/domain/entities/payment_split.dart';
 import 'package:pos_app/features/orders/domain/entities/payment_total.dart';
 import 'package:pos_app/features/orders/presentation/widgets/payment_dialog_item.dart';
+import 'package:pos_app/features/payments/presentation/state/payment_provider.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
 
-class PaymentDialog1 extends ConsumerStatefulWidget {
-  const PaymentDialog1({super.key});
+class PaymentDialog extends ConsumerStatefulWidget {
+  const PaymentDialog({super.key});
 
   @override
-  ConsumerState<PaymentDialog1> createState() => _PaymentDialog1State();
+  ConsumerState<PaymentDialog> createState() => _PaymentDialogState();
 }
 
-class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
-  int selectedTab = 0;
-  String activeField = "";
+class _PaymentDialogState extends ConsumerState<PaymentDialog> {
   final Map<String, TextEditingController> values = {};
   Order? order;
   static const String totalChangeInput ="given_amount";
@@ -31,9 +30,9 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
   static const String splitChangeInput ="given_amount_split";
   static const String itemsChangeInput ="given_amount_items";
   List<OrderItem> items = [];
-  PaymentSplit paymentSplit = PaymentSplit(paymentDetails: []); 
-  PaymentItems paymentItems = PaymentItems(itemsPaid: []); 
-  PaymentTotal paymentTotal = PaymentTotal(); 
+  PaymentSplit paymentSplit = PaymentSplit(paymentDetails: []); //Ok 
+  PaymentItems paymentItems = PaymentItems(itemsPaid: []); //Ok
+  PaymentTotal paymentTotal = PaymentTotal(); //Ok
   Set<String> selectedIds = {};
   List<String> paidItems = [];
 
@@ -165,11 +164,12 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
   }
 
   Widget _tabButton(String label, int index, bool isEnabled) {
+    var selectedTab = ref.watch(paymentProvider(order!.total)).selectedTab;
     final isSelected = selectedTab == index;
 
     return Expanded(
       child: GestureDetector(
-        onTap: !isEnabled ? () => setState(() => selectedTab = index) : null,
+        onTap: !isEnabled ? () => ref.read(paymentProvider(order!.total).notifier).selectTab(index) : null,
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           color: isSelected ? Colors.blue : Colors.grey.shade200,
@@ -188,6 +188,7 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
   }
 
   Widget _buildContent() {
+    var selectedTab = ref.watch(paymentProvider(order!.total)).selectedTab;
     switch (selectedTab) {
       case 0:
         return _buildTabTotal();
@@ -481,7 +482,7 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
 
   Widget _paymentItemSummary() {
     final double total = items.fold(0.0, (sum, s) => sum + (selectedIds.contains(s.id) ? s.total : 0));
-    values[itemsChangeInput]?.text = "$total";
+    //values[itemsChangeInput]?.text = "$total";
     return Column(
       children: [
         Row(
@@ -543,7 +544,6 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
 
   Widget _monnaieLine(String fieldKey, double total) {
     final controller = _getController(fieldKey);
-
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: controller,
       builder: (context, value, _) {
@@ -583,14 +583,15 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
       values[fieldKey] = TextEditingController();
       value = values[fieldKey];
     }
-
+    var activeField = ref.watch(paymentProvider(order!.total)).activeField;
     final isActive = activeField == fieldKey;
 
     return GestureDetector(
       onTap: () {
-        setState(() {
+         ref.read(paymentProvider(order!.total).notifier).setActiveField(fieldKey);
+        /*setState(() {
           activeField = fieldKey;
-        });
+        });*/
       },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
@@ -612,9 +613,10 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
           ],
           onTap: () {
-            setState(() {
+            ref.read(paymentProvider(order!.total).notifier).setActiveField(fieldKey);
+            /*setState(() {
               activeField = fieldKey;
-            });
+            });*/
           },
         ),
       ),
@@ -664,14 +666,13 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
       ),
       itemBuilder: (_, index) {
         final key = keys[index];
-
+        var activeField = ref.watch(paymentProvider(order!.total)).activeField;
         return ElevatedButton(
           onPressed: () {
             if (activeField.isEmpty) return;
             if(!checkFoReadOnlyField(activeField)){
               setState(() {
                 final current = values[activeField] ?? TextEditingController();
-
                 if (key == "⌫") {
                   if (current.text.isNotEmpty) {
                     values[activeField]!.text =
@@ -690,6 +691,7 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
   }
   
   void savePayment() {
+    var selectedTab = ref.watch(paymentProvider(order!.total)).selectedTab;
     final Payment payment;
     if(selectedTab == 0){
       payment = Payment(details: paymentTotal.copyWith(paymentMode:mode));
@@ -729,6 +731,7 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
   }
 
   bool isSaveEnabled(){
+    var selectedTab = ref.watch(paymentProvider(order!.total)).selectedTab;
     if(selectedTab == 0){
       return true;
     } else if(selectedTab == 1){
@@ -739,6 +742,7 @@ class _PaymentDialog1State extends ConsumerState<PaymentDialog1> {
   }
 
   bool checkFoReadOnlyField(String fieldKey){
+    var selectedTab = ref.watch(paymentProvider(order!.total)).selectedTab;
     if(selectedTab == 1){
       if(fieldKey == partCountInput){
         return paymentSplit.paymentDetails.isNotEmpty;

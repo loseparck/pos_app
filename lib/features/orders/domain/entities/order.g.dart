@@ -16,6 +16,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
       tableId: json['tableId'] as String?,
       status: $enumDecodeNullable(_$OrderStatusEnumMap, json['status']) ??
           OrderStatus.draft,
+      payment: Payment.fromJson( json['payment']),
     );
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
@@ -24,7 +25,8 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'items': instance.items,
       'createdAt': instance.createdAt.toIso8601String(),
       'synced': instance.synced,
-      'status': _$OrderStatusEnumMap[instance.status]!,
+      'status': _$OrderStatusEnumMap[instance.status],
+      'payment': instance.payment,
     };
 
 const _$OrderStatusEnumMap = {
