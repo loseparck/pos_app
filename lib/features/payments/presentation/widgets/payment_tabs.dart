@@ -3,34 +3,35 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../state/payment_provider.dart';
 
 class PaymentTabs extends ConsumerWidget {
-  final double total;
-
-  const PaymentTabs({super.key, required this.total});
+  final String label;
+  final int index;
+  
+  const PaymentTabs({
+    super.key,
+    required this.label,
+    required this.index
+    });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(paymentProvider(total));
-    final notifier = ref.read(paymentProvider(total).notifier);
-
-    return Row(
-      children: [
-        _tab("Total", 0, state, notifier),
-        _tab("Split", 1, state, notifier),
-        _tab("Items", 2, state, notifier),
-      ],
-    );
-  }
-
-  Widget _tab(String label, int index, state, notifier) {
-    final selected = state.selectedTab == index;
-
+    final selectedTab = ref.watch(paymentProvider).selectedTab;
+    final notifier =  ref.read(paymentProvider.notifier);
+    final isSelected = selectedTab == index;
     return Expanded(
       child: GestureDetector(
-        onTap: () => notifier.selectTab(index),
+        onTap: notifier.checkIfEnableTitle(index) ? () => notifier.selectTab(index) : null,
         child: Container(
-          color: selected ? Colors.blue : Colors.grey,
-          padding: const EdgeInsets.all(12),
-          child: Center(child: Text(label)),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          color: isSelected ? Colors.blue : Colors.grey.shade200,
+          child: Center(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ),
       ),
     );

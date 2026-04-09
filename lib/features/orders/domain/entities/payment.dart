@@ -23,12 +23,14 @@ class Payment {
     Discount? discount,
     PaymentType? type,
     PaymentEntity? details,
+    String? orderId,
   }) {
     return Payment(
       id: id,
       type: type ?? this.type,
       details: details ?? this.details,
       discount: discount ?? this.discount,
+      orderId: orderId ?? this.orderId,
     );
   }
 
@@ -57,6 +59,7 @@ class Payment {
       'type': _$PaymentTypeEnumMap[type],
       'details': details.toJson(),
       'discount': discount?.toJson(),
+      'orderId': orderId
     };
   }
 }

@@ -4,9 +4,9 @@ import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
-import 'package:pos_app/features/orders/presentation/widgets/payment_dialog.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
 import 'package:pos_app/features/orders/presentation/widgets/order_panel.dart';
+import 'package:pos_app/features/payments/presentation/state/payment_provider.dart';
 import 'package:pos_app/features/payments/presentation/widgets/payment_dialog.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
@@ -72,6 +72,7 @@ class OrdersView extends ConsumerWidget {
                 ElevatedButton(
                   onPressed: order?.status == OrderStatus.paid || order!.items.isEmpty
                     ? null : () {
+                      ref.read(paymentProvider.notifier).changeSelectedOrder(order.id);
                         showDialog( context: context, builder: (_) => const PaymentDialog());
                       },
                   child: const Text("Paiement"),

@@ -8,14 +8,15 @@ class DiscountBlock extends StatefulWidget {
 }
 
 class _DiscountBlockState extends State<DiscountBlock> {
-  bool custom = false;
+  bool customDiscount = false;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text("Réduction", style: TextStyle(fontWeight: FontWeight.bold)),
+        const Text("Réduction",
+            style: TextStyle(fontWeight: FontWeight.bold)),
 
         const SizedBox(height: 6),
 
@@ -27,13 +28,15 @@ class _DiscountBlockState extends State<DiscountBlock> {
           ],
           onChanged: (value) {
             setState(() {
-              custom = value == "custom";
+              customDiscount = value == "custom";
             });
           },
-          decoration: const InputDecoration(border: OutlineInputBorder()),
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+          ),
         ),
 
-        if (custom) ...[
+        if (customDiscount) ...[
           const SizedBox(height: 8),
 
           Row(

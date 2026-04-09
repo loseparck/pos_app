@@ -38,10 +38,8 @@ class PaymentDialogItem extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 4),
             child: Column(
               children: [
-                /// Ligne principale produit
                 Row(
                   children: [
-                    /// Nom du produit
                     Expanded(
                       flex: 2,
                       child: Text(
@@ -50,11 +48,9 @@ class PaymentDialogItem extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
                         ),
-                        overflow: TextOverflow.ellipsis, // Evite overflow si le nom est long
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
-                    /// Prix à droite
                     Flexible(
                       flex: 1,
                       child: Row(
@@ -72,8 +68,6 @@ class PaymentDialogItem extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                /// suppléments
                 if (supplements!.isNotEmpty)
                   Text(
                     supplements?.map((e) => "${e.name} (+${e.price})").join(', ') ?? "",
