@@ -107,7 +107,7 @@ class _ProductOptionDialogState
                       const SizedBox(height: 8),
 
                       /// OPTIONS
-                      ...group.options.map((opt) {
+                      ...group.items.map((opt) {
 
                         final count = selected
                             .where((e) => e.id == opt.id)

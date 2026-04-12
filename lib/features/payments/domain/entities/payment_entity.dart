@@ -1,7 +1,7 @@
-import 'package:pos_app/features/orders/domain/entities/payment.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_items.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_split.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_total.dart';
+import 'package:pos_app/features/payments/domain/entities/payment.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_items.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_split.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_total.dart';
 
 abstract class PaymentEntity {
   final String? id;

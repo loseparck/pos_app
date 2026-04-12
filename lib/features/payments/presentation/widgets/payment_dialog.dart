@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
-import 'package:pos_app/features/orders/domain/entities/payment.dart';
+import 'package:pos_app/features/payments/domain/entities/payment.dart';
 import 'package:pos_app/features/payments/presentation/state/payment_provider.dart';
 import 'package:pos_app/features/payments/presentation/widgets/payment_keypad.dart';
 import 'package:pos_app/features/payments/presentation/widgets/payment_tabs.dart';

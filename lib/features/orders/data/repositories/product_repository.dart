@@ -1,4 +1,4 @@
-import 'package:pos_app/features/orders/data/demo_products.dart';
+import 'package:pos_app/features/catalog/data/demo_products.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 
 class ProductRepository {

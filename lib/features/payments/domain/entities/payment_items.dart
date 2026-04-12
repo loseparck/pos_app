@@ -1,5 +1,5 @@
-import 'package:pos_app/features/orders/domain/entities/payment_entity.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_item.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_entity.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_item.dart';
 
 class PaymentItems extends PaymentEntity{
   List<PaymentItem> itemsPaid;

@@ -1,8 +1,8 @@
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/product_group.dart';
 import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
 
-import '../../catalog/domain/entities/product.dart';
-import '../domain/entities/product_group.dart';
+import '../domain/entities/product.dart';
 
 final List<ProductGroup> demoGroups = [
 
@@ -31,6 +31,97 @@ final List<ProductGroup> demoGroups = [
   ),
 ];
 
+final List<ProductOption> demoOptions = [
+
+  ProductOption(
+    id: "IDG1",
+    name: "Base",
+    isMandatory: true,
+    minToSelect: 2,
+    maxToSelect: 5,
+    multipleSelect: true, 
+    items: [
+      OptionItem(
+        id: "IDG1O1",
+        name: "Base Orange",
+        price: 5,
+        groupId: "IDG1",
+      ),
+      OptionItem(
+        id: "IDG1O2",
+        name: "Base Lait",
+        groupId: "IDG1",
+      ),
+    ]
+  ),
+  ProductOption(
+    isMandatory: true,
+    minToSelect: 1,
+    maxToSelect: 1,
+    id: "IDG2",
+    name: "Topping", 
+    items: [
+      OptionItem(
+        id: "IDG2O1",
+        name: "Creme",
+        price: 5,
+        groupId: "IDG2",
+      ),
+      OptionItem(
+        id: "IDG2O2",
+        name: "Cannelle",
+        groupId: "IDG2",
+      ),
+    ]
+  ),
+  ProductOption(
+    id: "IDG3",
+    name: "Chocolat",
+    isMandatory: true,
+    minToSelect: 2,
+    maxToSelect: 5,
+    multipleSelect: true, 
+    items: [
+      OptionItem(
+        id: "IDG3O1",
+        name: "Nutella",
+        price: 5,
+        groupId: "IDG3",
+      ),
+      OptionItem(
+        id: "IDG3O2",
+        name: "Mars",
+        groupId: "IDG3",
+      ),
+      OptionItem(
+        id: "IDG3O3",
+        name: "Snickers",
+        groupId: "IDG3",
+      ),
+      OptionItem(
+        id: "IDG3O4",
+        name: "Twix",
+        groupId: "IDG3",
+      ),
+      OptionItem(
+        id: "IDG3O5",
+        name: "Oreo",
+        groupId: "IDG3",
+      ),
+      OptionItem(
+        id: "IDG3O6",
+        name: "KitKat",
+        groupId: "IDG3",
+      ),
+      OptionItem(
+        id: "IDG3O7",
+        name: "Milka",
+        groupId: "IDG3",
+      ),
+    ]
+  )
+];
+
 final List<Product> demoProducts = [
 
   Product(
@@ -47,15 +138,17 @@ final List<Product> demoProducts = [
           minToSelect: 2,
           maxToSelect: 5,
           multipleSelect: true, 
-          options: [
+          items: [
             OptionItem(
               id: "IDG1O1",
               name: "Base Orange",
-              price: 5
+              price: 5,
+              groupId: "IDG1",
             ),
             OptionItem(
               id: "IDG1O2",
               name: "Base Lait",
+              groupId: "IDG1",
             ),
           ]
         ),
@@ -65,15 +158,17 @@ final List<Product> demoProducts = [
           maxToSelect: 1,
           id: "IDG2",
           name: "Topping", 
-          options: [
+          items: [
             OptionItem(
               id: "IDG2O1",
               name: "Creme",
-              price: 5
+              price: 5,
+              groupId: "IDG2",
             ),
             OptionItem(
               id: "IDG2O2",
               name: "Cannelle",
+              groupId: "IDG2",
             ),
           ]
         ),
@@ -84,35 +179,42 @@ final List<Product> demoProducts = [
           minToSelect: 2,
           maxToSelect: 5,
           multipleSelect: true, 
-          options: [
+          items: [
             OptionItem(
               id: "IDG3O1",
               name: "Nutella",
-              price: 5
+              price: 5,
+              groupId: "IDG3",
             ),
             OptionItem(
               id: "IDG3O2",
               name: "Mars",
+              groupId: "IDG3",
             ),
             OptionItem(
               id: "IDG3O3",
               name: "Snickers",
+              groupId: "IDG3",
             ),
             OptionItem(
               id: "IDG3O4",
               name: "Twix",
+              groupId: "IDG3",
             ),
             OptionItem(
               id: "IDG3O5",
               name: "Oreo",
+              groupId: "IDG3",
             ),
             OptionItem(
               id: "IDG3O6",
               name: "KitKat",
+              groupId: "IDG3",
             ),
             OptionItem(
               id: "IDG3O7",
               name: "Milka",
+              groupId: "IDG3",
             ),
           ]
         ),

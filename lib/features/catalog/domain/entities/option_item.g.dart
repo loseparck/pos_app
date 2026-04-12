@@ -10,6 +10,7 @@ OptionItem _$OptionItemFromJson(Map<String, dynamic> json) => OptionItem(
       name: json['name'] as String,
       price: (json['price'] as num?)?.toDouble() ?? 0,
       id: json['id'] as String,
+      groupId: json['groupId'] as String,
     );
 
 Map<String, dynamic> _$OptionItemToJson(OptionItem instance) =>
@@ -17,4 +18,5 @@ Map<String, dynamic> _$OptionItemToJson(OptionItem instance) =>
       'id': instance.id,
       'name': instance.name,
       'price': instance.price,
+      'groupId': instance.groupId,
     };

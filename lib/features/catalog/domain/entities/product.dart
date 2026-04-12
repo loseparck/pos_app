@@ -13,9 +13,9 @@ class Product {
   final List<ProductOption>? options;
 
   Product({
-    required this.id,
     required this.name,
     required this.price,
+    this.id = "",
     this.image,
     this.description,
     this.groupId,
@@ -24,4 +24,30 @@ class Product {
     this.status = true,
     this.options,
   });
+
+  Product copyWith({
+    String? id,
+    String? name,
+    double? price,
+    String? sku,
+    String? image,
+    String? description,
+    String? groupId,
+    String? codeBarres,
+    bool? status,
+    List<ProductOption>? options
+  }) {
+    return Product(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      price: price ?? this.price,
+      sku: sku ?? this.sku,
+      image: image ?? this.image,
+      description: description ?? this.description,
+      groupId: groupId ?? this.groupId,
+      codeBarres: codeBarres ?? this.codeBarres,
+      status: status ?? this.status,
+      options: options ?? this.options
+    );
+  }
 }

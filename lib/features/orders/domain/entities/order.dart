@@ -1,5 +1,5 @@
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
-import 'package:pos_app/features/orders/domain/entities/payment.dart';
+import 'package:pos_app/features/payments/domain/entities/payment.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:json_annotation/json_annotation.dart';
 

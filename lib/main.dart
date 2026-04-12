@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/auth_gate.dart';
 import 'package:pos_app/app/main_page.dart';
-import 'package:pos_app/features/plan/presentation/pages/plan_view.dart';
+import 'package:pos_app/features/management/presentation/pages/management.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized;
@@ -31,7 +31,7 @@ class MainApp extends StatelessWidget {
       title: "Pos App",
       home: /*AuthGate(
         child: const MainPage(),
-      )*/PlanView(),
+      ),*/ Management(),
     );
   }
 }

@@ -1,12 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:pos_app/features/orders/domain/entities/payment.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_item.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_items.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_mode.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_split.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_total.dart';
+import 'package:pos_app/features/payments/domain/entities/payment.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_item.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_items.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_split.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_total.dart';
 import 'payment_state.dart';
 
 class PaymentNotifier extends StateNotifier<PaymentState> {

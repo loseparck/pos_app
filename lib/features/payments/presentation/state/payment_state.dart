@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/orders/domain/entities/payment.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_mode.dart';
+import 'package:pos_app/features/payments/domain/entities/payment.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
 
 class PaymentState {
   static const String totalChangeInput ="given_amount";

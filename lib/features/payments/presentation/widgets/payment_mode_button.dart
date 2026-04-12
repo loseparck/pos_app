@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_mode.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
 import '../state/payment_provider.dart';
 
 class PaymentModeButton extends ConsumerWidget {

@@ -16,30 +16,34 @@ class ProductRepository {
         ProductOption(
           id: "IDG1",
           name: "Base", 
-          options: [
+          items: [
             OptionItem(
               id: "IDG1O1",
               name: "Base Orange",
-              price: 5
+              price: 5,
+              groupId: "IDG1",
             ),
             OptionItem(
               id: "IDG1O2",
               name: "Base Lait",
+              groupId: "IDG1",
             ),
           ]
         ),
         ProductOption(
           id: "IDG2",
           name: "Topping", 
-          options: [
+          items: [
             OptionItem(
               id: "IDG2O1",
               name: "Creme",
-              price: 5
+              price: 5,
+              groupId: "IDG2",
             ),
             OptionItem(
               id: "IDG2O2",
               name: "Cannelle",
+              groupId: "IDG2",
             ),
           ]
         )

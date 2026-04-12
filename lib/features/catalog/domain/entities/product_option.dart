@@ -7,17 +7,39 @@ class ProductOption {
   final int minToSelect;
   final int maxToSelect;
   final bool multipleSelect;
-  final List<OptionItem> options;
+  final bool enabled;
+  final List<OptionItem> items;
 
   ProductOption({
     required this.name,
-    required this.options,
+    required this.items,
     this.isMandatory = false,
     this.minToSelect = 0,
-    this.maxToSelect = 0,
+    this.maxToSelect = -1,
     this.multipleSelect = false,
-    required this.id,
+    this.id = "",
+    this.enabled = true,
   });
 
-  
+   ProductOption copyWith({
+    String? id,
+    String? name,
+    bool? isMandatory,
+    int? minToSelect,
+    int? maxToSelect,
+    bool? multipleSelect,
+    bool? enabled,
+    List<OptionItem>? items
+  }) {
+    return ProductOption(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      isMandatory: isMandatory ?? this.isMandatory,
+      minToSelect: minToSelect ?? this.minToSelect,
+      maxToSelect: maxToSelect ?? this.maxToSelect,
+      multipleSelect: multipleSelect ?? this.multipleSelect,
+      enabled: enabled ?? this.enabled,
+      items: items ?? this.items
+    );
+  }
 }

@@ -1,5 +1,5 @@
 import 'package:pos_app/features/orders/domain/entities/discount.dart';
-import 'package:pos_app/features/orders/domain/entities/payment_total.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_total.dart';
 
 class PaymentItem {
   final String? id;
