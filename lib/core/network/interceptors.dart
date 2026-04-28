@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+/*import 'package:dio/dio.dart';
 import 'package:pos_app/core/network/api_endpoints.dart';
 
 abstract class TokenProvider{
@@ -30,7 +30,8 @@ class AuthInterceptor extends Interceptor{
       try{
         final refreshResponse = await dio.post(ApiEndpoints.refresh);
         final newToken = refreshResponse.data["token"];
-
+        print("RefreshResponse $refreshResponse");
+        
         await tokenProvider.saveToken(newToken);
 
         final requestOptions = err.requestOptions;
@@ -47,4 +48,4 @@ class AuthInterceptor extends Interceptor{
     handler.next(err);
   }
   
-}
+}*/

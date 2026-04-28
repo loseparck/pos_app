@@ -1,10 +1,9 @@
-import 'package:pos_app/features/authentication/data/models/user_model.dart';
+import '../../domain/entities/user.dart';
 
-abstract class AuthLocalDatasource {
-  Future<void> cacheUser(UserModel user);
-  Future<UserModel> getCachedUser();
+abstract class AuthLocalDataSource {
+  Future<void> cacheUser(User user);
+  Future<User?> getCachedUser();
   Future<void> clear();
   Future<void> saveToken(String token);
   Future<String?> getToken();
-
 }

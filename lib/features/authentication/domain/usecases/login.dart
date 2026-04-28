@@ -1,12 +1,13 @@
-import 'package:pos_app/features/authentication/data/repositories/auth_repository_impl.dart';
-import 'package:pos_app/features/authentication/domain/entities/user.dart';
+import 'package:pos_app/features/authentication/data/repositories/auth_repository.dart';
 
-class Login{
-  final AuthRepository repository;
+import '../entities/user.dart';
 
-  Login(this.repository);
+class Login {
+  Login(this._repository);
 
-  Future<User?> call(String email, String password){
-    return repository.login(email, password);
+  final AuthRepository _repository;
+
+  Future<User> call(String email, String password) {
+    return _repository.login(email, password);
   }
 }

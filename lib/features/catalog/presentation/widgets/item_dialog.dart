@@ -41,13 +41,16 @@ class _OptionItemDialogState
           ),
         ],
       ),
-      content: Column(
+
+      content: SingleChildScrollView(
+        child:  
+      Column(
         children: [
           _buildTextRow("Nom :", nameCotnroller),
           _buildTextRow("Prix :", priceCotnroller),
           _buildTextRow("TVA :", vatCotnroller),
         ],
-      ),
+      )),
       
       
       actions: [
@@ -83,7 +86,7 @@ class _OptionItemDialogState
     );
   }
 
-  bool _canValidate() {
+  /*bool _canValidate() {
     return true;
-  }
+  }*/
 }

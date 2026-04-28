@@ -1,13 +1,13 @@
-import 'package:pos_app/features/authentication/data/repositories/auth_repository_impl.dart';
-import 'package:pos_app/features/authentication/domain/entities/user.dart';
+import 'package:pos_app/features/authentication/data/repositories/auth_repository.dart';
+
+import '../entities/user.dart';
 
 class GetCurrentUser {
-  final AuthRepository repository;
+  GetCurrentUser(this._repository);
 
-  GetCurrentUser(this.repository);
+  final AuthRepository _repository;
 
-  Future<User?> call(){
-    return repository.getCurrentUser();
+  Future<User?> call() {
+    return _repository.getCurrentUser();
   }
-
 }

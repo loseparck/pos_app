@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/application/payment_state.dart';
 /*
 final paymentProvider =

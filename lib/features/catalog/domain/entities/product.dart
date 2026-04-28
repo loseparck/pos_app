@@ -9,6 +9,7 @@ class Product {
   final String? description;
   final String? groupId;
   final String? codeBarres;
+  final bool isActive;
   final bool status;
   final List<ProductOption>? options;
 
@@ -22,6 +23,7 @@ class Product {
     this.codeBarres,
     this.sku,
     this.status = true,
+    this.isActive = true,
     this.options,
   });
 
@@ -35,7 +37,8 @@ class Product {
     String? groupId,
     String? codeBarres,
     bool? status,
-    List<ProductOption>? options
+    List<ProductOption>? options,
+    bool? isActive,
   }) {
     return Product(
       id: id ?? this.id,
@@ -47,7 +50,8 @@ class Product {
       groupId: groupId ?? this.groupId,
       codeBarres: codeBarres ?? this.codeBarres,
       status: status ?? this.status,
-      options: options ?? this.options
+      options: options ?? this.options,
+      isActive: isActive ?? this.isActive,
     );
   }
 }

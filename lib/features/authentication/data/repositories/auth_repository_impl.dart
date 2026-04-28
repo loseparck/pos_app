@@ -1,46 +1,49 @@
-import 'package:pos_app/features/authentication/data/datasources/auth_remote_datasource.dart';
-import 'package:pos_app/features/authentication/data/datasources/auth_local_datasource.dart';
-import 'package:pos_app/features/authentication/domain/entities/user.dart';
+import 'package:pos_app/features/authentication/data/repositories/auth_repository.dart';
 
-abstract class AuthRepository {
-  Future<User?> login(String email, String password);
-  Future<void> logout();
-  Future<User?> getCurrentUser();
-}
+import '../../domain/entities/user.dart';
+import '../../domain/repositories/token_repository.dart';
+import '../datasources/auth_local_datasource.dart';
+import '../datasources/auth_remote_datasource.dart';
 
-class AuthRepositoryImpl implements AuthRepository{
-  final AuthRemoteDatasource remote;
-  final AuthLocalDatasource local;
+class AuthRepositoryImpl implements AuthRepository {
+  AuthRepositoryImpl(
+    this._remoteDataSource,
+    this._localDataSource,
+    this._tokenRepository,
+  );
 
-  AuthRepositoryImpl(this.remote, this.local);
+  final AuthRemoteDataSource _remoteDataSource;
+  final AuthLocalDataSource _localDataSource;
+  final TokenRepository _tokenRepository;
 
   @override
-  Future<User?> getCurrentUser() async{
-    final token = await local.getToken();
-
-    if(token == null) return null;
-    return local.getCachedUser();
+  Future<User> login(String email, String password) async {
+    final response = await _remoteDataSource.login(email, password);
+    
+    await _tokenRepository.saveAccessToken(response.accessToken);
+    await _tokenRepository.saveRefreshToken(response.refreshToken);
+    await _tokenRepository.saveTenantId(response.tenantId);
+    await _localDataSource.cacheUser(response.user);
+    
+    return response.user;
   }
 
   @override
-  Future<User?> login(String email, String password) async{
-    final data = await remote.login(email, password);
-    if(data != null){
-      final token = data['token'];
-      await local.saveToken(token);
+  Future<void> logout() async {
+    await _tokenRepository.clearTokens();
+    await _localDataSource.clear();
+  }
 
-      return User(
-        id: data['user']['id'], 
-        name: data['user']['name'], 
-        email: data['user']['email'], 
-        role: data['user']['role']
-        );
+  @override
+  Future<User?> getCurrentUser() async {
+    final accessToken = await _tokenRepository.getAccessToken();
+    final refreshToken = await _tokenRepository.getRefreshToken();
+
+    if ((accessToken == null || accessToken.isEmpty) &&
+        (refreshToken == null || refreshToken.isEmpty)) {
+      return null;
     }
-    return null;
-  }
 
-  @override
-  Future<void> logout() async{
-    local.clear();
+    return _localDataSource.getCachedUser();
   }
 }

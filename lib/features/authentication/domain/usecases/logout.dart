@@ -1,11 +1,11 @@
-import 'package:pos_app/features/authentication/data/repositories/auth_repository_impl.dart';
+import 'package:pos_app/features/authentication/data/repositories/auth_repository.dart';
 
-class Logout{
-  final AuthRepository repository;
+class Logout {
+  Logout(this._repository);
 
-  Logout(this.repository);
+  final AuthRepository _repository;
 
-  Future<void> call(){
-    return repository.logout();
+  Future<void> call() {
+    return _repository.logout();
   }
 }

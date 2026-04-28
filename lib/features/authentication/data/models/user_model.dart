@@ -1,4 +1,3 @@
-import 'package:pos_app/features/authentication/domain/entities/role.dart';
 import 'package:pos_app/features/authentication/domain/entities/user.dart';
 
 class UserModel extends User{
@@ -6,8 +5,7 @@ class UserModel extends User{
     required super.id,
     required super.name,
     required super.email,
-    required super.role,
-    required super.token
+    required super.role
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json){
@@ -15,8 +13,8 @@ class UserModel extends User{
       id: json['id'], 
       name:  json['name'], 
       email:  json['email'], 
-      role:  UserRole.values.firstWhere((e) => e.name == json['role']), 
-      token:  json['token']);
+      role:  json['role']
+    );
   }
 
   Map<String, dynamic> toJson(){
@@ -24,8 +22,7 @@ class UserModel extends User{
       "id": id, 
       "name":  name, 
       "email":  email, 
-      "role":  role.name, 
-      "token":  token,
+      "role":  name,
     };
   }
 }

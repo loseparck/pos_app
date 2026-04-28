@@ -6,8 +6,8 @@ import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
 class ProductState{
   final List<Product> products;
   final List<ProductGroup> productGroups;
-  final List<OptionItem> options;
-  final List<ProductOption> optionGroups;
+  final List<OptionItem> items;
+  final List<ProductOption> options;
 
   final String? selectedProductId;
   final String? selectedProductGroupId;
@@ -18,7 +18,7 @@ class ProductState{
     required this.products,
     required this.productGroups,
     required this.options,
-    required this.optionGroups,
+    required this.items,
     this.selectedProductGroupId,
     this.selectedProductId,
     this.selectedOptionGroupId,
@@ -46,7 +46,7 @@ class ProductState{
   OptionItem? get selectedOption {
     if(selectedOptionId == null) return null;
     try{
-      return options.firstWhere((option) => option.id == selectedOptionId);
+      return items.firstWhere((option) => option.id == selectedOptionId);
     } catch(_){
       return null;
     }
@@ -55,7 +55,7 @@ class ProductState{
   ProductOption? get selectedOptionGroup {
     if(selectedOptionGroupId == null) return null;
     try{
-      return optionGroups.firstWhere((optionGroup) => optionGroup.id == selectedOptionGroupId);
+      return options.firstWhere((optionGroup) => optionGroup.id == selectedOptionGroupId);
     } catch(_){
       return null;
     }
@@ -64,8 +64,8 @@ class ProductState{
   ProductState copyWith({
     List<Product>? products,
     List<ProductGroup>? productGroups,
-    List<OptionItem>? options,
-    List<ProductOption>? optionGroups,
+    List<OptionItem>? items,
+    List<ProductOption>? options,
     String? selectedProductId,
     String? selectedProductGroupId,
     String? selectedOptionId,
@@ -75,7 +75,7 @@ class ProductState{
       products: products ?? this.products,
       productGroups: productGroups ?? this.productGroups,
       options: options ?? this.options,
-      optionGroups: optionGroups ?? this.optionGroups,
+      items: items ?? this.items,
       selectedProductId: selectedProductId ?? this.selectedProductId,
       selectedProductGroupId: selectedProductGroupId ?? this.selectedProductGroupId,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,

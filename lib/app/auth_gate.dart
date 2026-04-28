@@ -22,8 +22,9 @@ class AuthGate extends ConsumerWidget{
         ),
       );
     }
-
+    
     if(authState.status != AuthStatus.authenticated){
+      //Navigator.pop(context);
       return const LoginPage();
     }
 

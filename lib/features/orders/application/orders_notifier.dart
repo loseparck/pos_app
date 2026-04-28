@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
 import 'package:pos_app/features/orders/application/orders_state.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';

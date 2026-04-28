@@ -1,59 +1,82 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import 'package:pos_app/features/authentication/domain/entities/role.dart';
-import 'package:pos_app/features/authentication/domain/entities/user.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
 import 'package:pos_app/features/authentication/presentation/state/usecase_provider.dart';
 
-class AuthNotifier extends StateNotifier<AuthState>{
-  final Ref ref;
-  
-  AuthNotifier(this.ref) : super(AuthState.initial()){
-    checkAuth();
+class AuthNotifier extends StateNotifier<AuthState> {
+  AuthNotifier(this.ref) : super(AuthState.initial()) {
+    _checkAuthOnStartup();
   }
 
-  Future<void> checkAuth() async{
+  final Ref ref;
 
-    final getCurrentUser = ref.read(getCurrentUserUseCaseProvider);
-
+  Future<void> _checkAuthOnStartup() async {
     try {
+      final getCurrentUser = ref.read(getCurrentUserUseCaseProvider);
       final user = await getCurrentUser();
-      if(user != null){
+
+      if (user != null) {
         state = AuthState.authenticated(user);
       } else {
         state = AuthState.unauthenticated();
       }
-    } catch(_){
+    } catch (_) {
       state = AuthState.unauthenticated();
     }
   }
 
-  Future<void> login(String email, String password) async{
-    state = AuthState(status: AuthStatus.loading);
+  Future<void> login(String email, String password) async {
+    state = AuthState.loading();
 
-    try{
+    try {
       final loginUseCase = ref.read(loginUseCaseProvider);
-      final user = await loginUseCase.call(email, password);
-      if(user != null) {
+      final user = await loginUseCase(email, password);
+      state = AuthState.authenticated(user);
+    } catch (e) {
+      state = AuthState.error(
+        'Email ou mot de passe incorrect',
+      );
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      final logoutUseCase = ref.read(logoutUseCaseProvider);
+      await logoutUseCase();
+    } finally {
+      state = AuthState.unauthenticated();
+    }
+  }
+
+  Future<void> forceLogout() async {
+    try {
+      final logoutUseCase = ref.read(logoutUseCaseProvider);
+      await logoutUseCase();
+    } catch (_) {
+      // On ignore les erreurs ici car l'objectif principal
+      // est de forcer le retour à l'état déconnecté.
+    } finally {
+      state = AuthState.unauthenticated();
+    }
+  }
+
+  Future<void> refreshUserFromCache() async {
+    try {
+      final getCurrentUser = ref.read(getCurrentUserUseCaseProvider);
+      final user = await getCurrentUser();
+
+      if (user != null) {
         state = AuthState.authenticated(user);
       } else {
         state = AuthState.unauthenticated();
       }
-    } catch(_) {
-      state = AuthState.error("Identifiants Invalides");
-    }
-    if(email == "email" && password == "password"){
-      state = AuthState.authenticated(User(id: "id", email: "email", role: UserRole.admin, name: "name"));
+    } catch (_) {
+      state = AuthState.unauthenticated();
     }
   }
 
-  Future<void> logout() async{
-    final logOut = ref.read(logoutUseCaseProvider);
-    state = AuthState.unauthenticated();
-    await logOut();
+  void clearError() {
+    if (state.status == AuthStatus.error) {
+      state = AuthState.unauthenticated();
+    }
   }
-
-  final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
-    return AuthNotifier(ref);
-  });
 }

@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+/*import 'package:dio/dio.dart';
 import 'package:pos_app/core/network/api_endpoints.dart';
 import 'package:pos_app/core/network/interceptors.dart';
 
@@ -25,4 +25,4 @@ class DioClient {
       )
     ]);
   }
-}
+}*/

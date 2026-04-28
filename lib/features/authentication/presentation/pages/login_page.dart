@@ -13,8 +13,8 @@ class LoginPage extends ConsumerStatefulWidget{
 class _LoginPageState extends ConsumerState<LoginPage>{
   final _formKey = GlobalKey<FormState>();
 
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: "admin@demo.local");
+  final _passwordController = TextEditingController(text: "12345678");
   
   @override
   void dispose() {
@@ -39,17 +39,18 @@ class _LoginPageState extends ConsumerState<LoginPage>{
    ref.listen<AuthState>(authProvider, (previous, next) {
     if(next.status == AuthStatus.error){
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(next.message ?? "Erreur")),
+        SnackBar(content: Text(next.errorMessage ?? "Erreur")),
       );
     }
    });
    return Scaffold(
-    body: Center(
-      child: SizedBox(
-        width: 350,
-        child: Card(
-          elevation: 4,
-          child: Padding(
+    body: SingleChildScrollView(
+      child: Center(
+        child: SizedBox(
+          width: 350,
+          child: Card(
+            elevation: 4,
+            child: Padding(
             padding: const EdgeInsets.all(24),
             child: Form(
               key: _formKey,
@@ -103,6 +104,7 @@ class _LoginPageState extends ConsumerState<LoginPage>{
           ),
         ),
       ),
+    ),
     ),
    );
   }

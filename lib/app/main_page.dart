@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/management/presentation/pages/management.dart';
 import 'package:pos_app/features/plan/presentation/pages/plan_view.dart';

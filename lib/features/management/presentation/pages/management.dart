@@ -137,9 +137,9 @@ class _GestionPageState extends State<Management> {
     return const Center(child: Text("Documents"));
   }
 
-  Widget _productsPage() {
+  /*Widget _productsPage() {
     return const Center(child: Text("Produits"));
-  }
+  }*/
 
   Widget _stockPage() {
     return const Center(child: Text("Stock"));

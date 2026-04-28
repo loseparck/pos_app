@@ -1,135 +1,49 @@
-/*import 'package:flutter/material.dart';
-
-class OptionDialog extends StatefulWidget {
-  const OptionDialog({super.key});
-
-  @override
-  State<OptionDialog> createState() => _OptionDialogState();
-}
-
-class _OptionDialogState extends State<OptionDialog> {
-    final nameCotnroller = TextEditingController();
-    final minCotnroller = TextEditingController(text: "0");
-    final maxCotnroller = TextEditingController(text: "0");
-    bool isMandatory = false;
-    bool multipleSelect = false;
-
-    @override
-  void dispose() {
-    nameCotnroller.dispose();
-    minCotnroller.dispose();
-    maxCotnroller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    
-
-    return AlertDialog(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text("Ajouter un Group d'options"),
-          IconButton(
-            style: ElevatedButton.styleFrom(backgroundColor:  Colors.red.shade200),
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      ),
-      content: Column(
-        children: [
-          _buildTextRow("Nom :", nameCotnroller),
-          _buildCheckboxRow("Cette Option est Obligatoir ? ", isMandatory, (val) {
-            setState(() => isMandatory = val ?? true);
-          }),
-          if(isMandatory)
-            _buildTextRow("Nombre minimum d'options à choisir ?", minCotnroller),
-          _buildTextRow("Nombre maximum d'options qu'on peut choisir ?", maxCotnroller),
-          _buildCheckboxRow("Une Option peut etre selectionner plusieurs fois ? ", multipleSelect, (val) {
-            setState(() => multipleSelect = val!);
-          }),
-        ],
-      ),
-      
-      
-      actions: [
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
-          onPressed: () {
-            //notifier.addGroup(controller.text.trim());
-            Navigator.pop(context);
-          }, 
-          child: const Text("Valider"),
-        ),
-      ],
-    );
-  }
-
-    Widget _buildCheckboxRow(String label, bool value, Function(bool?) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(label)),
-          Expanded(
-            flex: 3,
-            child: SwitchListTile(
-              value: value,
-              onChanged: onChanged,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-// ===== Widget ligne texte =====
-  Widget _buildTextRow(String label, TextEditingController controller) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(label)),
-          Expanded(
-            flex: 3,
-            child: TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}*/
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
 
-class OptionDialog extends StatefulWidget {
-  const OptionDialog({super.key});
+class OptionDialog extends ConsumerStatefulWidget {
+  const OptionDialog({super.key, this.optionId});
+  final String? optionId;
 
   @override
-  State<OptionDialog> createState() => _OptionDialogState();
+  ConsumerState<OptionDialog> createState() => _OptionDialogState();
 }
 
-class _OptionDialogState extends State<OptionDialog> {
+class _OptionDialogState extends ConsumerState<OptionDialog> {
   final _formKey = GlobalKey<FormState>();
+  
+  ProductOption product = new ProductOption(name: '', items: [], minToSelect: 0, maxToSelect: 1);
 
-  final nameController = TextEditingController();
-  final minController = TextEditingController(text: "0");
-  final maxController = TextEditingController(text: "1");
+  late final TextEditingController nameController;
+  late final TextEditingController minController;
+  late final TextEditingController maxController;
 
   bool isMandatory = false;
   bool multipleSelect = false;
+  bool isActive = true;
 
   List<OptionItem> options = [];
+  
+  @override
+  void initState() {
+    super.initState();
+    if(widget.optionId == null){
+      nameController = TextEditingController();
+      minController = TextEditingController(text: "0");
+      maxController = TextEditingController(text: "1");
+    } else {
+      product = ref.read(productsProvider.notifier).getOption(widget.optionId ?? '');
+      nameController = TextEditingController(text: product.name);
+      minController = TextEditingController(text: '${product.minToSelect}');
+      maxController = TextEditingController(text: '${product.maxToSelect}');
+      isMandatory = product.isMandatory;
+      multipleSelect = product.multipleSelect;
+      isActive = product.isActive;
+    }
+  }
 
   @override
   void dispose() {
@@ -146,12 +60,15 @@ class _OptionDialogState extends State<OptionDialog> {
     final nameCtrl = TextEditingController(text: item?.name ?? "");
     final priceCtrl =
         TextEditingController(text: item?.price.toString() ?? "0");
+    final vatCtrl =
+        TextEditingController(text: item?.vat.toString() ?? "0");
 
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: Text(item == null ? "Ajouter une option" : "Modifier"),
-        content: Column(
+        content: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
@@ -164,8 +81,16 @@ class _OptionDialogState extends State<OptionDialog> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: "Prix (€)"),
             ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: vatCtrl,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(labelText: "TVA (€)"),
+            ),
           ],
+        )
         ),
+        
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -177,8 +102,10 @@ class _OptionDialogState extends State<OptionDialog> {
 
               final newItem = OptionItem(
                 name: nameCtrl.text.trim(),
-                price: double.tryParse(priceCtrl.text) ?? 0, groupId: '',
-                
+                price: double.tryParse(priceCtrl.text) ?? 0,
+                groupId: '',
+                vat: double.tryParse(vatCtrl.text) ?? 0,
+                isActive: true,
               );
 
               setState(() {
@@ -208,9 +135,9 @@ class _OptionDialogState extends State<OptionDialog> {
   // =======================
   // 💾 Submit
   // =======================
-  void _submit() {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-
+    
     final min = int.tryParse(minController.text) ?? 0;
     final max = int.tryParse(maxController.text) ?? 0;
 
@@ -221,14 +148,37 @@ class _OptionDialogState extends State<OptionDialog> {
       return;
     }
 
-    final data = {
-      "name": nameController.text,
-      "isMandatory": isMandatory,
-      "min": min,
-      "max": max,
-      "multiple": multipleSelect,
-      "options": options,
-    };
+    if (isMandatory && min <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Min doit être > 0")),
+      );
+      return;
+    }
+
+    final data = ProductOption(
+      name: nameController.text,
+      isMandatory: isMandatory,
+      minToSelect: min,
+      maxToSelect: max,
+      multipleSelect: multipleSelect,
+      items: options,
+    );
+
+    final bool isOk;
+    if(widget.optionId == null){
+      isOk = await ref.read(productsProvider.notifier).addOption(data);
+    } else{
+      ref.read(productsProvider.notifier).updateOption(data.copyWith(id: widget.optionId));
+      isOk = true;
+    }
+    
+    
+    if(!isOk){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erreur lors de l'ajout du groupe d'options")),
+      );
+      return;
+    }
 
     Navigator.pop(context, data);
   }
@@ -292,14 +242,21 @@ class _OptionDialogState extends State<OptionDialog> {
                             keyboardType: TextInputType.number,
                             decoration:
                                 const InputDecoration(labelText: "Nombre minimum d'options à choisir ?"),
+                            validator: (val) =>
+                              isMandatory && int.parse(val ?? '0') <= 0 ? "Minimum doit etre > 1" : null,
                           ),
-                              //),
                         const SizedBox(height: 10),
                             TextFormField(
                             controller: maxController,
                             keyboardType: TextInputType.number,
                             decoration:
                                 const InputDecoration(labelText: "Nombre maximum d'options qu'on peut choisir ?"),
+                            validator: (val) {
+                              int max = int.tryParse(val ?? '0') ?? 0;
+                              int min = int.tryParse(minController.text) ?? 0;
+
+                              return max <= 0 ? "Maximum doit etre > 0" : (isMandatory && max < min) ? "Maximum doit etre > minimum" : null;
+                              }
                           ),
 
                         const SizedBox(height: 10),
@@ -310,16 +267,23 @@ class _OptionDialogState extends State<OptionDialog> {
                           onChanged: (val) =>
                               setState(() => multipleSelect = val),
                         ),
+                        SwitchListTile(
+                          title: const Text("Cette Option est Active ?"),
+                          value: isActive,
+                          onChanged: (val) =>
+                              setState(() => isActive = val),
+                        ),
                       ],
                     ),
                   ),
                 ),
-
+                if(widget.optionId == null)
                 const VerticalDivider(width: 30),
 
                 // =========================
                 // 📋 COLONNE DROITE (OPTIONS)
                 // =========================
+                if(widget.optionId == null)
                 Expanded(
                   flex: 4,
                   child: Column(
@@ -371,7 +335,6 @@ class _OptionDialogState extends State<OptionDialog> {
             ),
           ),
         ),
-      //),
       actions: [
         ElevatedButton(
           onPressed: _submit,

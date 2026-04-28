@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/catalog/data/demo_products.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
 import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/option_dialog.dart';
-import 'package:pos_app/features/catalog/presentation/widgets/option_item_dialog.dart';
 
-class OptionView extends StatefulWidget {
+class OptionView extends ConsumerStatefulWidget {
   const OptionView({super.key});
 
   @override
-  State<OptionView> createState() => _OptionViewState();
+  ConsumerState<OptionView> createState() => _OptionViewState();
 }
 
-class _OptionViewState extends State<OptionView> {
+class _OptionViewState extends ConsumerState<OptionView> {
   bool check1 = false;
   bool check2 = false;
 
@@ -20,26 +20,13 @@ class _OptionViewState extends State<OptionView> {
       if (selectedGroupId == null) {
         return [];
       }
+      final groups = ref.read(productsProvider.notifier).getItemByOption(selectedGroupId ?? "");
 
-      return _applySearch(
-        demoOptions.where((p) => selectedGroupId == p.id).first.items
+      final result = _applySearch(
+        groups.where((p) => selectedGroupId == p.groupId).toList()
       );
+      return result;
   }
-
-  /*List<Product> get filteredProducts {
-    List<String> groupIds = [];
-
-    /// 👉 ROOT = afficher tout
-    if (selectedGroupId == null) {
-      return _applySearch(demoProducts);
-    }
-
-    //groupIds = _getAllChildrenIds(selectedGroupId!);
-
-    return _applySearch(
-      demoProducts.where((p) => groupIds.contains(p.groupId)).toList(),
-    );
-  }*/
 
   List<OptionItem> _applySearch(List<OptionItem> list) {
     return list.where((p) {
@@ -75,9 +62,113 @@ class _OptionViewState extends State<OptionView> {
     return pagination;
   }*/
 
+  void _openOptionDialog({OptionItem? item}) {
+    final nameCtrl = TextEditingController(text: item?.name ?? "");
+    final priceCtrl =
+        TextEditingController(text: item?.price.toString() ?? "0");
+    final tvaCtrl =
+        TextEditingController(text: item?.vat.toString() ?? "0");
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(item == null ? "Ajouter une option" : "Modifier une Option"),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameCtrl,
+                decoration: const InputDecoration(labelText: "Nom"),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: priceCtrl,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "Prix (€)"),
+              ),
+              TextField(
+                controller: tvaCtrl,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(labelText: "TVA (€)"),
+              ),
+            ],
+          )
+        ),
+        
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Annuler"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if(selectedGroupId != null){
+                final notifier = ref.read(productsProvider.notifier);
+                
+                if (nameCtrl.text.trim().isEmpty) return;
+
+                final newItem = OptionItem(
+                  id: item != null ? item.id : '',
+                  name: nameCtrl.text.trim(),
+                  price: double.tryParse(priceCtrl.text) ?? 0,
+                  groupId: selectedGroupId ?? '',
+                  vat: double.tryParse(tvaCtrl.text) ?? 0,
+                  isActive: item != null ? item.isActive : true
+                );
+                  if (item != null) {
+                     notifier.updateItem(newItem);
+                  } else {
+                    notifier.addItem(newItem);
+                  }
+              }
+              Navigator.pop(context);
+            },
+            child: const Text("Valider"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget confirmationWidget(void Function() onConfirm){
+    return AlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Confirmation Suppression Groupe d'option ?"),
+                IconButton(
+                  style: ElevatedButton.styleFrom(backgroundColor:  Colors.red.shade200),
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () async {onConfirm();}, 
+                child: const Text(
+                  "Supprimer",
+                  style: TextStyle(color: Colors.red)
+                  ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
+                onPressed: () {
+                  Navigator.pop(context);
+                }, 
+                child: const Text("Annuler"),
+              ),
+            ],
+          );
+  }
+
   final controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final notifier = ref.read(productsProvider.notifier);
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -86,15 +177,39 @@ class _OptionViewState extends State<OptionView> {
           alignment: WrapAlignment.spaceBetween,
           spacing: 8,
           children: [
-            _action("Actualiser"),
-            _action("Nouveau groupe d'option", onPressed: () {
+            _action("Supprimer", onPressed: selectedGroupId == null ? null : () {
+              if(selectedGroupId != null) {
+                showDialog(
+                  context: context,
+                  builder: (_) => confirmationWidget(() {
+                     notifier.removeOption(selectedGroupId ?? '');
+                    selectedGroupId = null;
+                    Navigator.pop(context);
+                  },),
+                );
+              }
+            }),
+            _action("Modifier", onPressed: selectedGroupId == null ? null : () {
+              if(selectedGroupId != null) {
+                 showDialog(
+                  context: context,
+                  builder: (_) => OptionDialog(optionId: selectedGroupId),
+                );
+              }
+            }),
+            
+            _action("Nouveau Groupe", onPressed: () {
               showDialog(
                   context: context,
                   builder: (_) => OptionDialog(),
                 );
               }
             ),
-            _action("Ajouter une option"),
+            _action("Ajouter une option", onPressed: selectedGroupId == null ? null : () {
+              if(selectedGroupId != null) {
+                _openOptionDialog();
+              }
+            }),
             _action("Imprimer"),
             _action("PDF"),
             _action("Étiquettes"),
@@ -119,14 +234,15 @@ class _OptionViewState extends State<OptionView> {
                   border: Border(right: BorderSide(color: Colors.grey.shade300)),
                 ),
                 child: SingleChildScrollView(
-                  child: _buildTree(null, 0),
+                  child: _buildTree(null, 0, ref),
                 ),
               ),
 
               /// 📄 DROITE
               Expanded(
-                child: Column(
-                  children: [
+                
+                  child: Column(
+                    children: [
 
                     /// 🔍 RECHERCHE
                     Padding(
@@ -159,47 +275,52 @@ class _OptionViewState extends State<OptionView> {
                         // ===== Tableau =====
                     Expanded(
                       child: SingleChildScrollView(
-                        child: DataTable(
+                        child: 
+                        SizedBox(
+                          width: double.infinity,
+                          child: DataTable(
                           columns: const [
                             DataColumn(label: Text('Nom')),
                             DataColumn(label: Text('Prix')),
                             DataColumn(label: Text('TVA')),
                             DataColumn(label: Text('Active')),
                             DataColumn(label: Text('')),
-                            DataColumn(label: Text('')),
                           ],
                           rows: filteredOptions.map((p) {
-                            return DataRow(cells: [
-                              DataCell(Text(p.name)),
-                              DataCell(Text("${p.price}")),
-                              DataCell(Text("${p.vat}")),
-                              DataCell(Text(p.enabled ? "oui": "non")),
-                              DataCell(
-                                TextButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor:  Colors.orange.shade400),
-                                  onPressed: (){
-                                    showDialog(
-                                      context: context,
-                                      builder: (_) => OptionItemDialog(option: p, groupeId: selectedGroupId ?? ""),
-                                    );
-                                  },
-                                  child: Icon(Icons.edit),
+                            return DataRow(
+                              cells: [
+                                DataCell(Text(p.name), onTap: () =>  _openOptionDialog(item: p)),
+                                DataCell(Text("${p.price}"), onTap: () =>  _openOptionDialog(item: p)),
+                                DataCell(Text("${p.vat}"), onTap: () =>  _openOptionDialog(item: p)),
+                                DataCell(
+                                  SwitchListTile(
+                                      title: const SizedBox(),
+                                      value: p.isActive,
+                                      contentPadding: EdgeInsets.zero,
+                                      onChanged: (val) =>
+                                            notifier.updateItem( p = p.copyWith(isActive: val))
+                                    ),
+                                  ),
+                                DataCell(
+                                  TextButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor:  Colors.red.shade300),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => confirmationWidget(() {
+                                          notifier.removeItem(p.id);
+                                          Navigator.pop(context);
+                                        },),
+                                      );
+                                    },
+                                    child: Icon(color: Colors.black,
+                                      Icons.delete_forever_outlined),
+                                  ),
                                 ),
-                              ),
-                              DataCell(
-                                TextButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor:  Colors.red.shade300),
-                                  onPressed: (){},
-                                  /*onPressed: () {
-                                    notifier.startEdition();
-                                    ref.read(editModeProvider.notifier).state = true;
-                                  },*/
-                                  child: Icon(color: Colors.black,
-                                    Icons.delete_forever_outlined),
-                                ),
-                              ),
-                            ]);
+                              ]
+                            );
                           }).toList(),
+                        ),
                         ),
                       ),
                     ),
@@ -213,44 +334,6 @@ class _OptionViewState extends State<OptionView> {
     );
   }
 
-// ===== Widget ligne texte =====
-  Widget _buildTextRow(String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(label)),
-          Expanded(
-            flex: 3,
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ===== Widget ligne checkbox =====
-  Widget _buildCheckboxRow(String label, bool value, Function(bool?) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Expanded(flex: 2, child: Text(label)),
-          Expanded(
-            flex: 3,
-            child: Checkbox(
-              value: value,
-              onChanged: onChanged,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
   /// 🔘 ACTION
   Widget _action(String label, {VoidCallback? onPressed}) {
     return ElevatedButton(
@@ -277,10 +360,10 @@ class _OptionViewState extends State<OptionView> {
     );
   }
 
-  Widget _buildTree(String? parentId, int level) {
+  Widget _buildTree(String? parentId, int level, WidgetRef ref) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: demoOptions.map((g) {
+      children: ref.watch(productsProvider).options.map((g) {
 
         final isSelected = selectedGroupId == g.id;
           /// 👉 PAS DE FLECHE
@@ -294,6 +377,8 @@ class _OptionViewState extends State<OptionView> {
                   Icon(Icons.arrow_right)
                 ],
               ),
+              selectedColor: Colors.black,
+              selectedTileColor: Colors.blueGrey.shade100,
               selected: isSelected,
               onTap: () {
                 setState(() {
