@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'package:pos_app/features/catalog/presentation/widgets/option_dialog.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/catalog/presentation/widgets/options/option_dialog.dart';
 
 class OptionView extends ConsumerStatefulWidget {
   const OptionView({super.key});
@@ -15,7 +15,7 @@ class _OptionViewState extends ConsumerState<OptionView> {
   bool check1 = false;
   bool check2 = false;
 
-  List<OptionItem> get filteredOptions {
+  List<Item> get filteredOptions {
       /// 👉 ROOT = afficher tout
       if (selectedGroupId == null) {
         return [];
@@ -23,12 +23,12 @@ class _OptionViewState extends ConsumerState<OptionView> {
       final groups = ref.read(productsProvider.notifier).getItemByOption(selectedGroupId ?? "");
 
       final result = _applySearch(
-        groups.where((p) => selectedGroupId == p.groupId).toList()
+        groups.where((p) => selectedGroupId == p.option.id).toList()
       );
       return result;
   }
 
-  List<OptionItem> _applySearch(List<OptionItem> list) {
+  List<Item> _applySearch(List<Item> list) {
     return list.where((p) {
       if (searchQuery.isEmpty) return true;
 
@@ -62,7 +62,7 @@ class _OptionViewState extends ConsumerState<OptionView> {
     return pagination;
   }*/
 
-  void _openOptionDialog({OptionItem? item}) {
+  void _openOptionDialog({Item? item}) {
     final nameCtrl = TextEditingController(text: item?.name ?? "");
     final priceCtrl =
         TextEditingController(text: item?.price.toString() ?? "0");
@@ -108,11 +108,11 @@ class _OptionViewState extends ConsumerState<OptionView> {
                 
                 if (nameCtrl.text.trim().isEmpty) return;
 
-                final newItem = OptionItem(
+                final newItem = Item(
                   id: item != null ? item.id : '',
                   name: nameCtrl.text.trim(),
                   price: double.tryParse(priceCtrl.text) ?? 0,
-                  groupId: selectedGroupId ?? '',
+                  option: notifier.getOption(selectedGroupId ?? ''),
                   vat: double.tryParse(tvaCtrl.text) ?? 0,
                   isActive: item != null ? item.isActive : true
                 );

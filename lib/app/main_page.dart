@@ -15,7 +15,6 @@ class MainPage extends ConsumerWidget{
     //final authState = ref.watch(authProvider);
     final selectedIndex = ref.watch(selectedTabProvider);
    // final user = authState.user;
-
     return Scaffold(
       body: Column(
         children: [

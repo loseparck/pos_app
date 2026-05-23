@@ -1,43 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:pos_app/app/auth_gate.dart';
 import 'package:pos_app/app/main_page.dart';
-import 'bootstrap_stub.dart'
-    if (dart.library.io) 'bootstrap_native.dart'
-    if (dart.library.js_interop) 'bootstrap_web.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 
 Future<void> main() async {
-  await bootstrap();
-  /*WidgetsFlutterBinding.ensureInitialized;
+  WidgetsFlutterBinding.ensureInitialized();
 
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.immersiveSticky,
+  );
 
-  if(kIsWeb){
-    runApp(
-      ProviderScope(
-        child: const MainApp()
-      )
-    );
-    return;
-  } else {
-    final dir = await getApplicationDocumentsDirectory();
-    final isar = await Isar.open(
-      [
-        ProductIsarSchema,
-        ProductGroupIsarSchema,
-        ProductOptionIsarSchema,
-      ],
-      directory: dir.path,
-      name: 'pos_db',
-    );
-    runApp(
-    ProviderScope(
-      overrides: [
-        isarInstanceProvider.overrideWithValue(isar),
-      ],
-      child: const MainApp()
-      )
-    );
-  }*/
-
+  runApp(
+    const ProviderScope(
+      child: MainApp(),
+    ),
+  );
 }
 
 class MainApp extends StatelessWidget {

@@ -1,25 +1,25 @@
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_group.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/category.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 class ProductState{
   final List<Product> products;
-  final List<ProductGroup> productGroups;
-  final List<OptionItem> items;
-  final List<ProductOption> options;
+  final List<Category> categories;
+  final List<Item> items;
+  final List<Option> options;
 
   final String? selectedProductId;
-  final String? selectedProductGroupId;
+  final String? selectedCategoryId;
   final String? selectedOptionId;
   final String? selectedOptionGroupId;
 
   ProductState({
     required this.products,
-    required this.productGroups,
+    required this.categories,
     required this.options,
     required this.items,
-    this.selectedProductGroupId,
+    this.selectedCategoryId,
     this.selectedProductId,
     this.selectedOptionGroupId,
     this.selectedOptionId,
@@ -34,16 +34,16 @@ class ProductState{
     }
   } 
 
-  ProductGroup? get selectedProductGroup {
-    if(selectedProductGroupId == null) return null;
+  Category? get selectedCategory {
+    if(selectedCategoryId == null) return null;
     try{
-      return productGroups.firstWhere((productGroup) => productGroup.id == selectedProductGroupId);
+      return categories.firstWhere((category) => category.id == selectedCategoryId);
     } catch(_){
       return null;
     }
   } 
 
-  OptionItem? get selectedOption {
+  Item? get selectedOption {
     if(selectedOptionId == null) return null;
     try{
       return items.firstWhere((option) => option.id == selectedOptionId);
@@ -52,7 +52,7 @@ class ProductState{
     }
   } 
 
-  ProductOption? get selectedOptionGroup {
+  Option? get selectedOptionGroup {
     if(selectedOptionGroupId == null) return null;
     try{
       return options.firstWhere((optionGroup) => optionGroup.id == selectedOptionGroupId);
@@ -63,21 +63,21 @@ class ProductState{
 
   ProductState copyWith({
     List<Product>? products,
-    List<ProductGroup>? productGroups,
-    List<OptionItem>? items,
-    List<ProductOption>? options,
+    List<Category>? categories,
+    List<Item>? items,
+    List<Option>? options,
     String? selectedProductId,
-    String? selectedProductGroupId,
+    String? selectedCategoryId,
     String? selectedOptionId,
     String? selectedOptionGroupId,
   }){
     return ProductState(
       products: products ?? this.products,
-      productGroups: productGroups ?? this.productGroups,
+      categories: categories ?? this.categories,
       options: options ?? this.options,
       items: items ?? this.items,
       selectedProductId: selectedProductId ?? this.selectedProductId,
-      selectedProductGroupId: selectedProductGroupId ?? this.selectedProductGroupId,
+      selectedCategoryId: selectedCategoryId ?? this.selectedCategoryId,
       selectedOptionId: selectedOptionId ?? this.selectedOptionId,
       selectedOptionGroupId: selectedOptionGroupId ?? this.selectedOptionGroupId
     );

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
+import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_option_dialog.dart';
-import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
-import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
-
-import '../../../catalog/application/providers/group_provider.dart';
-import '../../../catalog/application/providers/product_provider.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
+import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
 
 import 'product_card.dart';
 
@@ -23,7 +21,7 @@ class ProductGrid extends ConsumerWidget {
     final searchQuery = ref.watch(productSearchQueryProvider);
     final groupId = ref.watch(currentGroupProvider);
     final orderNotifier = ref.read(ordersProvider.notifier);
-    final planNotifier = ref.read(planGroupProvider.notifier);
+    final planNotifier = ref.read(planProvider.notifier);
     /// 🔎 MODE RECHERCHE
     if (searchQuery.isNotEmpty) {
 
@@ -91,13 +89,13 @@ class ProductGrid extends ConsumerWidget {
 
     /// 📦 MODE NORMAL
 
-    final groupsAsync =
-        ref.watch(productGroupsProvider(groupId));
+    final groupsAsync  = ref.read(productsProvider.notifier).getCategoryChild(groupId ?? '');
+        //ref.watch(productGroupsProvider(groupId));
 
-    final productsAsync =
-        ref.watch(productProvider(groupId));
+    final productsAsync = ref.watch(productsProvider).products;
+        //ref.watch(productsProvider(groupId));
 
-    return groupsAsync.when(
+    return const Text("A completer");/*groupsAsync.when(
       loading: () =>
           const Center(child: CircularProgressIndicator()),
 
@@ -206,6 +204,6 @@ class ProductGrid extends ConsumerWidget {
           },
         );
       },
-    );
+    );*/
   }
 }

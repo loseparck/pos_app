@@ -1,31 +1,55 @@
-import 'package:pos_app/features/catalog/data/models/dto/create_option_item_dto.dart';
-import 'package:pos_app/features/catalog/data/models/dto/create_product_option_dto.dart';
-import 'package:pos_app/features/catalog/data/models/dto/update_option_item_dto.dart';
-import 'package:pos_app/features/catalog/data/models/dto/update_product_option_dto.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/data/models/dto/create_category_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/create_item_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/create_option_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/create_product_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/update_category_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/update_item_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/update_option_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/update_product_dto.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/category.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 abstract class ProductRemoteDataSource {
-  Future<ProductOption> saveOption(CreateProductOptionDto option);
-  Future<OptionItem> saveItem(CreateOptionItemDto item);
+  Future<Option> saveOption(CreateOptionDto option);
+  Future<Item> saveItem(CreateItemDto item);
 
-  Future<List<OptionItem>> getItems();
-  Future<OptionItem> getItem(String itemId);
-  Future<List<OptionItem>> getItemByOptionId(String optionId);
-  Future<List<ProductOption>> getOptions();
-  Future<ProductOption> getOption(String id);
-  Future<ProductOption> getOptionWithItems(String id);
+  Future<List<Item>> getItems();
+  Future<Item> getItem(String itemId);
+  Future<List<Item>> getItemByOptionId(String optionId);
+  Future<List<Option>> getOptions();
+  Future<Option> getOption(String id);
+  Future<Option> getOptionWithItems(String id);
   
   Future<void> removeOption(String optionId);
   Future<void> removeItem(String itemId);
+  Future<void> removeItems(List<String> itemsId);
 
-  Future<ProductOption> updateOption(UpdateProductOptionDto option, String optionId);
-  Future<OptionItem> updateItem(UpdateOptionItemDto item, String itemId);
+  Future<Option> updateOption(UpdateOptionDto option, String optionId);
+  Future<Item> updateItem(UpdateItemDto item, String itemId);
   
-  /*Future<List<ProductOption>> getOptionByProductId(String productId);
-  Future<List<OptionItem>> getItemByOptionId(String optionId);*/
+  /*Future<List<Option>> getOptionByProductId(String productId);
+  Future<List<Item>> getItemByOptionId(String optionId);*/
   
   
+  Future<Category> saveCategory(CreateCategoryDto category);
+  Future<Product> saveProduct(CreateProductDto product);
+
+  Future<List<Category>> getCategories();
+  Future<List<Product>> getProducts();
+  Future<Category?> getCategory(String id);
+  Future<Product?> getProduct(String id);
+  Future<List<Product>> getProductsByCategory(String categoryId);
+  
+
+  Future<void> removeCategory(String id);
+  Future<void> removeCategoryWithChildren(String id);
+  Future<void> removeProduct(String id);
+  Future<void> removeProducts(List<String> ids);
+
+  Future<Category> updateCategory(UpdateCategoryDto category, String categoryId);
+  Future<Product> updateProduct(UpdateProductDto product, String productId);
   
   
   

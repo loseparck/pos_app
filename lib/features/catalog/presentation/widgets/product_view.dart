@@ -1,110 +1,163 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/catalog/data/demo_products.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
+import 'package:pos_app/features/catalog/domain/entities/dialog_action.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_group.dart';
+import 'package:pos_app/features/catalog/domain/entities/category.dart';
+import 'package:pos_app/features/catalog/presentation/widgets/products/category_dialog.dart';
+import 'package:pos_app/features/catalog/presentation/widgets/products/category_expansion_tile.dart';
+import 'package:pos_app/features/catalog/presentation/widgets/products/confirmation_dialog.dart';
+import 'package:pos_app/features/catalog/presentation/widgets/products/product_dialog.dart';
 
-class ProductView extends StatefulWidget {
+class ProductView extends ConsumerStatefulWidget {
   const ProductView({super.key});
 
   @override
-  State<ProductView> createState() => _ProductViewState();
+  ConsumerState<ProductView> createState() => _ProductViewState();
 }
 
-class _ProductViewState extends State<ProductView> {
-  List<Product> get filteredProducts {
-    List<String> groupIds = [];
+class _ProductViewState extends ConsumerState<ProductView> {
 
-    /// 👉 ROOT = afficher tout
-    if (selectedGroupId == null) {
-      return _applySearch(demoProducts);
-    }
-
-    groupIds = _getAllChildrenIds(selectedGroupId!);
-
-    return _applySearch(
-      demoProducts.where((p) => groupIds.contains(p.groupId)).toList(),
-    );
-}
-
-List<Product> _applySearch(List<Product> list) {
-  return list.where((p) {
-    if (searchQuery.isEmpty) return true;
-
-    switch (searchType) {
-      case 0:
-        return p.name.toLowerCase().contains(searchQuery.toLowerCase());
-      case 1:
-        return p.price.toString().contains(searchQuery);
-      case 2:
-        return p.codeBarres != null ? p.codeBarres!.contains(searchQuery) : false;
-      default:
-        return true;
-    }
-  }).toList();
-}
-
-  String? selectedGroupId;
+  String? selectedCategoryId;
   String searchQuery = "";
   int searchType = 0;
 
   int currentPage = 0;
   int rowsPerPage = 5;
 
-  List<Product> get paginatedProducts {
+  List<Product> _applySearch(List<Product> list) {
+    return list.where((p) {
+      if (searchQuery.isEmpty) return true;
+
+      switch (searchType) {
+        case 0:
+          return p.name.toLowerCase().contains(searchQuery.toLowerCase());
+        case 1:
+          return p.price.toString().contains(searchQuery);
+        case 2:
+          return p.codeBarres != null ? p.codeBarres!.contains(searchQuery) : false;
+        default:
+          return true;
+      }
+    }).toList();
+  }
+
+  List<Product> _paginate(List<Product> products) {
     final start = currentPage * rowsPerPage;
     final end = start + rowsPerPage;
-  
-     final pagination = filteredProducts.sublist(
+
+    if (start >= products.length) return [];
+
+    return products.sublist(
       start,
-      end > filteredProducts.length ? filteredProducts.length : end,
+      end > products.length ? products.length : end,
     );
-
-    return pagination;
   }
 
-  /// 🔁 Récupérer tous les enfants
-  List<String> _getAllChildrenIds(String parentId) {
-    final result = <String>[];
-
-    void collect(String id) {
-      result.add(id);
-
-      final children =
-          demoGroups.where((g) => g.parentId == id).toList();
-
-      for (var child in children) {
-        collect(child.id);
-      }
-    }
-
-    collect(parentId);
-    return result;
-  }
-
-  /// 🌳 récupérer enfants directs
-  List<ProductGroup> _getChildren(String? parentId) {
-    return demoGroups.where((g) => g.parentId == parentId).toList();
+  void openProductDialog(Product p) {
+    showDialog(
+      context: context,
+      builder: (_) => ProductDialog(product: p),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
+    final notifier = ref.read(productsProvider.notifier);
+    final state = ref.watch(productsProvider);
+    final products = state.products;
 
-        /// 🔝 TOOLBAR
+    final filtered = _applySearch(
+      selectedCategoryId == null
+          ? products
+          : products.where((p) => p.category?.id == selectedCategoryId).toList(),
+    );
+
+    final paginated = _paginate(filtered);
+
+    final categories = state.categories;
+
+    final categoriesByParentId = <String?, List<Category>>{};
+
+    for (final c in categories) {
+      final parentId = c.parent?.id;
+      categoriesByParentId.putIfAbsent(parentId, () => []).add(c);
+    }
+    return Column(
+      
+      children: [
+        const SizedBox(height: 10),
         Wrap(
-          spacing: 8,
+          direction: Axis.horizontal,
+          spacing: 10,
           children: [
-            _action("Actualiser"),
-            _action("Nouveau groupe"),
-            _action("Modifier groupe"),
-            //_action("Supprimer groupe"),
-            _action("Nouveau produit"),
-            _action("Modifier produit"),
-            //_action("Supprimer produit"),
+            _action("Categorie", onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => CategoryDialog(parentId: selectedCategoryId,));
+            }, color: Colors.green.shade400, icon: Icons.add_circle_outline_rounded),
+            _action("Categorie", onPressed: selectedCategoryId != null ? () {
+                showDialog(
+                  context: context,
+                  builder: (_) => CategoryDialog(categoryId: selectedCategoryId));
+            } : null, color: Colors.orange.shade200, icon: Icons.mode_edit_outline_outlined),
+            _action("Categorie", onPressed: selectedCategoryId != null ? () {
+                showDialog(
+                  context: context,
+                  builder: (_) => ConfirmationDialog(body: "Action à faire pour les sous Categories les Produits lié à cette Category ?",
+                    actions: [
+                      DialogAction(
+                        label: "Supprimer Tout",
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade200),
+                        onPressed: () async {
+                          final categoryId = selectedCategoryId;
+                          if (categoryId == null) return;
+                          try {
+                            await notifier.removeCategoryWithChildren(categoryId);
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                          } catch (e) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Erreur lors de la suppression")),
+                            );
+                          }
+                        },
+                      ),
+                      DialogAction(
+                        label: "Les déplacer vers la Categorie Parent",
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade200 ),
+                        onPressed: () async {
+                          final categoryId = selectedCategoryId;
+                          if (categoryId == null) return;
+                          try {
+                            await notifier.removeCategory(categoryId);
+                            if (!context.mounted) return;
+                            Navigator.pop(context);
+                          } catch (e) {
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Erreur lors de la suppression")),
+                            );
+                          }
+                        },
+                      ),
+                       DialogAction(
+                        label: "Annuler",
+                        style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],));
+            } : null, color: Colors.red.shade300, icon: Icons.delete_forever),
+            _action("Produit", onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => ProductDialog(categoryId: selectedCategoryId,));
+            }, color: Colors.green.shade400, icon: Icons.add_circle_outline_rounded),
             _action("Imprimer"),
             _action("PDF"),
-            _action("Étiquettes"),
             _action("Importer"),
             _action("Exporter"),
             _action("Aide"),
@@ -120,13 +173,13 @@ List<Product> _applySearch(List<Product> list) {
 
               /// 🌳 TREE
               Container(
-                alignment: AlignmentGeometry.topCenter,
+                alignment: Alignment.topLeft,
                 width: 250,
                 decoration: BoxDecoration(
                   border: Border(right: BorderSide(color: Colors.grey.shade300)),
                 ),
                 child: SingleChildScrollView(
-                  child: _buildTreeRoot(),
+                  child: _buildTreeRoot(categoriesByParentId),
                 ),
               ),
 
@@ -150,6 +203,7 @@ List<Product> _applySearch(List<Product> list) {
                               onChanged: (value) {
                                 setState(() {
                                   searchQuery = value;
+                                  currentPage = 0;
                                 });
                               },
                             ),
@@ -172,23 +226,76 @@ List<Product> _applySearch(List<Product> list) {
                           /// TABLE
                           Expanded(
                             child: SingleChildScrollView(
-                              child: DataTable(
-                                columns: const [
-                                  DataColumn(label: Text("ID")),
-                                  DataColumn(label: Text("Nom")),
-                                  DataColumn(label: Text("Groupe")),
-                                  DataColumn(label: Text("Prix")),
-                                  DataColumn(label: Text("Code barre")),
-                                ],
-                                rows: paginatedProducts.map((p) {
-                                  return DataRow(cells: [
-                                    DataCell(Text(p.id)),
-                                    DataCell(Text(p.name)),
-                                    DataCell(Text(_getGroupName(p.groupId ?? ""))),
-                                    DataCell(Text("${p.price} €")),
-                                    DataCell(Text(p.codeBarres ?? "")),
-                                  ]);
-                                }).toList(),
+                              child: 
+                              SizedBox(
+                                width: double.infinity,
+                                child: DataTable(
+                                  columns: const [
+                                    DataColumn(label: Text("Nom")),
+                                    DataColumn(label: Text("Sku")),
+                                    DataColumn(label: Text("Code barre")),
+                                    DataColumn(label: Text("Prix")),
+                                    DataColumn(label: Text("Qte en Stock")),
+                                    DataColumn(label: Text("Actif")),
+                                    DataColumn(label: Text("")),
+                                  ],
+                                  rows: paginated.map((p) {
+                                    return DataRow(cells: [
+                                      DataCell(Text(p.name), onTap: () => openProductDialog(p)),
+                                      DataCell(Text(p.sku ?? ''), onTap: () => openProductDialog(p)),
+                                      DataCell(Text(p.codeBarres ?? ''), onTap: () => openProductDialog(p)),
+                                      DataCell(Text("${p.price} €"), onTap: () => openProductDialog(p)),
+                                      DataCell(Text("${p.stockQuantity ?? 0}"), onTap: () => openProductDialog(p)),
+                                      DataCell(
+                                        Switch(
+                                            value: p.isActive,
+                                            onChanged: (val) async {
+                                              try {
+                                                await notifier.updateProduct(p.copyWith(isActive: val));
+                                              } catch (e) {
+                                                if (!context.mounted) return;
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text("Erreur lors de la mise à jour"))
+                                                );
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      DataCell(
+                                        IconButton(
+                                          color: Colors.red.shade300,
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (_) => ConfirmationDialog(
+                                                body: "Veillez confirmez la suppression du Produit '${p.name}'",
+                                                actions: [
+                                                  DialogAction(
+                                                    label: "Supprimer",
+                                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade200),
+                                                    onPressed: () async {
+                                                      try {
+                                                        await notifier.removeProduct(p.id);
+                                                        if (!context.mounted) return;
+                                                        Navigator.pop(context);
+                                                      } catch (e) {
+                                                        if (!context.mounted) return;
+                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                          const SnackBar(content: Text("Erreur lors de la suppression")),
+                                                        );
+                                                      }
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          },
+                                          icon: const Icon(Icons.delete_forever_outlined),
+                                        ),
+                                      ),
+                                    ]);
+                                  }).toList(),
+                                ),
                               ),
                             ),
                           ),
@@ -214,7 +321,7 @@ List<Product> _applySearch(List<Product> list) {
                               IconButton(
                                 icon: const Icon(Icons.chevron_right),
                                 onPressed:
-                                    (currentPage + 1) * rowsPerPage < filteredProducts.length
+                                    (currentPage + 1) * rowsPerPage < filtered.length
                                         ? () {
                                             setState(() {
                                               currentPage++;
@@ -227,28 +334,6 @@ List<Product> _applySearch(List<Product> list) {
                         ],
                       ),
                     )
-                    /*Expanded(
-                      child: SingleChildScrollView(
-                        child: DataTable(
-                          columns: const [
-                            DataColumn(label: Text("ID")),
-                            DataColumn(label: Text("Nom")),
-                            DataColumn(label: Text("Groupe")),
-                            DataColumn(label: Text("Prix")),
-                            DataColumn(label: Text("Code barre")),
-                          ],
-                          rows: filteredProducts.map((p) {
-                            return DataRow(cells: [
-                              DataCell(Text(p.id)),
-                              DataCell(Text(p.name)),
-                              DataCell(Text(_getGroupName(p.groupId ?? ""))),
-                              DataCell(Text("${p.price} €")),
-                              DataCell(Text(p.codeBarres ?? "")),
-                            ]);
-                          }).toList(),
-                        ),
-                      ),
-                    ),*/
                   ],
                 ),
               ),
@@ -259,15 +344,25 @@ List<Product> _applySearch(List<Product> list) {
     );
   }
 
-  /// 🔘 ACTION
-  Widget _action(String label) {
+  Widget _action(String label, {VoidCallback? onPressed, IconData? icon, Color? color}) {
     return ElevatedButton(
-      onPressed: () {},
-      child: Text(label),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(10),
+        backgroundColor: color,
+      ),
+      onPressed: onPressed,
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 2,
+        children: [
+          if(icon != null) Icon(icon, color:  Colors.grey.shade800),
+          Text(
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.grey.shade800), label),
+        ],
+      )
     );
   }
 
-  /// 🔍 TYPE RECHERCHE
   Widget _searchTypeButton(String label, int index) {
     final selected = searchType == index;
 
@@ -279,18 +374,14 @@ List<Product> _applySearch(List<Product> list) {
         onSelected: (_) {
           setState(() {
             searchType = index;
+            currentPage = 0;
           });
         },
       ),
     );
   }
 
-  /// 🔎 Nom groupe
-  String _getGroupName(String id) {
-    return demoGroups.firstWhere((g) => g.id == id).name;
-  }
-
-  Widget _buildTreeRoot() {
+  Widget _buildTreeRoot(Map<String?, List<Category>> categoriesByParentId) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -301,74 +392,71 @@ List<Product> _applySearch(List<Product> list) {
             "Produits",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          selected: selectedGroupId == null,
+          selected: selectedCategoryId == null,
           onTap: () {
-            setState(() {
-              selectedGroupId = null;
-              currentPage = 0;
-            });
+            if(selectedCategoryId != null){
+              setState(() {
+                selectedCategoryId = null;
+                currentPage = 0;
+              });
+            }
           },
         ),
 
         /// 🌳 GROUPES
-        _buildTree(null, 0),
+        _buildTree(null, 0, categoriesByParentId),
       ],
     );
   }
 
-  Widget _buildTree(String? parentId, int level) {
-    final children = _getChildren(parentId);
+  Widget _buildTree(
+  String? parentId,
+  int level,
+  Map<String?, List<Category>> categoriesByParentId,
+) {
+  final children = categoriesByParentId[parentId] ?? [];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: children.map((g) {
-        final subChildren = _getChildren(g.id);
-        final hasChildren = subChildren.isNotEmpty;
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: children.map((g) {
+      final hasChildren = (categoriesByParentId[g.id] ?? []).isNotEmpty;
+      final isSelected = selectedCategoryId == g.id;
 
-        final isSelected = selectedGroupId == g.id;
-
-        if (!hasChildren) {
-          /// 👉 PAS DE FLECHE
-          return Padding(
-            padding: EdgeInsets.only(left: level * 16),
-            child: ListTile(
-              title: Text(g.name),
-              selected: isSelected,
-              onTap: () {
-                setState(() {
-                  selectedGroupId = g.id;
-                  currentPage = 0;
-                });
-              },
-            ),
-          );
-        }
-
-        /// 👉 AVEC FLECHE
+      if (!hasChildren) {
         return Padding(
-          padding: EdgeInsets.only(left: level * 16),
-          child: ExpansionTile(
-            title: GestureDetector(
-              onTap: () {
+          padding: EdgeInsets.only(left: level * 3),
+          child: ListTile(
+            selectedTileColor: Colors.blueGrey.shade500,
+            selectedColor: Colors.black,
+            title: Text(g.name),
+            selected: isSelected,
+            onTap: () {
+              if (!isSelected) {
                 setState(() {
-                  selectedGroupId = g.id;
+                  selectedCategoryId = g.id;
                   currentPage = 0;
                 });
-              },
-              child: Container(
-                color: isSelected
-                    ? Colors.blue.withOpacity(0.2)
-                    : null,
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(g.name),
-              ),
-            ),
-            children: [
-              _buildTree(g.id, level + 1),
-            ],
+              }
+            },
           ),
         );
-      }).toList(),
-    );
-  }
+      }
+
+      return CategoryExpansionTile(
+        name: g.name,
+        isSelected: isSelected,
+        level: level,
+        onSelect: () {
+          setState(() {
+            selectedCategoryId = g.id;
+            currentPage = 0;
+          });
+        },
+        children: [
+          _buildTree(g.id, level + 1, categoriesByParentId),
+        ],
+      );
+    }).toList(),
+  );
+}
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 class ProductOptionDialog extends StatefulWidget {
   final Product product;
-  final void Function(Map<String, List<OptionItem>>) onSelected;
+  final void Function(Map<String, List<Item>>) onSelected;
 
   const ProductOptionDialog({
     super.key,
@@ -21,7 +21,7 @@ class ProductOptionDialog extends StatefulWidget {
 class _ProductOptionDialogState
     extends State<ProductOptionDialog> {
 
-  Map<String, List<OptionItem>> selectedOptions = {};
+  Map<String, List<Item>> selectedOptions = {};
 
   double get totalOptionsPrice {
     return selectedOptions.values
@@ -228,7 +228,7 @@ class _ProductOptionDialogState
     );
   }
 
-  bool _canValidate(List<ProductOption> groups) {
+  bool _canValidate(List<Option> groups) {
 
     for (final group in groups) {
 

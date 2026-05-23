@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 
 class OrderPanelItem extends StatelessWidget {
   final String productName;
   final double productPrice;
   final int quantity;
   final Color backgroundColor;
-  final List<OptionItem>? supplements;
+  final List<Item>? supplements;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
 

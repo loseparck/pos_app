@@ -8,9 +8,9 @@ import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
 import 'package:pos_app/features/orders/presentation/widgets/order_panel.dart';
 import 'package:pos_app/features/payments/presentation/state/payment_provider.dart';
 import 'package:pos_app/features/payments/presentation/widgets/payment_dialog.dart';
-import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
-import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
-import 'package:pos_app/features/plan/presentation/state/plan_state_notifier.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
+import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
+import 'package:pos_app/features/plan/application/plan_notifier.dart';
 
 
 class OrdersView extends ConsumerWidget {
@@ -28,7 +28,7 @@ class OrdersView extends ConsumerWidget {
     Order? order = ref.watch(ordersProvider)!.selectedOrder;
     
     final orderNotifier = ref.read(ordersProvider.notifier);
-    final planNotifier = ref.read(planGroupProvider.notifier);
+    final planNotifier = ref.read(planProvider.notifier);
     return Scaffold(
       body: Column(
         children: [

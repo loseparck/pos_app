@@ -1,26 +1,50 @@
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/category.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 abstract class ProductRepository {
-  Future<ProductOption> saveOption(ProductOption option);
-  Future<OptionItem> saveItem(OptionItem option);
+  Future<Option> saveOption(Option option);
+  Future<Item> saveItem(Item option);
 
-  Future<List<OptionItem>> getItems();
-  Future<List<OptionItem>> getItemByOptionId(String optionId);
-  Future<OptionItem?> getItem(String id);
-  Future<List<ProductOption>> getOptions();
-  Future<ProductOption?> getOption(String id);
-  
+  Future<List<Item>> getItems();
+  Future<List<Item>> getItemByOptionId(String optionId);
+  Future<Item?> getItem(String id);
+  Future<List<Option>> getOptions();
+  Future<Option?> getOption(String id);
+  //Future<List<Option>> getOptions(String productId);
+
   Future<void> removeOption(String optionId);
   Future<void> removeItem(String itemId);
-  Future<void> removeItems(List<String> itemId);
+  Future<void> removeItems(List<String> ids);
 
-  Future<ProductOption> updateOption(ProductOption option);
-  Future<OptionItem> updateItem(OptionItem item);
+  Future<Option> updateOption(Option option);
+  Future<Item> updateItem(Item item);
+
+
+  Future<Category> saveCategory(Category category);
+  Future<Product> saveProduct(Product product);
+
+  Future<List<Category>> getCategories();
+  Future<List<Product>> getProducts();
+  Future<Category?> getCategory(String id);
+  Future<Product?> getProduct(String id);
+  Future<List<Product>> getProductsByCategory(String categoryId);
+  
+
+  Future<void> removeCategory(String id);
+  Future<void> removeCategoryWithChildren(String id);
+  
+  Future<void> removeProduct(String id);
+  Future<void> removeProducts(List<String> ids);
+
+  Future<Category> updateCategory(Category category);
+  Future<Product> updateProduct(Product product);
+
   //Future<List<Product>> getProductsByGroup();
   
   
-  //Future<List<ProductOption>> getOptionByProductId(String productId);
+  //Future<List<Option>> getOptionByProductId(String productId);
   
   
 }

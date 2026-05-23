@@ -1,0 +1,160 @@
+import 'package:json_annotation/json_annotation.dart';
+import 'package:pos_app/features/plan/domain/entities/plan.dart';
+
+enum TableShape{ square, circle}
+
+enum TableStatus{ empty, draft, validated}
+
+class RestaurantTable{
+  final String id;
+  final String name;
+  final double x;
+  final double y;
+  final int seats;
+  final TableStatus status;
+  final double rotation;
+  final TableShape shape;
+  final double width;
+  final double height;
+  final String? color;
+  final Plan plan;
+  final String? createdById;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
+
+  RestaurantTable({
+    required this.id,
+    required this.name,
+    required this.x,
+    required this.y,
+    this.seats = 2,
+    required this.plan,
+    this.status = TableStatus.empty,
+    this.rotation = 0,
+    this.shape = TableShape.square,
+    this.height = 100,
+    this.width = 100,
+    this.color = "0xFF81C784",
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.createdById,
+  });
+
+  RestaurantTable copyWith({
+    String? id,
+    String? name,
+    double? x,
+    double? y,
+    int? seats,
+    TableStatus? status,
+    double? rotation,
+    TableShape? shape,
+    bool? isSelected,
+    double? height,
+    double? width,
+    Plan? plan,
+    String? color,
+    String? createdById,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
+  }){
+    return RestaurantTable(
+       id: id ?? this.id,
+      name: name ?? this.name, 
+      x: x ?? this.x,
+      y: y ?? this.y,
+      seats: seats ?? this.seats,
+      status: status ?? this.status, 
+      rotation: rotation ?? this.rotation,
+      shape: shape ?? this.shape,
+      height: height ?? this.height,
+      width: width ?? this.width,
+      plan: plan ?? this.plan,
+      color: color ?? this.color,
+      createdById: createdById ?? this.createdById, 
+      createdAt: createdAt ?? this.createdAt, 
+      updatedAt: updatedAt ?? this.updatedAt, 
+      deletedAt: deletedAt ?? this.deletedAt, 
+    );
+  }
+
+  factory RestaurantTable.create(Plan plan) {
+    return RestaurantTable(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: "Table",
+      seats: 2,
+      x: 600,
+      y: 600,
+      width: 100,
+      height: 100,
+      rotation: 0,
+      shape: TableShape.square,
+      plan: plan,
+      createdAt: DateTime.now()
+    );
+  }
+
+   @override
+  String toString() {
+    return toJson().toString();
+  }
+
+  factory RestaurantTable.fromJson(Map<String, dynamic> json){
+    return RestaurantTable(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      x: double.tryParse(json['x'].toString()) ?? 0,
+      y: double.tryParse(json['y'].toString()) ?? 0,
+      seats: int.tryParse(json['seats'].toString()) ?? 0,
+      status: $enumDecodeNullable(tableStatusEnumMap, json['status']) ??
+          TableStatus.empty,
+      rotation: double.tryParse(json['rotation'].toString()) ?? 0,
+      shape: $enumDecodeNullable(tableShapeEnumMap, json['shape']) ??
+          TableShape.circle,
+      width: double.tryParse(json['width'].toString()) ?? 0,
+      height: double.tryParse(json['height'].toString()) ?? 0,
+      color: json['color'] as String,
+      plan: json['plan'] != null ? Plan.fromJson(json['plan'] as Map<String, dynamic>) : Plan(id: json['planId'] as String, name: ''),
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
+      createdById: json['createdById'] as String?,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+    );
+  }
+
+  Map<String, dynamic> toJson(){
+    return {
+      'id': id,
+      'name': name,
+      'x': x,
+      'y': y,
+      'seats': seats,
+      'status': tableStatusEnumMap[status],
+      'rotation': rotation,
+      'shape': tableShapeEnumMap[shape]!,
+      'width': width,
+      'height': height,
+      'color': color,
+      'plan': plan,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'deletedAt': deletedAt?.toIso8601String(),
+      'createdById': createdById,
+    };
+  }
+  
+}
+
+const tableShapeEnumMap = {
+  TableShape.circle: 'circle',
+  TableShape.square: 'square',
+};
+
+const tableStatusEnumMap = {
+  TableStatus.empty: 'empty',
+  TableStatus.draft: 'draft',
+  TableStatus.validated: 'validated',
+};

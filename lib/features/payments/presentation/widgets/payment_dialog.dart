@@ -10,8 +10,8 @@ import 'package:pos_app/features/payments/presentation/widgets/payment_tabs.dart
 import 'package:pos_app/features/payments/presentation/widgets/tab_items.dart';
 import 'package:pos_app/features/payments/presentation/widgets/tab_split.dart';
 import 'package:pos_app/features/payments/presentation/widgets/tab_total.dart';
-import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
-import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
+import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
 
 class PaymentDialog extends ConsumerStatefulWidget {
   const PaymentDialog({super.key});
@@ -123,7 +123,7 @@ class _PaymentDialogState extends ConsumerState<PaymentDialog> {
                         Payment? payment = ref.read(paymentProvider.notifier).savePayment();
                         if(payment != null){
                           ref.read(ordersProvider.notifier).payOrder(payment);
-                          ref.read(planGroupProvider.notifier).changeTableState(TableStatus.empty);
+                          ref.read(planProvider.notifier).changeTableState(TableStatus.empty);
                           Navigator.pop(context);
                         }
                       },

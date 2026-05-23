@@ -1,4 +1,4 @@
-import 'package:pos_app/features/catalog/data/demo_products.dart';
+/*import 'package:pos_app/features/catalog/data/demo_products.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 
 class ProductRepository {
@@ -7,7 +7,7 @@ class ProductRepository {
       String? groupId) async {
 
     return demoProducts
-        .where((p) => p.groupId == groupId)
+        .where((p) => p.category?.id == groupId)
         .toList();
   }
 
@@ -20,4 +20,4 @@ class ProductRepository {
             .contains(query.toLowerCase()))
         .toList();
   }
-}
+}*/

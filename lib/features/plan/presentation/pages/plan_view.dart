@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/presentation/orders_view.dart';
-import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
-import 'package:pos_app/features/plan/domain/entities/plan_group_entity.dart';
-import 'package:pos_app/features/plan/presentation/state/plan_state_notifier.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
+import 'package:pos_app/features/plan/domain/entities/plan.dart';
+import 'package:pos_app/features/plan/application/plan_notifier.dart';
 import 'package:pos_app/features/plan/presentation/widgets/draggable_table.dart';
 import 'package:pos_app/features/plan/presentation/widgets/grid_painter.dart';
 import 'package:pos_app/features/plan/presentation/widgets/table_editor_panel.dart';
@@ -26,14 +26,32 @@ class _PlanViewState extends ConsumerState<PlanView>{
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _focusNode.requestFocus();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      final state = ref.read(planProvider);
+      if (state.selectedPlanId == null &&
+          state.plans.isNotEmpty) {
+        ref
+            .read(planProvider.notifier)
+            .selectPlan(state.plans.first.id);
+      }
+
+      FocusScope.of(context).requestFocus(_focusNode);
+      
     });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
   }
 
   void _handleKeyEvent(KeyEvent event) {
     if (event is! KeyDownEvent) return;
-    final notifier = ref.read(planGroupProvider.notifier);
+    final notifier = ref.read(planProvider.notifier);
     final isEditMode = ref.read(editModeProvider);
 
     if (!isEditMode) return;
@@ -70,17 +88,23 @@ class _PlanViewState extends ConsumerState<PlanView>{
 
   @override
   Widget build(BuildContext context) {
-    final groupState = ref.watch(planGroupProvider);
-    final notifier = ref.read(planGroupProvider.notifier);
+    final groupState = ref.watch(planProvider);
+    final notifier = ref.read(planProvider.notifier);
     final isEditMode = ref.watch(editModeProvider);
-    final selectedGroup = groupState.selectedGroup;
-
+    final tables = groupState.selectedPlanTables;
+    final selectedGroup = groupState.selectedPlan;
+    
     return Scaffold(
       body: KeyboardListener(
       focusNode: _focusNode,
       autofocus: true,
       onKeyEvent: _handleKeyEvent,
-      child: Column(
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          FocusScope.of(context).requestFocus(_focusNode);
+        },
+        child: Column(
         children: [
           //Top BAR
           Container(
@@ -89,15 +113,15 @@ class _PlanViewState extends ConsumerState<PlanView>{
               color: Colors.grey.shade200,
               child: Row(
                 children: [
-                  ...groupState.groups.map((group) {
-                    final isSelected = group.id == groupState.selectedGroupId;
+                  ...groupState.plans.map((group) {
+                    final isSelected = group.id == groupState.selectedPlanId;
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isSelected ? Colors.blue : Colors.grey,
                         ),
-                        onPressed: () => notifier.selectGroup(group.id),
+                        onPressed: () => notifier.selectPlan(group.id),
                         onLongPress: isEditMode
                           ? () => _showEditGroupDialog(context, notifier, group)
                           : null,
@@ -158,91 +182,92 @@ class _PlanViewState extends ConsumerState<PlanView>{
                   maxScale: 3.0,
                   //boundaryMargin: const EdgeInsets.all(500),
                   child: Row(
-                  children: [
-                    Expanded(
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                        notifier.maxY = constraints.maxHeight;
-                        notifier.maxX = constraints.maxWidth;
-                        return Stack(
-                        children: [
-                          CustomPaint(
-                            size: Size.infinite,
-                            painter: GridPainter(),
-                          ),
-                          ...selectedGroup.tables.map((t) =>
-                            DraggableTable(table: t, editMode: isEditMode),
-                          ),
-                          if(isEditMode)
-                            Positioned(
-                              bottom: 20,
-                              right: 20,
-                              child: Tooltip(
-                                message: "Ajouter une Table",
-                                child: 
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    //shape: const CircleBorder(),
-                                    padding: EdgeInsets.all(10),
-                                    backgroundColor: Colors.green.shade300,
-                                   // minimumSize: const Size(80, 80),
-                                   // maximumSize: const Size(100, 100),
-                                  ),
-                                  onPressed: () => notifier.addTable("Table", 4),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.add_circle_outline_rounded),
-                                      Text(
-                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-                                        "Ajouter une Nouvelle Table"),
-                                    ],
-                                  )
-                                  
-                                ),
-                              )
+                    children: [
+                      Expanded(
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                          notifier.maxY = constraints.maxHeight;
+                          notifier.maxX = constraints.maxWidth;
+                          return Stack(
+                          children: [
+                            CustomPaint(
+                              size: Size.infinite,
+                              painter: GridPainter(),
                             ),
-                          if(!isEditMode && selectedGroup.tables.isEmpty)
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              top: 0,
-                              child: Center(
+                            ...tables.map((t) =>
+                              DraggableTable(table: t, editMode: isEditMode),
+                            ),
+                            if(isEditMode)
+                              Positioned(
+                                bottom: 20,
+                                right: 20,
                                 child: Tooltip(
-                                message: "Creer une Commande",
-                                child: ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                    padding: EdgeInsets.zero,
-                                    backgroundColor: Colors.greenAccent.shade400,
-                                    minimumSize: const Size(80, 80),
-                                    maximumSize: const Size(100, 100),
+                                  message: "Ajouter une Table",
+                                  child: 
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      //shape: const CircleBorder(),
+                                      padding: EdgeInsets.all(10),
+                                      backgroundColor: Colors.green.shade300,
+                                    // minimumSize: const Size(80, 80),
+                                    // maximumSize: const Size(100, 100),
+                                    ),
+                                    onPressed: () => notifier.startTableChange(),//notifier.addTable("Table", 4),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.add_circle_outline_rounded),
+                                        Text(
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                                          "Ajouter une Nouvelle Table"),
+                                      ],
+                                    )
+                                    
                                   ),
-                                  onPressed: () {
-                                    ref.read(ordersProvider.notifier).initSelectedOrderByTableOrGroupId(selectedGroup.id, false);
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId:selectedGroup.id, isTable: false,)));
-                                  },
-                                  child: const Icon(Icons.assignment_add, size: 60),
-                                ),
-                              )
+                                )
                               ),
-                            ),
-                        const SizedBox(width: 20),
-                        ],
-                      );
-                      })
-                    ),
-                  if (isEditMode && groupState.selectedTableId != null)
+                            if(!isEditMode && tables.isEmpty)
+                              Positioned(
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                top: 0,
+                                child: Center(
+                                  child: Tooltip(
+                                  message: "Creer une Commande",
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      shape: const CircleBorder(),
+                                      padding: EdgeInsets.zero,
+                                      backgroundColor: Colors.greenAccent.shade400,
+                                      minimumSize: const Size(80, 80),
+                                      maximumSize: const Size(100, 100),
+                                    ),
+                                    onPressed: () {
+                                      ref.read(ordersProvider.notifier).initSelectedOrderByTableOrGroupId(selectedGroup.id, false);
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId:selectedGroup.id, isTable: false,)));
+                                    },
+                                    child: const Icon(Icons.assignment_add, size: 60),
+                                  ),
+                                )
+                                ),
+                              ),
+                          const SizedBox(width: 20),
+                          ],
+                        );
+                        })
+                      ),
+                      if (isEditMode && groupState.tableChange)
                         const SizedBox(
                           width: 300,
                           child: TableEditorPanel(),
                         ),
                     ]
+                  ),
+                )
               ),
-              )
+            ],
           ),
-        ],
-      ),
+        ),
       ),
     );
   }
@@ -277,7 +302,7 @@ class _PlanViewState extends ConsumerState<PlanView>{
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
             onPressed: () {
-              notifier.addGroup(controller.text.trim());
+              notifier.addPlan(controller.text.trim());
               Navigator.pop(context);
             }, 
             child: const Text("Ajouter"),
@@ -290,7 +315,7 @@ class _PlanViewState extends ConsumerState<PlanView>{
   void _showEditGroupDialog(
     BuildContext context,
     PlanGroupNotifier notifier,
-    PlanGroup group,
+    Plan group,
   ) {
     final controller = TextEditingController(text: group.name);
 
@@ -314,7 +339,7 @@ class _PlanViewState extends ConsumerState<PlanView>{
         actions: [
           TextButton(
             onPressed: () {
-              notifier.removeGroup(group.id);
+              notifier.removePlan(group.id);
               Navigator.pop(context);
             }, 
             child: const Text(
@@ -325,7 +350,7 @@ class _PlanViewState extends ConsumerState<PlanView>{
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor:  Colors.green),
             onPressed: () {
-              notifier.renameGroup(group.id, controller.text);
+              notifier.renamePlan(group.id, controller.text);
               Navigator.pop(context);
             }, 
             child: const Text("Valider"),

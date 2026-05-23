@@ -1,49 +1,52 @@
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 class ProductRepository {
-
-  final List<Product> products = [
-
+  final fruitOption = Option(
+      name: 'Base', 
+      items: [], 
+      id:'1231321'
+    );
+  late final List<Product> products = [
     Product(
       id: "coffede",
       name: "Café",
       price: 2,
-      groupId: "hot_drinks",
+      //categoryId: "hot_drinks",
       description: "Expresso",
       options: [
-        ProductOption(
+        Option(
           id: "IDG1",
           name: "Base", 
           items: [
-            OptionItem(
+            Item(
               id: "IDG1O1",
               name: "Base Orange",
               price: 5,
-              groupId: "IDG1",
+              option: fruitOption,
             ),
-            OptionItem(
+            Item(
               id: "IDG1O2",
               name: "Base Lait",
-              groupId: "IDG1",
+              option: fruitOption,
             ),
           ]
         ),
-        ProductOption(
+        Option(
           id: "IDG2",
           name: "Topping", 
           items: [
-            OptionItem(
+            Item(
               id: "IDG2O1",
               name: "Creme",
               price: 5,
-              groupId: "IDG2",
+             option: fruitOption,
             ),
-            OptionItem(
+            Item(
               id: "IDG2O2",
               name: "Cannelle",
-              groupId: "IDG2",
+             option: fruitOption,
             ),
           ]
         )
@@ -54,7 +57,7 @@ class ProductRepository {
       id: "tea",
       name: "Thé",
       price: 2.5,
-      groupId: "hot_drinks",
+      //categoryId: "hot_drinks",
       description: "Thé vert",
     ),
 
@@ -62,7 +65,7 @@ class ProductRepository {
       id: "cola",
       name: "Coca",
       price: 3,
-      groupId: "cold_drinks",
+      //categoryId: "cold_drinks",
       description: "33cl",
     ),
 
@@ -70,7 +73,7 @@ class ProductRepository {
       id: "burger",
       name: "Burger",
       price: 10,
-      groupId: "foods",
+      //categoryId: "foods",
       description: "Burger maison",
     ),
   ];
@@ -79,7 +82,7 @@ class ProductRepository {
       String? groupId) async {
 
     return products
-        .where((p) => p.groupId == groupId)
+        .where((p) => p.category?.id == groupId)
         .toList();
   }
 }

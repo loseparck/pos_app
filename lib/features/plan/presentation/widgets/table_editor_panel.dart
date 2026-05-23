@@ -1,22 +1,83 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/plan/data/repositories/plan_group_provider.dart';
-import 'package:pos_app/features/plan/domain/entities/table_entity.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
+import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
 
-class TableEditorPanel extends ConsumerWidget {
+class TableEditorPanel extends ConsumerStatefulWidget {
   const TableEditorPanel({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final groupState = ref.watch(planGroupProvider);
-    final notifier = ref.read(planGroupProvider.notifier);
+  ConsumerState<TableEditorPanel> createState() => _TableEditorPanelState();
+}
+
+class _TableEditorPanelState extends ConsumerState<TableEditorPanel>{
+  int? selectedColor;
+  final _nameFormKey = GlobalKey<FormState>();
+  TextEditingController? nameController;
+  
+  Widget _buildColorPalette() {
+    final notifier = ref.read(planProvider.notifier);
+    final colors = [
+      0xFF81C784,
+      0xFFFFD54F,
+      0xFFBA68C8,
+      0xFF4DB6AC,
+      0xFFA1887F,
+      0xFF90A4AE,
+    ];
+
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: colors.map((colorValue) {
+        final selected = selectedColor == colorValue;
+
+        return InkWell(
+          onTap: () {
+            notifier.changeTableColor('$colorValue');
+            setState(() {
+              selectedColor = colorValue;
+            });
+            
+          },
+          borderRadius: BorderRadius.circular(24),
+          child: Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: Color(colorValue),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: selected ? Colors.blue : Colors.grey.shade400,
+                width: selected ? 4 : 1,
+              ),
+            ),
+            child: selected
+                ? const Icon(Icons.check, color: Colors.black)
+                : null,
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  void dispose() {
+    nameController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final groupState = ref.watch(planProvider);
+    final notifier = ref.read(planProvider.notifier);
     final table = groupState.selectedTable;
+    
     if (table == null) {
       return const Center(child: Text("Aucune table sélectionnée"));
     }
-
-    final nameController = TextEditingController(text: table.name);
     
+    nameController ??= TextEditingController(text: table.name);
 
     return Container(
       color: Colors.grey.shade100,
@@ -30,16 +91,26 @@ class TableEditorPanel extends ConsumerWidget {
 
           const SizedBox(height: 10),
 
-          /// NOM
-          TextField(
-            decoration: const InputDecoration(
-              labelText: "Nom / Numéro",
+          Form(
+            key: _nameFormKey,
+            child: TextFormField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nom / Numéro *'),
+              onChanged: (value){
+                notifier.changeTableName(value);
+              },
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Le nom est obligatoire';
+                }
+                if (value.trim().length < 2) {
+                  return 'Le nom doit contenir au moins 2 caractères';
+                }
+                return null;
+              },
             ),
-            controller: nameController,
-            onChanged: (value) {
-               notifier.changeSeatName(value);
-            },
           ),
+          
 
           const SizedBox(height: 10),
 
@@ -152,6 +223,10 @@ class TableEditorPanel extends ConsumerWidget {
 
           const Spacer(),
 
+          _buildColorPalette(),
+
+          const Spacer(),
+
           /// DELETE
           SizedBox(
             width: double.infinity,
@@ -159,9 +234,51 @@ class TableEditorPanel extends ConsumerWidget {
               onPressed: () {
                 notifier.removeTable();
               },
-              child: const Text(
-                "Supprimer",
-                style: TextStyle(color: Colors.red),
+              child:  Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                spacing: 10,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(10),
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: () => notifier.removeTable(),//notifier.addTable("Table", 4),
+                    child: Text(
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          "Supprimer"
+                          ),
+                    
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(10),
+                      backgroundColor: Colors.orange,
+                    ),
+                    onPressed: () => notifier.cancelEditTable(),//notifier.addTable("Table", 4),
+                    child: Text(
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          "Annuler"
+                          ),
+                    
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding: EdgeInsets.all(10),
+                      backgroundColor: Colors.green.shade300,
+                    ),
+                    onPressed: () {
+                      if(_nameFormKey.currentState?.validate() ?? false){
+                         notifier.validateTable();
+                      }
+                    },
+                    child: Text(
+                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                          "Valider"
+                          ),
+                    
+                  ),
+                ],
               ),
             ),
           ),

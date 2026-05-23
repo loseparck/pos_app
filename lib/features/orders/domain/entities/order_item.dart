@@ -1,4 +1,4 @@
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 
@@ -12,7 +12,7 @@ class OrderItem {
   int quantity;
   final double unitPrice;
   final double vat;
-  final List<OptionItem>? options;
+  final List<Item>? options;
   final OrderStatus status;
   final DateTime createdAt;
   final DateTime? validatedAt;

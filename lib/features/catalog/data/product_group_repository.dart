@@ -1,39 +1,39 @@
-import '../domain/entities/product_group.dart';
+import '../domain/entities/category.dart';
 
 class ProductGroupRepository {
 
-  final List<ProductGroup> groups = [
+  final List<Category> groups = [
 
-    const ProductGroup(
+   /* const Category(
       id: "drinks",
       name: "Boissons",
       parentId: null,
     ),
 
-    const ProductGroup(
+    const Category(
       id: "foods",
       name: "Plats",
       parentId: null,
     ),
 
-    const ProductGroup(
+    const Category(
       id: "hot_drinks",
       name: "Boissons chaudes",
       parentId: "drinks",
     ),
 
-    const ProductGroup(
+    const Category(
       id: "cold_drinks",
       name: "Boissons froides",
       parentId: "drinks",
-    ),
+    ),*/
   ];
 
-  Future<List<ProductGroup>> getGroupsByParent(
+  Future<List<Category>> getGroupsByParent(
       String? parentId) async {
 
     return groups
-        .where((g) => g.parentId == parentId)
+        .where((g) => g.parent?.id == parentId)
         .toList();
   }
 
@@ -42,6 +42,6 @@ class ProductGroupRepository {
     final group =
         groups.firstWhere((g) => g.id == groupId);
 
-    return group.parentId;
+    return group.parent?.id;
   }
 }

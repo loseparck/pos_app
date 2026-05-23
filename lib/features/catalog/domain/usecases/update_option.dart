@@ -1,5 +1,5 @@
 import 'package:pos_app/features/catalog/data/repositories/product_repository.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 
 class UpdateOption {
@@ -7,7 +7,7 @@ class UpdateOption {
 
   final ProductRepository _repository;
 
-  Future<ProductOption> call(ProductOption option) {
+  Future<Option> call(Option option) {
     return _repository.updateOption(option);
   }
 }

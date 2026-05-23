@@ -1,10 +1,11 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/application/product_state.dart';
-//import 'package:pos_app/features/catalog/data/product_repository.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository.dart';
+import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/category.dart';
 import 'usecase_provider.dart';
 
 class ProductNotifier extends StateNotifier<ProductState> {
@@ -15,32 +16,34 @@ class ProductNotifier extends StateNotifier<ProductState> {
     super(
       ProductState(
         products: [], 
-        productGroups: [], 
-        options:  [], 
-        items:  []
+        categories: [], 
+        options: [], 
+        items: []
       )
-    ){
-      load();
-    }
+    );
 
   Future<void> load() async {
     final items = await _repository.getItems();
     final options = await _repository.getOptions();
+    final categories = await _repository.getCategories();
+    final products = await _repository.getProducts();
     state = state.copyWith(
+      categories: categories,
+      products: products,
       items: items,
       options: options
     );
   } 
 
-  List<OptionItem> getItemByOption(String groupId){
-    return state.items.where((item) => item.groupId == groupId).toList();
+  List<Item> getItemByOption(String groupId){
+    return state.items.where((item) => item.option.id == groupId).toList();
   }
 
-  ProductOption getOption(String optionId){
+  Option getOption(String optionId){
     return state.options.where((option) => option.id == optionId).first;
   }
 
-  Future<bool> addItem(OptionItem item) async {
+  Future<bool> addItem(Item item) async {
     try {
       final saveItemUseCase = ref.read(saveItemUseCaseProvider);
       final newItemGroup = await saveItemUseCase(item);
@@ -56,13 +59,13 @@ class ProductNotifier extends StateNotifier<ProductState> {
     }
   }
 
-  Future<bool> addOption(ProductOption optionGroup) async {
+  Future<bool> addOption(Option optionGroup) async {
     try {
       final saveOptionUseCase = ref.read(saveOptionUseCaseProvider);
-      final newOptionGroup = await saveOptionUseCase(optionGroup);
+      final newOption = await saveOptionUseCase(optionGroup);
       state = state.copyWith(
-        options: [...state.options, newOptionGroup],
-        items: [...state.items, ...newOptionGroup.items.map((o) => o.copyWith(groupId: newOptionGroup.id))],
+        options: [...state.options, newOption],
+        items: [...state.items, ...newOption.items.map((o) => o.copyWith(option: newOption))],
       );
       return true;
     } catch (e) {
@@ -78,7 +81,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
       removeOptionUseCase(id);
       state = state.copyWith(
         options: state.options.where((item) => item.id != id).toList(),
-        items: state.items.where((item) => item.groupId != id).toList(),
+        items: state.items.where((item) => item.option.id != id).toList(),
       );
   }
 
@@ -98,7 +101,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
-  void updateOption(ProductOption option) async {
+  void updateOption(Option option) async {
       final updateOptionUseCase = ref.read(updateOptionUseCaseProvider);
       updateOptionUseCase(option);
       state = state.copyWith(
@@ -106,12 +109,111 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
-  void updateItem(OptionItem item) async {
+  void updateItem(Item item) async {
       final updateItemUseCase = ref.read(updateItemUseCaseProvider);
       updateItemUseCase(item);
        
       state = state.copyWith(
         items: state.items.map((elem) => elem.id != item.id ? elem: item).toList(),
+      );
+  }
+
+  Future<bool> addCategory(Category category) async {
+    try {
+      final saveCategoryUseCase = ref.read(saveCategoryUseCaseProvider);
+      final newCategory = await saveCategoryUseCase(category);
+      state = state.copyWith(
+        categories: [...state.categories, newCategory],
+      );
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error ${e.toString()}");
+      }
+      return false;
+    }
+  }
+
+  Future<bool> addProduct(Product product) async {
+    try {
+      final saveProductUseCase = ref.read(saveProductUseCaseProvider);
+      final newProduct = await saveProductUseCase(product);
+      state = state.copyWith(
+        products: [...state.products, newProduct],
+      );
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error ${e.toString()}");
+      }
+      return false;
+    }
+  }
+
+  List<Product> getProductsByCategory(String groupId){
+    return state.products.where((item) => item.category != null && item.category?.id == groupId).toList();
+  }
+
+  Category getCategory(String categoryId){
+    return state.categories.where((category) => category.id == categoryId).first;
+  }
+
+  Future<List<Category>> getCategoryChild(String parentId) async {
+    
+    return state.categories.where((category) => category.parent?.id == parentId).toList();
+  }
+
+  void updateCategory(Category category) async {
+      final updateCategoryUseCase = ref.read(updateCategoryUseCaseProvider);
+      updateCategoryUseCase(category);
+      state = state.copyWith(
+        categories: state.categories.map((elem) => elem.id != category.id ? elem : category).toList(),
+      );
+  }
+
+  Future<void> updateProduct(Product product) async {
+      final updateProductUseCase = ref.read(updateProductUseCaseProvider);
+      updateProductUseCase(product);
+       
+      state = state.copyWith(
+        products: state.products.map((elem) => elem.id != product.id ? elem: product).toList(),
+      );
+  }
+
+  Future<void> removeCategory(String id) async {
+      final removeCategoryUseCase = ref.read(removeCategoryUseCaseProvider);
+      removeCategoryUseCase(id);
+      Category toRemove = getCategory(id);
+
+      state = state.copyWith(
+        categories: state.categories.where((item) => item.id != id).map((item) => item.parent?.id != toRemove.id ? item : item.copyWith(parent: toRemove.parent, resetParent: toRemove.parent == null)).toList(),
+        products: state.products.map((product) => product.category?.id != toRemove.id ? product : product.copyCategory(category: toRemove.parent)).toList(),
+      );
+
+  }
+
+  Future<void> removeCategoryWithChildren(String id) async {
+    final removeCategoryWithChilrendUseCase = ref.read(removeCategoryWithChilrendUseCaseProvider);
+    removeCategoryWithChilrendUseCase(id);
+    state = state.copyWith(
+      categories: state.categories.where((item) => item.id != id && item.parentId != id).toList(),
+      products: state.products.where((item) => item.category == null || item.category?.id != id).toList(),
+    );
+  }
+  
+  Future<void> removeProduct(String id) async {
+      final removeProductUseCase = ref.read(removeProductUseCaseProvider);
+      removeProductUseCase(id);
+      state = state.copyWith(
+        products: state.products.where((item) => item.id != id).toList(),
+      );
+  }
+
+  Future<void> removeProducts(List<String> ids) async {
+      final removeProductsUseCase = ref.read(removeProductsUseCaseProvider);
+      removeProductsUseCase(ids);
+      state = state.copyWith(
+        products: state.products.where((item) => !ids.contains(item.id)).toList(),
       );
   }
 

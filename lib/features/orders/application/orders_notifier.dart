@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/orders/application/orders_state.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
@@ -52,12 +52,12 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   }
 
   void addProduct(Product product,
-      {Map<String, List<OptionItem>>? options, String? supportId, bool? isTable}) {
+      {Map<String, List<Item>>? options, String? supportId, bool? isTable}) {
     /// récupérer la commande actuelle
     Order? order = state.selectedOrder;
 
     final items = [...order!.items];
-    List<OptionItem> newOptions = [];
+    List<Item> newOptions = [];
     if(options != null) {
       newOptions = options.values.expand((opt) => opt).toList();
     }
@@ -178,7 +178,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     orderItem.quantity--;
   }
 
-  bool checkSameOption(List<OptionItem>? options, List<OptionItem> newOptions) {
+  bool checkSameOption(List<Item>? options, List<Item> newOptions) {
     final eq = const UnorderedIterableEquality();
     if(eq.equals(newOptions.map((e) => e.id),options!.map((e) => e.id))){
       return true;

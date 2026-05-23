@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/authentication/presentation/pages/login_page.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
+import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
+//import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
 
 class AuthGate extends ConsumerWidget{
   final Widget child;
@@ -24,11 +27,33 @@ class AuthGate extends ConsumerWidget{
     }
     
     if(authState.status != AuthStatus.authenticated){
-      //Navigator.pop(context);
       return const LoginPage();
     }
 
-    return child;
+    final initState = ref.watch(appInitializationProvider);
+
+    return initState.when(
+      loading: () => const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
+
+      error: (e, stack) => Scaffold(
+        body: Center(
+          child: Text('Erreur: $e'),
+        ),
+      ),
+
+      data: (_) => child,
+    );
   }
 
 }
+
+final appInitializationProvider = FutureProvider<void>((ref) async {
+  await ref.read(planProvider.notifier).load();
+  //await ref.read(ordersProvider.notifier).load();
+  await ref.read(productsProvider.notifier).load();
+  // autres chargements
+});

@@ -1,5 +1,5 @@
 import 'package:pos_app/features/catalog/data/repositories/product_repository.dart';
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
 
 
 class SaveItem {
@@ -7,7 +7,7 @@ class SaveItem {
 
   final ProductRepository _repository;
 
-  Future<OptionItem> call(OptionItem item) {
+  Future<Item> call(Item item) {
     return _repository.saveItem(item);
   }
 }

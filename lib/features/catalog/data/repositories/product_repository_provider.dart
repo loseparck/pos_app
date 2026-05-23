@@ -11,6 +11,7 @@ import 'package:pos_app/features/catalog/data/datasources/product_remote_datasou
 import 'package:pos_app/features/catalog/data/repositories/product_repository.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository_impl.dart';
 import 'package:pos_app/core/network/dio_provider.dart';
+import 'package:flutter/foundation.dart';
 
 final productRemoteDataSourceProvider = Provider<ProductRemoteDataSource>((ref) {
   return ProductRemoteDataSourceImpl(
@@ -19,8 +20,15 @@ final productRemoteDataSourceProvider = Provider<ProductRemoteDataSource>((ref) 
 });
 
 final productLocalDataSourceProvider = Provider<ProductLocalDataSource>((ref) {
+  if (kIsWeb) {
+     return ProductLocalDataSourceImpl(
+      null
+    );
+  }
+
+  //return ProductRepositoryDrift(db);
   return ProductLocalDataSourceImpl(
-    ref.read(appDatabaseProvider)
+    ref.watch(appDatabaseProvider)
   );
 });
 

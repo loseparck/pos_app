@@ -15,7 +15,7 @@ OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
       createdAt: DateTime.parse(json['createdAt'] as String),
       synced: json['synced'] as bool? ?? false,
       options: (json['options'] as List<dynamic>?)
-          ?.map((e) => OptionItem.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => Item.fromJson(e as Map<String, dynamic>))
           .toList(),
       status: $enumDecodeNullable(_$OrderStatusEnumMap, json['status']) ??
           OrderStatus.draft,

@@ -5,9 +5,10 @@ import 'package:pos_app/core/network/connectivity_service.dart';
 import 'package:pos_app/data/local/db/app_database.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_notifier.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
-import 'package:pos_app/features/orders/data/repositories/product_repository.dart';
+import 'package:pos_app/features/catalog/data/product_repository.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/core/network/dio_provider.dart';
+import 'package:flutter/foundation.dart';
 
 final connectivityProvider = Provider<ConnectivityService>((ref) {
   return ConnectivityService(
@@ -24,9 +25,9 @@ final productSearchProvider =
 FutureProvider.family<List<Product>, String>(
   (ref, query) async {
 
-    final repo = ref.read(productRepositoryProviderO);
+   // final repo = ref.read(productRepositoryProviderO);
 
-    return repo.searchProducts(query);
+    return [];
   },
 );
 
@@ -42,8 +43,19 @@ StateProvider<String>((ref) => "");
   );
 });*/
 
-final appDatabaseProvider = Provider<AppDatabase>((ref) {
-  return AppDatabase();
+final appDatabaseProvider = Provider<AppDatabase?>((ref) {
+  if (kIsWeb) {
+    return null;
+  }
+
+  final db = AppDatabase();
+
+  ref.onDispose(() {
+    db.close();
+  });
+
+  return db;
+  //return AppDatabase();
 });
 
 final connectivityServiceProvider =

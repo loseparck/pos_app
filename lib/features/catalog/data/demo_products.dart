@@ -1,39 +1,39 @@
-import 'package:pos_app/features/catalog/domain/entities/option_item.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_group.dart';
-import 'package:pos_app/features/catalog/domain/entities/product_option.dart';
+import 'package:pos_app/features/catalog/domain/entities/category.dart';
+import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
 import '../domain/entities/product.dart';
 
-final List<ProductGroup> demoGroups = [
+/*final List<Category> demoGroups = [
 
-  ProductGroup(
+  Category(
     id: "drinks",
     name: "Boissons",
-    parentId: null,
+    parent: null,
   ),
 
-  ProductGroup(
+  Category(
     id: "foods",
     name: "Plats",
-    parentId: null,
+    parent: null,
   ),
 
-  ProductGroup(
+  Category(
     id: "hot_drinks",
     name: "Boissons Chaudes",
-    parentId: "drinks",
+    //parentId: "drinks",
   ),
 
-  ProductGroup(
+  Category(
     id: "cold_drinks",
     name: "Boissons Froides",
-    parentId: "drinks",
+    //parentId: "drinks",
   ),
-];
+];*/
 
-final List<ProductOption> demoOptions = [
+final List<Option> demoOptionss = [
 
-  ProductOption(
+  Option(
     id: "IDG1",
     name: "Base",
     isMandatory: true,
@@ -41,40 +41,40 @@ final List<ProductOption> demoOptions = [
     maxToSelect: 5,
     multipleSelect: true, 
     items: [
-      OptionItem(
+      Item(
         id: "IDG1O1",
         name: "Base Orange",
         price: 5,
-        groupId: "IDG1",
+        option: Option(name: '"IDG1"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG1O2",
         name: "Base Lait",
-        groupId: "IDG1",
+        option: Option(name: '"IDG1"', items: []) ,
       ),
     ]
   ),
-  ProductOption(
+  Option(
     isMandatory: true,
     minToSelect: 1,
     maxToSelect: 1,
     id: "IDG2",
     name: "Topping", 
     items: [
-      OptionItem(
+      Item(
         id: "IDG2O1",
         name: "Creme",
         price: 5,
-        groupId: "IDG2",
+        option: Option(name: '"IDG2"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG2O2",
         name: "Cannelle",
-        groupId: "IDG2",
+        option: Option(name: '"IDG2"', items: []) ,
       ),
     ]
   ),
-  ProductOption(
+  Option(
     id: "IDG3",
     name: "Chocolat",
     isMandatory: true,
@@ -82,56 +82,56 @@ final List<ProductOption> demoOptions = [
     maxToSelect: 5,
     multipleSelect: true, 
     items: [
-      OptionItem(
+      Item(
         id: "IDG3O1",
         name: "Nutella",
         price: 5,
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG3O2",
         name: "Mars",
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG3O3",
         name: "Snickers",
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG3O4",
         name: "Twix",
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG3O5",
         name: "Oreo",
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG3O6",
         name: "KitKat",
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
-      OptionItem(
+      Item(
         id: "IDG3O7",
         name: "Milka",
-        groupId: "IDG3",
+        option: Option(name: '"IDG3"', items: []) ,
       ),
     ]
   )
 ];
 
-final List<Product> demoProducts = [
-
+/*final List<Product> demoProducts = [
+/*
   Product(
     id: "coffee",
     name: "Café",
     price: 2.0,
-    groupId: "hot_drinks",
+    categoryId: "hot_drinks",
     description: "Café expresso",
     options: [
-        ProductOption(
+        Option(
           id: "IDG1",
           name: "Base",
           isMandatory: true,
@@ -139,40 +139,40 @@ final List<Product> demoProducts = [
           maxToSelect: 5,
           multipleSelect: true, 
           items: [
-            OptionItem(
+            Item(
               id: "IDG1O1",
               name: "Base Orange",
               price: 5,
-              groupId: "IDG1",
+              optionId: "IDG1",
             ),
-            OptionItem(
+            Item(
               id: "IDG1O2",
               name: "Base Lait",
-              groupId: "IDG1",
+              optionId: "IDG1",
             ),
           ]
         ),
-        ProductOption(
+        Option(
           isMandatory: true,
           minToSelect: 1,
           maxToSelect: 1,
           id: "IDG2",
           name: "Topping", 
           items: [
-            OptionItem(
+            Item(
               id: "IDG2O1",
               name: "Creme",
               price: 5,
-              groupId: "IDG2",
+              optionId: "IDG2",
             ),
-            OptionItem(
+            Item(
               id: "IDG2O2",
               name: "Cannelle",
-              groupId: "IDG2",
+              optionId: "IDG2",
             ),
           ]
         ),
-        ProductOption(
+        Option(
           id: "IDG3",
           name: "Chocolat",
           isMandatory: true,
@@ -180,41 +180,41 @@ final List<Product> demoProducts = [
           maxToSelect: 5,
           multipleSelect: true, 
           items: [
-            OptionItem(
+            Item(
               id: "IDG3O1",
               name: "Nutella",
               price: 5,
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
-            OptionItem(
+            Item(
               id: "IDG3O2",
               name: "Mars",
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
-            OptionItem(
+            Item(
               id: "IDG3O3",
               name: "Snickers",
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
-            OptionItem(
+            Item(
               id: "IDG3O4",
               name: "Twix",
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
-            OptionItem(
+            Item(
               id: "IDG3O5",
               name: "Oreo",
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
-            OptionItem(
+            Item(
               id: "IDG3O6",
               name: "KitKat",
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
-            OptionItem(
+            Item(
               id: "IDG3O7",
               name: "Milka",
-              groupId: "IDG3",
+              optionId: "IDG3",
             ),
           ]
         ),
@@ -225,7 +225,7 @@ final List<Product> demoProducts = [
     id: "tea",
     name: "Thé",
     price: 2.5,
-    groupId: "hot_drinks",
+    categoryId: "hot_drinks",
     description: "Thé vert ou noir",
   ),
 
@@ -233,7 +233,7 @@ final List<Product> demoProducts = [
     id: "cola",
     name: "Coca Cola",
     price: 3.0,
-    groupId: "cold_drinks",
+    categoryId: "cold_drinks",
     description: "33cl",
   ),
 
@@ -241,7 +241,7 @@ final List<Product> demoProducts = [
     id: "burger",
     name: "Burger",
     price: 10.0,
-    groupId: "foods",
+    categoryId: "foods",
     description: "Burger maison",
   ),
 
@@ -249,7 +249,7 @@ final List<Product> demoProducts = [
     id: "pizza",
     name: "Pizza",
     price: 12.0,
-    groupId: "foods",
+    categoryId: "foods",
     description: "Pizza margherita",
-  ),
-];
+  ),*/
+];*/

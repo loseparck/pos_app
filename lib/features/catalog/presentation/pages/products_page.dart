@@ -3,13 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/option_view.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/product_view.dart';
 final selectedTabProvider = StateProvider<int>((ref) => 0);
-class ProductsPage extends ConsumerWidget{ 
-  const ProductsPage({super.key});
-
+class ProductsPage extends StatefulWidget{ 
+    const ProductsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedIndex = ref.watch(selectedTabProvider);
+  State<ProductsPage> createState() => _ProductsPageState();
+}
+
+class _ProductsPageState extends State<ProductsPage> {
+  int selectedIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
@@ -19,37 +24,33 @@ class ProductsPage extends ConsumerWidget{
             color:  Colors.grey.shade200,
             child: Row(
               children: [
-                _buildNavButton(ref, 0, "Produits"),
-                _buildNavButton(ref, 1, "Options"),
+                _buildNavButton(0, "Produits"),
+                _buildNavButton(1, "Options"),
 
               ],
             ),
           ),
           Expanded(
-            child: IndexedStack(
-              index: selectedIndex,
-              children: const [
-                ProductView(),
-                OptionView(),
-              ],
-            ),
-          )
+            child: selectedIndex == 0
+                ? const ProductView()
+                : const OptionView(),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildNavButton(
-    WidgetRef ref, int index, String label ){
-    final selectedIndex = ref.watch(selectedTabProvider);
-
+    int index, String label ){
     final isSelected = selectedIndex == index;
 
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: ElevatedButton(
         onPressed: (){
-          ref.read(selectedTabProvider.notifier).state = index;
+          setState(() {
+            selectedIndex = index;
+          });
         }, 
         style: ElevatedButton.styleFrom(
           backgroundColor: isSelected ? Colors.blue : Colors.grey,
