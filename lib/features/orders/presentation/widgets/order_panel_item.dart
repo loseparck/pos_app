@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 
 class OrderPanelItem extends StatelessWidget {
   final String productName;
   final double productPrice;
   final int quantity;
   final Color backgroundColor;
-  final List<Item>? supplements;
-  final VoidCallback onAdd;
-  final VoidCallback onRemove;
+  final List<OrderItemOption>? supplements;
+  final VoidCallback? onAdd;
+  final VoidCallback? onRemove;
 
   const OrderPanelItem({
     super.key,
@@ -17,18 +17,18 @@ class OrderPanelItem extends StatelessWidget {
     required this.quantity,
     required this.backgroundColor,
     this.supplements,
-    required this.onAdd,
-    required this.onRemove,
+    this.onAdd,
+    this.onRemove,
   });
 
   double get supplementsTotal =>
-      supplements!.fold(0, (sum, s) => sum + s.price);
+      supplements!.fold(0, (sum, s) => sum + (s.unitPrice * s.quantity));
 
   double get totalPrice =>
       (productPrice + supplementsTotal) * quantity;
 
   Icon getDecreaseIcon(){
-    return quantity > 1 ? const Icon(Icons.remove_circle_outline) : Icon(Icons.delete_forever_rounded);
+    return quantity > 1 ? const Icon(Icons.remove_circle_outline,size: 20,) : Icon(Icons.delete_forever_rounded,size: 20,);
   } 
 
   @override
@@ -63,33 +63,35 @@ class OrderPanelItem extends StatelessWidget {
                     ),
 
                     /// Quantité centrée
-                    Flexible(
-                      flex: 1,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: getDecreaseIcon(),
-                            onPressed: onRemove,
-                            constraints: const BoxConstraints(), // réduit la taille par défaut
-                            padding: EdgeInsets.zero,
-                          ),
-                          Text(
-                            quantity.toString(),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                    if(onAdd != null)
+                      Flexible(
+                        flex: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: getDecreaseIcon(),
+                              onPressed: onRemove,
+                              constraints: const BoxConstraints(), // réduit la taille par défaut
+                              padding: EdgeInsets.zero,
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.add_circle_outline),
-                            onPressed: onAdd,
-                            constraints: const BoxConstraints(),
-                            padding: EdgeInsets.zero,
-                          ),
-                        ],
+                            Text(
+                              quantity.toString(),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.add_circle_outline,size: 20,),
+                              onPressed: onAdd,
+                              constraints: const BoxConstraints(),
+                              //padding: EdgeInsets.zero,
+                              padding: const EdgeInsets.only(left: 0, top: 0, right: -5),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
                     /// Prix à droite
                     Flexible(
@@ -113,14 +115,14 @@ class OrderPanelItem extends StatelessWidget {
                 /// suppléments
                 if (supplements!.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(left: 40, top: 4, right: 5),
+                    padding: const EdgeInsets.only(left: 40, top: 0, right: 5),
                     child: Column(
                       children: supplements!.map((s) {
                         return Row(
                           children: [
                             Expanded(
                               child: Text(
-                                "+ ${s.name}",
+                                "+ ${s.optionName} (x${s.quantity})",
                                 style: const TextStyle(
                                   fontSize: 13,
                                   color: Colors.black54,
@@ -128,7 +130,7 @@ class OrderPanelItem extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "${s.price.toStringAsFixed(2)}€",
+                              "${(s.unitPrice* s.quantity).toStringAsFixed(2)}€",
                               style: const TextStyle(
                                 fontSize: 13,
                                 color: Colors.black54,

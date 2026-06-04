@@ -5,7 +5,6 @@ import 'package:pos_app/core/network/connectivity_service.dart';
 import 'package:pos_app/data/local/db/app_database.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_notifier.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
-import 'package:pos_app/features/catalog/data/product_repository.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/core/network/dio_provider.dart';
 import 'package:flutter/foundation.dart';
@@ -30,9 +29,6 @@ FutureProvider.family<List<Product>, String>(
     return [];
   },
 );
-
-final productRepositoryProviderO =
-Provider((ref) => ProductRepository());
 
 final productSearchQueryProvider =
 StateProvider<String>((ref) => "");

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/orders/presentation/widgets/order_panel_item.dart';
@@ -32,8 +32,8 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
 
   @override
   Widget build(BuildContext context) {
-    Order? order = ref.watch(ordersProvider)!.selectedOrder;
-    
+    Order? order = ref.watch(ordersProvider).selectedOrder;
+    final notifier = ref.read(ordersProvider.notifier);
     if (order == null) {
       return const Center(child: Text("Aucune commande"));
     }
@@ -49,24 +49,22 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
 
               final item = order.items[index];
               return OrderPanelItem(
-                productName: item.name,
+                productName: item.productName,
                 productPrice: item.unitPrice,
                 quantity: item.quantity,
                 supplements: item.options,
                 backgroundColor: getBackgroundColor(order.status, item.status),
-                onAdd: () {
-                  setState(() {
-                    item.quantity++;
-                  });
+                onAdd: item.status != OrderStatus.draft ? null : () {
+                  notifier.increaseQuantity(item.id, order.id);
                 },
 
-                onRemove: () {
+                onRemove: item.status != OrderStatus.draft ? null : () {
                   setState(() {
                     if (item.quantity > 1) {
-                      item.quantity--;
+                      notifier.decreaseQuantity(item.id, order.id);
                     }
                     else{
-                      order.items.removeAt(index);
+                      notifier.removeItem(item.id, order.id);
                     }
                   });
                 },

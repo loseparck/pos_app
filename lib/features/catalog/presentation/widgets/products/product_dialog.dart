@@ -191,7 +191,7 @@ class _ProductDialogState extends ConsumerState<ProductDialog> {
           ? null
           : codeBarresController.text.trim(),
       price: double.parse(priceController.text.trim()),
-      vat: double.tryParse(vatController.text.trim()),
+      vat: double.tryParse(vatController.text.trim()) ?? 0,
       stockQuantity: double.tryParse(stockController.text.trim()),
       image: imageController.text.trim().isEmpty ? null : imageController.text.trim(),
       color: selectedColor,

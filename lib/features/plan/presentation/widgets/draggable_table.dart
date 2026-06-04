@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/presentation/orders_view.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
@@ -51,7 +51,7 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
           ),
           onTap: () {
             notifer.selectTable(table.id);
-            ref.read(ordersProvider.notifier).initSelectedOrderByTableOrGroupId(table.id, true);
+            ref.read(ordersProvider.notifier).setTableAndGroupId(tableId :table.id);
             ref.read(currentGroupProvider.notifier).state = null;
             Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId: table.id, isTable: true,)));
           }

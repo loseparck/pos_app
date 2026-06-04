@@ -8,7 +8,7 @@ class Product {
   final String? description;
   final String? codeBarres;
   final double price;
-  final double? vat;
+  final double vat;
   final double? stockQuantity;
   final String? image;
   final int? color;

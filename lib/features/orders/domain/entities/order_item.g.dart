@@ -9,13 +9,12 @@ part of 'order_item.dart';
 OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
       id: json['id'] as String,
       productId: json['productId'] as String,
-      name: json['name'] as String,
+      productName: json['productName'] as String,
       quantity: (json['quantity'] as num).toInt(),
       unitPrice: (json['unitPrice'] as num).toDouble(),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      synced: json['synced'] as bool? ?? false,
-      options: (json['options'] as List<dynamic>?)
-          ?.map((e) => Item.fromJson(e as Map<String, dynamic>))
+      orderId: json['orderId'] as String,
+      options: (json['options'] as List<dynamic>)
+          .map((e) => OrderItemOption.fromJson(e as Map<String, dynamic>))
           .toList(),
       status: $enumDecodeNullable(_$OrderStatusEnumMap, json['status']) ??
           OrderStatus.draft,
@@ -23,27 +22,42 @@ OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
           ? null
           : DateTime.parse(json['validatedAt'] as String),
       vat: (json['vat'] as num?)?.toDouble() ?? 0,
+      comment: json['comment'] as String?,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
+      deletedAt: json['deletedAt'] == null
+          ? null
+          : DateTime.parse(json['deletedAt'] as String),
+      createdById: json['createdById'] as String?,
     );
 
 Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
       'id': instance.id,
       'productId': instance.productId,
-      'name': instance.name,
+      'orderId': instance.orderId,
+      'productName': instance.productName,
+      'comment': instance.comment,
       'quantity': instance.quantity,
       'unitPrice': instance.unitPrice,
       'vat': instance.vat,
       'options': instance.options,
       'status': _$OrderStatusEnumMap[instance.status]!,
-      'createdAt': instance.createdAt.toIso8601String(),
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'deletedAt': instance.deletedAt?.toIso8601String(),
+      'createdById': instance.createdById,
       'validatedAt': instance.validatedAt?.toIso8601String(),
-      'synced': instance.synced,
     };
 
 const _$OrderStatusEnumMap = {
   OrderStatus.draft: 'draft',
-  OrderStatus.saved: 'saved',
+  OrderStatus.waitingValidation: 'waitingValidation',
+  OrderStatus.validated: 'validated',
+  OrderStatus.cancelled: 'cancelled',
   OrderStatus.delivred: 'delivred',
   OrderStatus.paid: 'paid',
-  OrderStatus.cancelled: 'cancelled',
-  OrderStatus.waitingValidation: 'waitingValidation',
 };

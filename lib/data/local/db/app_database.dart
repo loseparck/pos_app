@@ -9,6 +9,9 @@ import '../../../features/catalog/data/models/drift/products_options_drift.dart'
 import '../../../features/catalog/data/models/drift/audit_logs_drift.dart';
 import '../../../features/plan/data/models/drift/plan_drift.dart';
 import '../../../features/plan/data/models/drift/restaurant_table_drift.dart';
+import '../../../features/orders/data/models/drift/order_drift.dart';
+import '../../../features/orders/data/models/drift/order_item_drift.dart';
+import '../../../features/orders/data/models/drift/order_item_options_drift.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
@@ -21,15 +24,17 @@ part 'app_database.g.dart';
     AuditLogsDrift,
     PlanDrift,
     RestaurantTableDrift,
-    DiscountsDrift
-    
+    DiscountsDrift,
+    OrderDrift,
+    OrderItemDrift,
+    OrderItemOptionsDrift
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 8;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -44,6 +49,29 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 3) {
         await m.createTable(restaurantTableDrift);
+      }
+      if (from < 4) {
+        await m.createTable(discountsDrift);
+      }
+      if (from < 5) {
+        await m.createTable(orderDrift);
+        await m.createTable(orderItemDrift);
+        await m.createTable(orderItemOptionsDrift);
+      }
+      if (from < 6) {
+        await m.alterTable(TableMigration(orderDrift,
+          columnTransformer: {
+            orderDrift.paymentId:orderDrift.paymentId,
+            orderDrift.validatedAt:orderDrift.validatedAt
+            }
+          )
+        );
+      }
+      if (from < 7) {
+        await m.alterTable(TableMigration(orderDrift));
+      }
+      if (from < 8) {
+        await m.alterTable(TableMigration(orderItemDrift));
       }
     },
   );

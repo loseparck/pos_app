@@ -9,6 +9,7 @@ class ApiEndpoints {
   static const String items = "/items";
   static const String categories = "/categories";
   static const String products = "/products";
+  static const String discounts = "/discounts";
   static const String plans = "/plans";
   static const String tables = "/tables";
 }

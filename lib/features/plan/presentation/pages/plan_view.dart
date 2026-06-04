@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/presentation/orders_view.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/plan.dart';
@@ -243,7 +243,7 @@ class _PlanViewState extends ConsumerState<PlanView>{
                                       maximumSize: const Size(100, 100),
                                     ),
                                     onPressed: () {
-                                      ref.read(ordersProvider.notifier).initSelectedOrderByTableOrGroupId(selectedGroup.id, false);
+                                      ref.read(ordersProvider.notifier).setTableAndGroupId(groupId: selectedGroup.id);
                                       Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId:selectedGroup.id, isTable: false,)));
                                     },
                                     child: const Icon(Icons.assignment_add, size: 60),

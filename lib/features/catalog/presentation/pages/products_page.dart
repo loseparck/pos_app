@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/catalog/presentation/widgets/discount_view.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/option_view.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/product_view.dart';
 final selectedTabProvider = StateProvider<int>((ref) => 0);
@@ -26,6 +27,7 @@ class _ProductsPageState extends State<ProductsPage> {
               children: [
                 _buildNavButton(0, "Produits"),
                 _buildNavButton(1, "Options"),
+                _buildNavButton(2, "Réductions"),
 
               ],
             ),
@@ -33,7 +35,7 @@ class _ProductsPageState extends State<ProductsPage> {
           Expanded(
             child: selectedIndex == 0
                 ? const ProductView()
-                : const OptionView(),
+                : selectedIndex == 1 ? const OptionView() : const DiscountView(),
           ),
         ],
       ),

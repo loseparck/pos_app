@@ -4735,6 +4735,1762 @@ class DiscountsDriftCompanion extends UpdateCompanion<DiscountsDriftData> {
   }
 }
 
+class $OrderDriftTable extends OrderDrift
+    with TableInfo<$OrderDriftTable, OrderDriftData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OrderDriftTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _tableIdMeta =
+      const VerificationMeta('tableId');
+  @override
+  late final GeneratedColumn<String> tableId = GeneratedColumn<String>(
+      'table_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _groupIdMeta =
+      const VerificationMeta('groupId');
+  @override
+  late final GeneratedColumn<String> groupId = GeneratedColumn<String>(
+      'group_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _paymentIdMeta =
+      const VerificationMeta('paymentId');
+  @override
+  late final GeneratedColumn<String> paymentId = GeneratedColumn<String>(
+      'payment_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _validatedAtMeta =
+      const VerificationMeta('validatedAt');
+  @override
+  late final GeneratedColumn<DateTime> validatedAt = GeneratedColumn<DateTime>(
+      'validated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('draft'));
+  static const VerificationMeta _createdByIdMeta =
+      const VerificationMeta('createdById');
+  @override
+  late final GeneratedColumn<String> createdById = GeneratedColumn<String>(
+      'created_by_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _deletedAtMeta =
+      const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        tableId,
+        groupId,
+        paymentId,
+        validatedAt,
+        status,
+        createdById,
+        deletedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'order_drift';
+  @override
+  VerificationContext validateIntegrity(Insertable<OrderDriftData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('table_id')) {
+      context.handle(_tableIdMeta,
+          tableId.isAcceptableOrUnknown(data['table_id']!, _tableIdMeta));
+    } else if (isInserting) {
+      context.missing(_tableIdMeta);
+    }
+    if (data.containsKey('group_id')) {
+      context.handle(_groupIdMeta,
+          groupId.isAcceptableOrUnknown(data['group_id']!, _groupIdMeta));
+    } else if (isInserting) {
+      context.missing(_groupIdMeta);
+    }
+    if (data.containsKey('payment_id')) {
+      context.handle(_paymentIdMeta,
+          paymentId.isAcceptableOrUnknown(data['payment_id']!, _paymentIdMeta));
+    }
+    if (data.containsKey('validated_at')) {
+      context.handle(
+          _validatedAtMeta,
+          validatedAt.isAcceptableOrUnknown(
+              data['validated_at']!, _validatedAtMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('created_by_id')) {
+      context.handle(
+          _createdByIdMeta,
+          createdById.isAcceptableOrUnknown(
+              data['created_by_id']!, _createdByIdMeta));
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta,
+          deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OrderDriftData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OrderDriftData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      tableId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}table_id'])!,
+      groupId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}group_id'])!,
+      paymentId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}payment_id']),
+      validatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}validated_at']),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      createdById: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_by_id']),
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $OrderDriftTable createAlias(String alias) {
+    return $OrderDriftTable(attachedDatabase, alias);
+  }
+}
+
+class OrderDriftData extends DataClass implements Insertable<OrderDriftData> {
+  final String id;
+  final String tableId;
+  final String groupId;
+  final String? paymentId;
+  final DateTime? validatedAt;
+  final String status;
+  final String? createdById;
+  final DateTime? deletedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const OrderDriftData(
+      {required this.id,
+      required this.tableId,
+      required this.groupId,
+      this.paymentId,
+      this.validatedAt,
+      required this.status,
+      this.createdById,
+      this.deletedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['table_id'] = Variable<String>(tableId);
+    map['group_id'] = Variable<String>(groupId);
+    if (!nullToAbsent || paymentId != null) {
+      map['payment_id'] = Variable<String>(paymentId);
+    }
+    if (!nullToAbsent || validatedAt != null) {
+      map['validated_at'] = Variable<DateTime>(validatedAt);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || createdById != null) {
+      map['created_by_id'] = Variable<String>(createdById);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  OrderDriftCompanion toCompanion(bool nullToAbsent) {
+    return OrderDriftCompanion(
+      id: Value(id),
+      tableId: Value(tableId),
+      groupId: Value(groupId),
+      paymentId: paymentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paymentId),
+      validatedAt: validatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(validatedAt),
+      status: Value(status),
+      createdById: createdById == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdById),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory OrderDriftData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OrderDriftData(
+      id: serializer.fromJson<String>(json['id']),
+      tableId: serializer.fromJson<String>(json['tableId']),
+      groupId: serializer.fromJson<String>(json['groupId']),
+      paymentId: serializer.fromJson<String?>(json['paymentId']),
+      validatedAt: serializer.fromJson<DateTime?>(json['validatedAt']),
+      status: serializer.fromJson<String>(json['status']),
+      createdById: serializer.fromJson<String?>(json['createdById']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'tableId': serializer.toJson<String>(tableId),
+      'groupId': serializer.toJson<String>(groupId),
+      'paymentId': serializer.toJson<String?>(paymentId),
+      'validatedAt': serializer.toJson<DateTime?>(validatedAt),
+      'status': serializer.toJson<String>(status),
+      'createdById': serializer.toJson<String?>(createdById),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  OrderDriftData copyWith(
+          {String? id,
+          String? tableId,
+          String? groupId,
+          Value<String?> paymentId = const Value.absent(),
+          Value<DateTime?> validatedAt = const Value.absent(),
+          String? status,
+          Value<String?> createdById = const Value.absent(),
+          Value<DateTime?> deletedAt = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      OrderDriftData(
+        id: id ?? this.id,
+        tableId: tableId ?? this.tableId,
+        groupId: groupId ?? this.groupId,
+        paymentId: paymentId.present ? paymentId.value : this.paymentId,
+        validatedAt: validatedAt.present ? validatedAt.value : this.validatedAt,
+        status: status ?? this.status,
+        createdById: createdById.present ? createdById.value : this.createdById,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  OrderDriftData copyWithCompanion(OrderDriftCompanion data) {
+    return OrderDriftData(
+      id: data.id.present ? data.id.value : this.id,
+      tableId: data.tableId.present ? data.tableId.value : this.tableId,
+      groupId: data.groupId.present ? data.groupId.value : this.groupId,
+      paymentId: data.paymentId.present ? data.paymentId.value : this.paymentId,
+      validatedAt:
+          data.validatedAt.present ? data.validatedAt.value : this.validatedAt,
+      status: data.status.present ? data.status.value : this.status,
+      createdById:
+          data.createdById.present ? data.createdById.value : this.createdById,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderDriftData(')
+          ..write('id: $id, ')
+          ..write('tableId: $tableId, ')
+          ..write('groupId: $groupId, ')
+          ..write('paymentId: $paymentId, ')
+          ..write('validatedAt: $validatedAt, ')
+          ..write('status: $status, ')
+          ..write('createdById: $createdById, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, tableId, groupId, paymentId, validatedAt,
+      status, createdById, deletedAt, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OrderDriftData &&
+          other.id == this.id &&
+          other.tableId == this.tableId &&
+          other.groupId == this.groupId &&
+          other.paymentId == this.paymentId &&
+          other.validatedAt == this.validatedAt &&
+          other.status == this.status &&
+          other.createdById == this.createdById &&
+          other.deletedAt == this.deletedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class OrderDriftCompanion extends UpdateCompanion<OrderDriftData> {
+  final Value<String> id;
+  final Value<String> tableId;
+  final Value<String> groupId;
+  final Value<String?> paymentId;
+  final Value<DateTime?> validatedAt;
+  final Value<String> status;
+  final Value<String?> createdById;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const OrderDriftCompanion({
+    this.id = const Value.absent(),
+    this.tableId = const Value.absent(),
+    this.groupId = const Value.absent(),
+    this.paymentId = const Value.absent(),
+    this.validatedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdById = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OrderDriftCompanion.insert({
+    required String id,
+    required String tableId,
+    required String groupId,
+    this.paymentId = const Value.absent(),
+    this.validatedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdById = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        tableId = Value(tableId),
+        groupId = Value(groupId),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<OrderDriftData> custom({
+    Expression<String>? id,
+    Expression<String>? tableId,
+    Expression<String>? groupId,
+    Expression<String>? paymentId,
+    Expression<DateTime>? validatedAt,
+    Expression<String>? status,
+    Expression<String>? createdById,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (tableId != null) 'table_id': tableId,
+      if (groupId != null) 'group_id': groupId,
+      if (paymentId != null) 'payment_id': paymentId,
+      if (validatedAt != null) 'validated_at': validatedAt,
+      if (status != null) 'status': status,
+      if (createdById != null) 'created_by_id': createdById,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OrderDriftCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? tableId,
+      Value<String>? groupId,
+      Value<String?>? paymentId,
+      Value<DateTime?>? validatedAt,
+      Value<String>? status,
+      Value<String?>? createdById,
+      Value<DateTime?>? deletedAt,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return OrderDriftCompanion(
+      id: id ?? this.id,
+      tableId: tableId ?? this.tableId,
+      groupId: groupId ?? this.groupId,
+      paymentId: paymentId ?? this.paymentId,
+      validatedAt: validatedAt ?? this.validatedAt,
+      status: status ?? this.status,
+      createdById: createdById ?? this.createdById,
+      deletedAt: deletedAt ?? this.deletedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (tableId.present) {
+      map['table_id'] = Variable<String>(tableId.value);
+    }
+    if (groupId.present) {
+      map['group_id'] = Variable<String>(groupId.value);
+    }
+    if (paymentId.present) {
+      map['payment_id'] = Variable<String>(paymentId.value);
+    }
+    if (validatedAt.present) {
+      map['validated_at'] = Variable<DateTime>(validatedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdById.present) {
+      map['created_by_id'] = Variable<String>(createdById.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderDriftCompanion(')
+          ..write('id: $id, ')
+          ..write('tableId: $tableId, ')
+          ..write('groupId: $groupId, ')
+          ..write('paymentId: $paymentId, ')
+          ..write('validatedAt: $validatedAt, ')
+          ..write('status: $status, ')
+          ..write('createdById: $createdById, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $OrderItemDriftTable extends OrderItemDrift
+    with TableInfo<$OrderItemDriftTable, OrderItemDriftData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OrderItemDriftTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _commentMeta =
+      const VerificationMeta('comment');
+  @override
+  late final GeneratedColumn<String> comment = GeneratedColumn<String>(
+      'comment', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _orderIdMeta =
+      const VerificationMeta('orderId');
+  @override
+  late final GeneratedColumn<String> orderId = GeneratedColumn<String>(
+      'order_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _productIdMeta =
+      const VerificationMeta('productId');
+  @override
+  late final GeneratedColumn<String> productId = GeneratedColumn<String>(
+      'product_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _productNameMeta =
+      const VerificationMeta('productName');
+  @override
+  late final GeneratedColumn<String> productName = GeneratedColumn<String>(
+      'product_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _quantityMeta =
+      const VerificationMeta('quantity');
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+      'quantity', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _unitPriceMeta =
+      const VerificationMeta('unitPrice');
+  @override
+  late final GeneratedColumn<double> unitPrice = GeneratedColumn<double>(
+      'unit_price', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _vatMeta = const VerificationMeta('vat');
+  @override
+  late final GeneratedColumn<double> vat = GeneratedColumn<double>(
+      'vat', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _validatedAtMeta =
+      const VerificationMeta('validatedAt');
+  @override
+  late final GeneratedColumn<DateTime> validatedAt = GeneratedColumn<DateTime>(
+      'validated_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+      'status', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('draft'));
+  static const VerificationMeta _createdByIdMeta =
+      const VerificationMeta('createdById');
+  @override
+  late final GeneratedColumn<String> createdById = GeneratedColumn<String>(
+      'created_by_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _deletedAtMeta =
+      const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        comment,
+        orderId,
+        productId,
+        productName,
+        quantity,
+        unitPrice,
+        vat,
+        validatedAt,
+        status,
+        createdById,
+        deletedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'order_item_drift';
+  @override
+  VerificationContext validateIntegrity(Insertable<OrderItemDriftData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('comment')) {
+      context.handle(_commentMeta,
+          comment.isAcceptableOrUnknown(data['comment']!, _commentMeta));
+    }
+    if (data.containsKey('order_id')) {
+      context.handle(_orderIdMeta,
+          orderId.isAcceptableOrUnknown(data['order_id']!, _orderIdMeta));
+    } else if (isInserting) {
+      context.missing(_orderIdMeta);
+    }
+    if (data.containsKey('product_id')) {
+      context.handle(_productIdMeta,
+          productId.isAcceptableOrUnknown(data['product_id']!, _productIdMeta));
+    }
+    if (data.containsKey('product_name')) {
+      context.handle(
+          _productNameMeta,
+          productName.isAcceptableOrUnknown(
+              data['product_name']!, _productNameMeta));
+    } else if (isInserting) {
+      context.missing(_productNameMeta);
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(_quantityMeta,
+          quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    if (data.containsKey('unit_price')) {
+      context.handle(_unitPriceMeta,
+          unitPrice.isAcceptableOrUnknown(data['unit_price']!, _unitPriceMeta));
+    }
+    if (data.containsKey('vat')) {
+      context.handle(
+          _vatMeta, vat.isAcceptableOrUnknown(data['vat']!, _vatMeta));
+    }
+    if (data.containsKey('validated_at')) {
+      context.handle(
+          _validatedAtMeta,
+          validatedAt.isAcceptableOrUnknown(
+              data['validated_at']!, _validatedAtMeta));
+    }
+    if (data.containsKey('status')) {
+      context.handle(_statusMeta,
+          status.isAcceptableOrUnknown(data['status']!, _statusMeta));
+    }
+    if (data.containsKey('created_by_id')) {
+      context.handle(
+          _createdByIdMeta,
+          createdById.isAcceptableOrUnknown(
+              data['created_by_id']!, _createdByIdMeta));
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta,
+          deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OrderItemDriftData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OrderItemDriftData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      comment: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}comment']),
+      orderId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}order_id'])!,
+      productId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}product_id']),
+      productName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}product_name'])!,
+      quantity: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}quantity'])!,
+      unitPrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}unit_price'])!,
+      vat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vat'])!,
+      validatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}validated_at']),
+      status: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}status'])!,
+      createdById: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_by_id']),
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $OrderItemDriftTable createAlias(String alias) {
+    return $OrderItemDriftTable(attachedDatabase, alias);
+  }
+}
+
+class OrderItemDriftData extends DataClass
+    implements Insertable<OrderItemDriftData> {
+  final String id;
+  final String? comment;
+  final String orderId;
+  final String? productId;
+  final String productName;
+  final int quantity;
+  final double unitPrice;
+  final double vat;
+  final DateTime? validatedAt;
+  final String status;
+  final String? createdById;
+  final DateTime? deletedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const OrderItemDriftData(
+      {required this.id,
+      this.comment,
+      required this.orderId,
+      this.productId,
+      required this.productName,
+      required this.quantity,
+      required this.unitPrice,
+      required this.vat,
+      this.validatedAt,
+      required this.status,
+      this.createdById,
+      this.deletedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    if (!nullToAbsent || comment != null) {
+      map['comment'] = Variable<String>(comment);
+    }
+    map['order_id'] = Variable<String>(orderId);
+    if (!nullToAbsent || productId != null) {
+      map['product_id'] = Variable<String>(productId);
+    }
+    map['product_name'] = Variable<String>(productName);
+    map['quantity'] = Variable<int>(quantity);
+    map['unit_price'] = Variable<double>(unitPrice);
+    map['vat'] = Variable<double>(vat);
+    if (!nullToAbsent || validatedAt != null) {
+      map['validated_at'] = Variable<DateTime>(validatedAt);
+    }
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || createdById != null) {
+      map['created_by_id'] = Variable<String>(createdById);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  OrderItemDriftCompanion toCompanion(bool nullToAbsent) {
+    return OrderItemDriftCompanion(
+      id: Value(id),
+      comment: comment == null && nullToAbsent
+          ? const Value.absent()
+          : Value(comment),
+      orderId: Value(orderId),
+      productId: productId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productId),
+      productName: Value(productName),
+      quantity: Value(quantity),
+      unitPrice: Value(unitPrice),
+      vat: Value(vat),
+      validatedAt: validatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(validatedAt),
+      status: Value(status),
+      createdById: createdById == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdById),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory OrderItemDriftData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OrderItemDriftData(
+      id: serializer.fromJson<String>(json['id']),
+      comment: serializer.fromJson<String?>(json['comment']),
+      orderId: serializer.fromJson<String>(json['orderId']),
+      productId: serializer.fromJson<String?>(json['productId']),
+      productName: serializer.fromJson<String>(json['productName']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unitPrice: serializer.fromJson<double>(json['unitPrice']),
+      vat: serializer.fromJson<double>(json['vat']),
+      validatedAt: serializer.fromJson<DateTime?>(json['validatedAt']),
+      status: serializer.fromJson<String>(json['status']),
+      createdById: serializer.fromJson<String?>(json['createdById']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'comment': serializer.toJson<String?>(comment),
+      'orderId': serializer.toJson<String>(orderId),
+      'productId': serializer.toJson<String?>(productId),
+      'productName': serializer.toJson<String>(productName),
+      'quantity': serializer.toJson<int>(quantity),
+      'unitPrice': serializer.toJson<double>(unitPrice),
+      'vat': serializer.toJson<double>(vat),
+      'validatedAt': serializer.toJson<DateTime?>(validatedAt),
+      'status': serializer.toJson<String>(status),
+      'createdById': serializer.toJson<String?>(createdById),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  OrderItemDriftData copyWith(
+          {String? id,
+          Value<String?> comment = const Value.absent(),
+          String? orderId,
+          Value<String?> productId = const Value.absent(),
+          String? productName,
+          int? quantity,
+          double? unitPrice,
+          double? vat,
+          Value<DateTime?> validatedAt = const Value.absent(),
+          String? status,
+          Value<String?> createdById = const Value.absent(),
+          Value<DateTime?> deletedAt = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      OrderItemDriftData(
+        id: id ?? this.id,
+        comment: comment.present ? comment.value : this.comment,
+        orderId: orderId ?? this.orderId,
+        productId: productId.present ? productId.value : this.productId,
+        productName: productName ?? this.productName,
+        quantity: quantity ?? this.quantity,
+        unitPrice: unitPrice ?? this.unitPrice,
+        vat: vat ?? this.vat,
+        validatedAt: validatedAt.present ? validatedAt.value : this.validatedAt,
+        status: status ?? this.status,
+        createdById: createdById.present ? createdById.value : this.createdById,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  OrderItemDriftData copyWithCompanion(OrderItemDriftCompanion data) {
+    return OrderItemDriftData(
+      id: data.id.present ? data.id.value : this.id,
+      comment: data.comment.present ? data.comment.value : this.comment,
+      orderId: data.orderId.present ? data.orderId.value : this.orderId,
+      productId: data.productId.present ? data.productId.value : this.productId,
+      productName:
+          data.productName.present ? data.productName.value : this.productName,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unitPrice: data.unitPrice.present ? data.unitPrice.value : this.unitPrice,
+      vat: data.vat.present ? data.vat.value : this.vat,
+      validatedAt:
+          data.validatedAt.present ? data.validatedAt.value : this.validatedAt,
+      status: data.status.present ? data.status.value : this.status,
+      createdById:
+          data.createdById.present ? data.createdById.value : this.createdById,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderItemDriftData(')
+          ..write('id: $id, ')
+          ..write('comment: $comment, ')
+          ..write('orderId: $orderId, ')
+          ..write('productId: $productId, ')
+          ..write('productName: $productName, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPrice: $unitPrice, ')
+          ..write('vat: $vat, ')
+          ..write('validatedAt: $validatedAt, ')
+          ..write('status: $status, ')
+          ..write('createdById: $createdById, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      id,
+      comment,
+      orderId,
+      productId,
+      productName,
+      quantity,
+      unitPrice,
+      vat,
+      validatedAt,
+      status,
+      createdById,
+      deletedAt,
+      createdAt,
+      updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OrderItemDriftData &&
+          other.id == this.id &&
+          other.comment == this.comment &&
+          other.orderId == this.orderId &&
+          other.productId == this.productId &&
+          other.productName == this.productName &&
+          other.quantity == this.quantity &&
+          other.unitPrice == this.unitPrice &&
+          other.vat == this.vat &&
+          other.validatedAt == this.validatedAt &&
+          other.status == this.status &&
+          other.createdById == this.createdById &&
+          other.deletedAt == this.deletedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class OrderItemDriftCompanion extends UpdateCompanion<OrderItemDriftData> {
+  final Value<String> id;
+  final Value<String?> comment;
+  final Value<String> orderId;
+  final Value<String?> productId;
+  final Value<String> productName;
+  final Value<int> quantity;
+  final Value<double> unitPrice;
+  final Value<double> vat;
+  final Value<DateTime?> validatedAt;
+  final Value<String> status;
+  final Value<String?> createdById;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const OrderItemDriftCompanion({
+    this.id = const Value.absent(),
+    this.comment = const Value.absent(),
+    this.orderId = const Value.absent(),
+    this.productId = const Value.absent(),
+    this.productName = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unitPrice = const Value.absent(),
+    this.vat = const Value.absent(),
+    this.validatedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdById = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OrderItemDriftCompanion.insert({
+    required String id,
+    this.comment = const Value.absent(),
+    required String orderId,
+    this.productId = const Value.absent(),
+    required String productName,
+    required int quantity,
+    this.unitPrice = const Value.absent(),
+    this.vat = const Value.absent(),
+    this.validatedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.createdById = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        orderId = Value(orderId),
+        productName = Value(productName),
+        quantity = Value(quantity),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<OrderItemDriftData> custom({
+    Expression<String>? id,
+    Expression<String>? comment,
+    Expression<String>? orderId,
+    Expression<String>? productId,
+    Expression<String>? productName,
+    Expression<int>? quantity,
+    Expression<double>? unitPrice,
+    Expression<double>? vat,
+    Expression<DateTime>? validatedAt,
+    Expression<String>? status,
+    Expression<String>? createdById,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (comment != null) 'comment': comment,
+      if (orderId != null) 'order_id': orderId,
+      if (productId != null) 'product_id': productId,
+      if (productName != null) 'product_name': productName,
+      if (quantity != null) 'quantity': quantity,
+      if (unitPrice != null) 'unit_price': unitPrice,
+      if (vat != null) 'vat': vat,
+      if (validatedAt != null) 'validated_at': validatedAt,
+      if (status != null) 'status': status,
+      if (createdById != null) 'created_by_id': createdById,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OrderItemDriftCompanion copyWith(
+      {Value<String>? id,
+      Value<String?>? comment,
+      Value<String>? orderId,
+      Value<String?>? productId,
+      Value<String>? productName,
+      Value<int>? quantity,
+      Value<double>? unitPrice,
+      Value<double>? vat,
+      Value<DateTime?>? validatedAt,
+      Value<String>? status,
+      Value<String?>? createdById,
+      Value<DateTime?>? deletedAt,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return OrderItemDriftCompanion(
+      id: id ?? this.id,
+      comment: comment ?? this.comment,
+      orderId: orderId ?? this.orderId,
+      productId: productId ?? this.productId,
+      productName: productName ?? this.productName,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      vat: vat ?? this.vat,
+      validatedAt: validatedAt ?? this.validatedAt,
+      status: status ?? this.status,
+      createdById: createdById ?? this.createdById,
+      deletedAt: deletedAt ?? this.deletedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (comment.present) {
+      map['comment'] = Variable<String>(comment.value);
+    }
+    if (orderId.present) {
+      map['order_id'] = Variable<String>(orderId.value);
+    }
+    if (productId.present) {
+      map['product_id'] = Variable<String>(productId.value);
+    }
+    if (productName.present) {
+      map['product_name'] = Variable<String>(productName.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unitPrice.present) {
+      map['unit_price'] = Variable<double>(unitPrice.value);
+    }
+    if (vat.present) {
+      map['vat'] = Variable<double>(vat.value);
+    }
+    if (validatedAt.present) {
+      map['validated_at'] = Variable<DateTime>(validatedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (createdById.present) {
+      map['created_by_id'] = Variable<String>(createdById.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderItemDriftCompanion(')
+          ..write('id: $id, ')
+          ..write('comment: $comment, ')
+          ..write('orderId: $orderId, ')
+          ..write('productId: $productId, ')
+          ..write('productName: $productName, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPrice: $unitPrice, ')
+          ..write('vat: $vat, ')
+          ..write('validatedAt: $validatedAt, ')
+          ..write('status: $status, ')
+          ..write('createdById: $createdById, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $OrderItemOptionsDriftTable extends OrderItemOptionsDrift
+    with TableInfo<$OrderItemOptionsDriftTable, OrderItemOptionsDriftData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $OrderItemOptionsDriftTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+      'id', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+  static const VerificationMeta _orderItemIdMeta =
+      const VerificationMeta('orderItemId');
+  @override
+  late final GeneratedColumn<String> orderItemId = GeneratedColumn<String>(
+      'order_item_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _optionIdMeta =
+      const VerificationMeta('optionId');
+  @override
+  late final GeneratedColumn<String> optionId = GeneratedColumn<String>(
+      'option_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _quantityMeta =
+      const VerificationMeta('quantity');
+  @override
+  late final GeneratedColumn<int> quantity = GeneratedColumn<int>(
+      'quantity', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _unitPriceMeta =
+      const VerificationMeta('unitPrice');
+  @override
+  late final GeneratedColumn<double> unitPrice = GeneratedColumn<double>(
+      'unit_price', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _vatMeta = const VerificationMeta('vat');
+  @override
+  late final GeneratedColumn<double> vat = GeneratedColumn<double>(
+      'vat', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _optionNameMeta =
+      const VerificationMeta('optionName');
+  @override
+  late final GeneratedColumn<String> optionName = GeneratedColumn<String>(
+      'option_name', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _createdByIdMeta =
+      const VerificationMeta('createdById');
+  @override
+  late final GeneratedColumn<String> createdById = GeneratedColumn<String>(
+      'created_by_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _deletedAtMeta =
+      const VerificationMeta('deletedAt');
+  @override
+  late final GeneratedColumn<DateTime> deletedAt = GeneratedColumn<DateTime>(
+      'deleted_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _createdAtMeta =
+      const VerificationMeta('createdAt');
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+      'created_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _updatedAtMeta =
+      const VerificationMeta('updatedAt');
+  @override
+  late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>(
+      'updated_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        id,
+        orderItemId,
+        optionId,
+        quantity,
+        unitPrice,
+        vat,
+        optionName,
+        createdById,
+        deletedAt,
+        createdAt,
+        updatedAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'order_item_options_drift';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<OrderItemOptionsDriftData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('order_item_id')) {
+      context.handle(
+          _orderItemIdMeta,
+          orderItemId.isAcceptableOrUnknown(
+              data['order_item_id']!, _orderItemIdMeta));
+    } else if (isInserting) {
+      context.missing(_orderItemIdMeta);
+    }
+    if (data.containsKey('option_id')) {
+      context.handle(_optionIdMeta,
+          optionId.isAcceptableOrUnknown(data['option_id']!, _optionIdMeta));
+    }
+    if (data.containsKey('quantity')) {
+      context.handle(_quantityMeta,
+          quantity.isAcceptableOrUnknown(data['quantity']!, _quantityMeta));
+    } else if (isInserting) {
+      context.missing(_quantityMeta);
+    }
+    if (data.containsKey('unit_price')) {
+      context.handle(_unitPriceMeta,
+          unitPrice.isAcceptableOrUnknown(data['unit_price']!, _unitPriceMeta));
+    }
+    if (data.containsKey('vat')) {
+      context.handle(
+          _vatMeta, vat.isAcceptableOrUnknown(data['vat']!, _vatMeta));
+    }
+    if (data.containsKey('option_name')) {
+      context.handle(
+          _optionNameMeta,
+          optionName.isAcceptableOrUnknown(
+              data['option_name']!, _optionNameMeta));
+    } else if (isInserting) {
+      context.missing(_optionNameMeta);
+    }
+    if (data.containsKey('created_by_id')) {
+      context.handle(
+          _createdByIdMeta,
+          createdById.isAcceptableOrUnknown(
+              data['created_by_id']!, _createdByIdMeta));
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(_deletedAtMeta,
+          deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta));
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(_createdAtMeta,
+          createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  OrderItemOptionsDriftData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return OrderItemOptionsDriftData(
+      id: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
+      orderItemId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}order_item_id'])!,
+      optionId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}option_id']),
+      quantity: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}quantity'])!,
+      unitPrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}unit_price'])!,
+      vat: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}vat'])!,
+      optionName: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}option_name'])!,
+      createdById: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}created_by_id']),
+      deletedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}deleted_at']),
+      createdAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!,
+      updatedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!,
+    );
+  }
+
+  @override
+  $OrderItemOptionsDriftTable createAlias(String alias) {
+    return $OrderItemOptionsDriftTable(attachedDatabase, alias);
+  }
+}
+
+class OrderItemOptionsDriftData extends DataClass
+    implements Insertable<OrderItemOptionsDriftData> {
+  final String id;
+  final String orderItemId;
+  final String? optionId;
+  final int quantity;
+  final double unitPrice;
+  final double vat;
+  final String optionName;
+  final String? createdById;
+  final DateTime? deletedAt;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  const OrderItemOptionsDriftData(
+      {required this.id,
+      required this.orderItemId,
+      this.optionId,
+      required this.quantity,
+      required this.unitPrice,
+      required this.vat,
+      required this.optionName,
+      this.createdById,
+      this.deletedAt,
+      required this.createdAt,
+      required this.updatedAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['order_item_id'] = Variable<String>(orderItemId);
+    if (!nullToAbsent || optionId != null) {
+      map['option_id'] = Variable<String>(optionId);
+    }
+    map['quantity'] = Variable<int>(quantity);
+    map['unit_price'] = Variable<double>(unitPrice);
+    map['vat'] = Variable<double>(vat);
+    map['option_name'] = Variable<String>(optionName);
+    if (!nullToAbsent || createdById != null) {
+      map['created_by_id'] = Variable<String>(createdById);
+    }
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt);
+    }
+    map['created_at'] = Variable<DateTime>(createdAt);
+    map['updated_at'] = Variable<DateTime>(updatedAt);
+    return map;
+  }
+
+  OrderItemOptionsDriftCompanion toCompanion(bool nullToAbsent) {
+    return OrderItemOptionsDriftCompanion(
+      id: Value(id),
+      orderItemId: Value(orderItemId),
+      optionId: optionId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(optionId),
+      quantity: Value(quantity),
+      unitPrice: Value(unitPrice),
+      vat: Value(vat),
+      optionName: Value(optionName),
+      createdById: createdById == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdById),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory OrderItemOptionsDriftData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return OrderItemOptionsDriftData(
+      id: serializer.fromJson<String>(json['id']),
+      orderItemId: serializer.fromJson<String>(json['orderItemId']),
+      optionId: serializer.fromJson<String?>(json['optionId']),
+      quantity: serializer.fromJson<int>(json['quantity']),
+      unitPrice: serializer.fromJson<double>(json['unitPrice']),
+      vat: serializer.fromJson<double>(json['vat']),
+      optionName: serializer.fromJson<String>(json['optionName']),
+      createdById: serializer.fromJson<String?>(json['createdById']),
+      deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'orderItemId': serializer.toJson<String>(orderItemId),
+      'optionId': serializer.toJson<String?>(optionId),
+      'quantity': serializer.toJson<int>(quantity),
+      'unitPrice': serializer.toJson<double>(unitPrice),
+      'vat': serializer.toJson<double>(vat),
+      'optionName': serializer.toJson<String>(optionName),
+      'createdById': serializer.toJson<String?>(createdById),
+      'deletedAt': serializer.toJson<DateTime?>(deletedAt),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+    };
+  }
+
+  OrderItemOptionsDriftData copyWith(
+          {String? id,
+          String? orderItemId,
+          Value<String?> optionId = const Value.absent(),
+          int? quantity,
+          double? unitPrice,
+          double? vat,
+          String? optionName,
+          Value<String?> createdById = const Value.absent(),
+          Value<DateTime?> deletedAt = const Value.absent(),
+          DateTime? createdAt,
+          DateTime? updatedAt}) =>
+      OrderItemOptionsDriftData(
+        id: id ?? this.id,
+        orderItemId: orderItemId ?? this.orderItemId,
+        optionId: optionId.present ? optionId.value : this.optionId,
+        quantity: quantity ?? this.quantity,
+        unitPrice: unitPrice ?? this.unitPrice,
+        vat: vat ?? this.vat,
+        optionName: optionName ?? this.optionName,
+        createdById: createdById.present ? createdById.value : this.createdById,
+        deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+        createdAt: createdAt ?? this.createdAt,
+        updatedAt: updatedAt ?? this.updatedAt,
+      );
+  OrderItemOptionsDriftData copyWithCompanion(
+      OrderItemOptionsDriftCompanion data) {
+    return OrderItemOptionsDriftData(
+      id: data.id.present ? data.id.value : this.id,
+      orderItemId:
+          data.orderItemId.present ? data.orderItemId.value : this.orderItemId,
+      optionId: data.optionId.present ? data.optionId.value : this.optionId,
+      quantity: data.quantity.present ? data.quantity.value : this.quantity,
+      unitPrice: data.unitPrice.present ? data.unitPrice.value : this.unitPrice,
+      vat: data.vat.present ? data.vat.value : this.vat,
+      optionName:
+          data.optionName.present ? data.optionName.value : this.optionName,
+      createdById:
+          data.createdById.present ? data.createdById.value : this.createdById,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderItemOptionsDriftData(')
+          ..write('id: $id, ')
+          ..write('orderItemId: $orderItemId, ')
+          ..write('optionId: $optionId, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPrice: $unitPrice, ')
+          ..write('vat: $vat, ')
+          ..write('optionName: $optionName, ')
+          ..write('createdById: $createdById, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, orderItemId, optionId, quantity,
+      unitPrice, vat, optionName, createdById, deletedAt, createdAt, updatedAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is OrderItemOptionsDriftData &&
+          other.id == this.id &&
+          other.orderItemId == this.orderItemId &&
+          other.optionId == this.optionId &&
+          other.quantity == this.quantity &&
+          other.unitPrice == this.unitPrice &&
+          other.vat == this.vat &&
+          other.optionName == this.optionName &&
+          other.createdById == this.createdById &&
+          other.deletedAt == this.deletedAt &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class OrderItemOptionsDriftCompanion
+    extends UpdateCompanion<OrderItemOptionsDriftData> {
+  final Value<String> id;
+  final Value<String> orderItemId;
+  final Value<String?> optionId;
+  final Value<int> quantity;
+  final Value<double> unitPrice;
+  final Value<double> vat;
+  final Value<String> optionName;
+  final Value<String?> createdById;
+  final Value<DateTime?> deletedAt;
+  final Value<DateTime> createdAt;
+  final Value<DateTime> updatedAt;
+  final Value<int> rowid;
+  const OrderItemOptionsDriftCompanion({
+    this.id = const Value.absent(),
+    this.orderItemId = const Value.absent(),
+    this.optionId = const Value.absent(),
+    this.quantity = const Value.absent(),
+    this.unitPrice = const Value.absent(),
+    this.vat = const Value.absent(),
+    this.optionName = const Value.absent(),
+    this.createdById = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  OrderItemOptionsDriftCompanion.insert({
+    required String id,
+    required String orderItemId,
+    this.optionId = const Value.absent(),
+    required int quantity,
+    this.unitPrice = const Value.absent(),
+    this.vat = const Value.absent(),
+    required String optionName,
+    this.createdById = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    required DateTime createdAt,
+    required DateTime updatedAt,
+    this.rowid = const Value.absent(),
+  })  : id = Value(id),
+        orderItemId = Value(orderItemId),
+        quantity = Value(quantity),
+        optionName = Value(optionName),
+        createdAt = Value(createdAt),
+        updatedAt = Value(updatedAt);
+  static Insertable<OrderItemOptionsDriftData> custom({
+    Expression<String>? id,
+    Expression<String>? orderItemId,
+    Expression<String>? optionId,
+    Expression<int>? quantity,
+    Expression<double>? unitPrice,
+    Expression<double>? vat,
+    Expression<String>? optionName,
+    Expression<String>? createdById,
+    Expression<DateTime>? deletedAt,
+    Expression<DateTime>? createdAt,
+    Expression<DateTime>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (orderItemId != null) 'order_item_id': orderItemId,
+      if (optionId != null) 'option_id': optionId,
+      if (quantity != null) 'quantity': quantity,
+      if (unitPrice != null) 'unit_price': unitPrice,
+      if (vat != null) 'vat': vat,
+      if (optionName != null) 'option_name': optionName,
+      if (createdById != null) 'created_by_id': createdById,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  OrderItemOptionsDriftCompanion copyWith(
+      {Value<String>? id,
+      Value<String>? orderItemId,
+      Value<String?>? optionId,
+      Value<int>? quantity,
+      Value<double>? unitPrice,
+      Value<double>? vat,
+      Value<String>? optionName,
+      Value<String?>? createdById,
+      Value<DateTime?>? deletedAt,
+      Value<DateTime>? createdAt,
+      Value<DateTime>? updatedAt,
+      Value<int>? rowid}) {
+    return OrderItemOptionsDriftCompanion(
+      id: id ?? this.id,
+      orderItemId: orderItemId ?? this.orderItemId,
+      optionId: optionId ?? this.optionId,
+      quantity: quantity ?? this.quantity,
+      unitPrice: unitPrice ?? this.unitPrice,
+      vat: vat ?? this.vat,
+      optionName: optionName ?? this.optionName,
+      createdById: createdById ?? this.createdById,
+      deletedAt: deletedAt ?? this.deletedAt,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (orderItemId.present) {
+      map['order_item_id'] = Variable<String>(orderItemId.value);
+    }
+    if (optionId.present) {
+      map['option_id'] = Variable<String>(optionId.value);
+    }
+    if (quantity.present) {
+      map['quantity'] = Variable<int>(quantity.value);
+    }
+    if (unitPrice.present) {
+      map['unit_price'] = Variable<double>(unitPrice.value);
+    }
+    if (vat.present) {
+      map['vat'] = Variable<double>(vat.value);
+    }
+    if (optionName.present) {
+      map['option_name'] = Variable<String>(optionName.value);
+    }
+    if (createdById.present) {
+      map['created_by_id'] = Variable<String>(createdById.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<DateTime>(deletedAt.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('OrderItemOptionsDriftCompanion(')
+          ..write('id: $id, ')
+          ..write('orderItemId: $orderItemId, ')
+          ..write('optionId: $optionId, ')
+          ..write('quantity: $quantity, ')
+          ..write('unitPrice: $unitPrice, ')
+          ..write('vat: $vat, ')
+          ..write('optionName: $optionName, ')
+          ..write('createdById: $createdById, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -4750,6 +6506,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RestaurantTableDriftTable restaurantTableDrift =
       $RestaurantTableDriftTable(this);
   late final $DiscountsDriftTable discountsDrift = $DiscountsDriftTable(this);
+  late final $OrderDriftTable orderDrift = $OrderDriftTable(this);
+  late final $OrderItemDriftTable orderItemDrift = $OrderItemDriftTable(this);
+  late final $OrderItemOptionsDriftTable orderItemOptionsDrift =
+      $OrderItemOptionsDriftTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -4763,7 +6523,10 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         auditLogsDrift,
         planDrift,
         restaurantTableDrift,
-        discountsDrift
+        discountsDrift,
+        orderDrift,
+        orderItemDrift,
+        orderItemOptionsDrift
       ];
 }
 
@@ -8033,6 +9796,831 @@ typedef $$DiscountsDriftTableProcessedTableManager = ProcessedTableManager<
     ),
     DiscountsDriftData,
     PrefetchHooks Function()>;
+typedef $$OrderDriftTableCreateCompanionBuilder = OrderDriftCompanion Function({
+  required String id,
+  required String tableId,
+  required String groupId,
+  Value<String?> paymentId,
+  Value<DateTime?> validatedAt,
+  Value<String> status,
+  Value<String?> createdById,
+  Value<DateTime?> deletedAt,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$OrderDriftTableUpdateCompanionBuilder = OrderDriftCompanion Function({
+  Value<String> id,
+  Value<String> tableId,
+  Value<String> groupId,
+  Value<String?> paymentId,
+  Value<DateTime?> validatedAt,
+  Value<String> status,
+  Value<String?> createdById,
+  Value<DateTime?> deletedAt,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$OrderDriftTableFilterComposer
+    extends Composer<_$AppDatabase, $OrderDriftTable> {
+  $$OrderDriftTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get tableId => $composableBuilder(
+      column: $table.tableId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get groupId => $composableBuilder(
+      column: $table.groupId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get paymentId => $composableBuilder(
+      column: $table.paymentId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get validatedAt => $composableBuilder(
+      column: $table.validatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$OrderDriftTableOrderingComposer
+    extends Composer<_$AppDatabase, $OrderDriftTable> {
+  $$OrderDriftTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get tableId => $composableBuilder(
+      column: $table.tableId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get groupId => $composableBuilder(
+      column: $table.groupId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get paymentId => $composableBuilder(
+      column: $table.paymentId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get validatedAt => $composableBuilder(
+      column: $table.validatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$OrderDriftTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OrderDriftTable> {
+  $$OrderDriftTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get tableId =>
+      $composableBuilder(column: $table.tableId, builder: (column) => column);
+
+  GeneratedColumn<String> get groupId =>
+      $composableBuilder(column: $table.groupId, builder: (column) => column);
+
+  GeneratedColumn<String> get paymentId =>
+      $composableBuilder(column: $table.paymentId, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get validatedAt => $composableBuilder(
+      column: $table.validatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$OrderDriftTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $OrderDriftTable,
+    OrderDriftData,
+    $$OrderDriftTableFilterComposer,
+    $$OrderDriftTableOrderingComposer,
+    $$OrderDriftTableAnnotationComposer,
+    $$OrderDriftTableCreateCompanionBuilder,
+    $$OrderDriftTableUpdateCompanionBuilder,
+    (
+      OrderDriftData,
+      BaseReferences<_$AppDatabase, $OrderDriftTable, OrderDriftData>
+    ),
+    OrderDriftData,
+    PrefetchHooks Function()> {
+  $$OrderDriftTableTableManager(_$AppDatabase db, $OrderDriftTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OrderDriftTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OrderDriftTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OrderDriftTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> tableId = const Value.absent(),
+            Value<String> groupId = const Value.absent(),
+            Value<String?> paymentId = const Value.absent(),
+            Value<DateTime?> validatedAt = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> createdById = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              OrderDriftCompanion(
+            id: id,
+            tableId: tableId,
+            groupId: groupId,
+            paymentId: paymentId,
+            validatedAt: validatedAt,
+            status: status,
+            createdById: createdById,
+            deletedAt: deletedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String tableId,
+            required String groupId,
+            Value<String?> paymentId = const Value.absent(),
+            Value<DateTime?> validatedAt = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> createdById = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            required DateTime createdAt,
+            required DateTime updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              OrderDriftCompanion.insert(
+            id: id,
+            tableId: tableId,
+            groupId: groupId,
+            paymentId: paymentId,
+            validatedAt: validatedAt,
+            status: status,
+            createdById: createdById,
+            deletedAt: deletedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$OrderDriftTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $OrderDriftTable,
+    OrderDriftData,
+    $$OrderDriftTableFilterComposer,
+    $$OrderDriftTableOrderingComposer,
+    $$OrderDriftTableAnnotationComposer,
+    $$OrderDriftTableCreateCompanionBuilder,
+    $$OrderDriftTableUpdateCompanionBuilder,
+    (
+      OrderDriftData,
+      BaseReferences<_$AppDatabase, $OrderDriftTable, OrderDriftData>
+    ),
+    OrderDriftData,
+    PrefetchHooks Function()>;
+typedef $$OrderItemDriftTableCreateCompanionBuilder = OrderItemDriftCompanion
+    Function({
+  required String id,
+  Value<String?> comment,
+  required String orderId,
+  Value<String?> productId,
+  required String productName,
+  required int quantity,
+  Value<double> unitPrice,
+  Value<double> vat,
+  Value<DateTime?> validatedAt,
+  Value<String> status,
+  Value<String?> createdById,
+  Value<DateTime?> deletedAt,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$OrderItemDriftTableUpdateCompanionBuilder = OrderItemDriftCompanion
+    Function({
+  Value<String> id,
+  Value<String?> comment,
+  Value<String> orderId,
+  Value<String?> productId,
+  Value<String> productName,
+  Value<int> quantity,
+  Value<double> unitPrice,
+  Value<double> vat,
+  Value<DateTime?> validatedAt,
+  Value<String> status,
+  Value<String?> createdById,
+  Value<DateTime?> deletedAt,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$OrderItemDriftTableFilterComposer
+    extends Composer<_$AppDatabase, $OrderItemDriftTable> {
+  $$OrderItemDriftTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get comment => $composableBuilder(
+      column: $table.comment, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get orderId => $composableBuilder(
+      column: $table.orderId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get productId => $composableBuilder(
+      column: $table.productId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get productName => $composableBuilder(
+      column: $table.productName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+      column: $table.quantity, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get unitPrice => $composableBuilder(
+      column: $table.unitPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vat => $composableBuilder(
+      column: $table.vat, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get validatedAt => $composableBuilder(
+      column: $table.validatedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$OrderItemDriftTableOrderingComposer
+    extends Composer<_$AppDatabase, $OrderItemDriftTable> {
+  $$OrderItemDriftTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get comment => $composableBuilder(
+      column: $table.comment, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get orderId => $composableBuilder(
+      column: $table.orderId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get productId => $composableBuilder(
+      column: $table.productId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get productName => $composableBuilder(
+      column: $table.productName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+      column: $table.quantity, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get unitPrice => $composableBuilder(
+      column: $table.unitPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vat => $composableBuilder(
+      column: $table.vat, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get validatedAt => $composableBuilder(
+      column: $table.validatedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get status => $composableBuilder(
+      column: $table.status, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$OrderItemDriftTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OrderItemDriftTable> {
+  $$OrderItemDriftTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get comment =>
+      $composableBuilder(column: $table.comment, builder: (column) => column);
+
+  GeneratedColumn<String> get orderId =>
+      $composableBuilder(column: $table.orderId, builder: (column) => column);
+
+  GeneratedColumn<String> get productId =>
+      $composableBuilder(column: $table.productId, builder: (column) => column);
+
+  GeneratedColumn<String> get productName => $composableBuilder(
+      column: $table.productName, builder: (column) => column);
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<double> get unitPrice =>
+      $composableBuilder(column: $table.unitPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get vat =>
+      $composableBuilder(column: $table.vat, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get validatedAt => $composableBuilder(
+      column: $table.validatedAt, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$OrderItemDriftTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $OrderItemDriftTable,
+    OrderItemDriftData,
+    $$OrderItemDriftTableFilterComposer,
+    $$OrderItemDriftTableOrderingComposer,
+    $$OrderItemDriftTableAnnotationComposer,
+    $$OrderItemDriftTableCreateCompanionBuilder,
+    $$OrderItemDriftTableUpdateCompanionBuilder,
+    (
+      OrderItemDriftData,
+      BaseReferences<_$AppDatabase, $OrderItemDriftTable, OrderItemDriftData>
+    ),
+    OrderItemDriftData,
+    PrefetchHooks Function()> {
+  $$OrderItemDriftTableTableManager(
+      _$AppDatabase db, $OrderItemDriftTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OrderItemDriftTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OrderItemDriftTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OrderItemDriftTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String?> comment = const Value.absent(),
+            Value<String> orderId = const Value.absent(),
+            Value<String?> productId = const Value.absent(),
+            Value<String> productName = const Value.absent(),
+            Value<int> quantity = const Value.absent(),
+            Value<double> unitPrice = const Value.absent(),
+            Value<double> vat = const Value.absent(),
+            Value<DateTime?> validatedAt = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> createdById = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              OrderItemDriftCompanion(
+            id: id,
+            comment: comment,
+            orderId: orderId,
+            productId: productId,
+            productName: productName,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            vat: vat,
+            validatedAt: validatedAt,
+            status: status,
+            createdById: createdById,
+            deletedAt: deletedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            Value<String?> comment = const Value.absent(),
+            required String orderId,
+            Value<String?> productId = const Value.absent(),
+            required String productName,
+            required int quantity,
+            Value<double> unitPrice = const Value.absent(),
+            Value<double> vat = const Value.absent(),
+            Value<DateTime?> validatedAt = const Value.absent(),
+            Value<String> status = const Value.absent(),
+            Value<String?> createdById = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            required DateTime createdAt,
+            required DateTime updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              OrderItemDriftCompanion.insert(
+            id: id,
+            comment: comment,
+            orderId: orderId,
+            productId: productId,
+            productName: productName,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            vat: vat,
+            validatedAt: validatedAt,
+            status: status,
+            createdById: createdById,
+            deletedAt: deletedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$OrderItemDriftTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $OrderItemDriftTable,
+    OrderItemDriftData,
+    $$OrderItemDriftTableFilterComposer,
+    $$OrderItemDriftTableOrderingComposer,
+    $$OrderItemDriftTableAnnotationComposer,
+    $$OrderItemDriftTableCreateCompanionBuilder,
+    $$OrderItemDriftTableUpdateCompanionBuilder,
+    (
+      OrderItemDriftData,
+      BaseReferences<_$AppDatabase, $OrderItemDriftTable, OrderItemDriftData>
+    ),
+    OrderItemDriftData,
+    PrefetchHooks Function()>;
+typedef $$OrderItemOptionsDriftTableCreateCompanionBuilder
+    = OrderItemOptionsDriftCompanion Function({
+  required String id,
+  required String orderItemId,
+  Value<String?> optionId,
+  required int quantity,
+  Value<double> unitPrice,
+  Value<double> vat,
+  required String optionName,
+  Value<String?> createdById,
+  Value<DateTime?> deletedAt,
+  required DateTime createdAt,
+  required DateTime updatedAt,
+  Value<int> rowid,
+});
+typedef $$OrderItemOptionsDriftTableUpdateCompanionBuilder
+    = OrderItemOptionsDriftCompanion Function({
+  Value<String> id,
+  Value<String> orderItemId,
+  Value<String?> optionId,
+  Value<int> quantity,
+  Value<double> unitPrice,
+  Value<double> vat,
+  Value<String> optionName,
+  Value<String?> createdById,
+  Value<DateTime?> deletedAt,
+  Value<DateTime> createdAt,
+  Value<DateTime> updatedAt,
+  Value<int> rowid,
+});
+
+class $$OrderItemOptionsDriftTableFilterComposer
+    extends Composer<_$AppDatabase, $OrderItemOptionsDriftTable> {
+  $$OrderItemOptionsDriftTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get orderItemId => $composableBuilder(
+      column: $table.orderItemId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get optionId => $composableBuilder(
+      column: $table.optionId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get quantity => $composableBuilder(
+      column: $table.quantity, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get unitPrice => $composableBuilder(
+      column: $table.unitPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get vat => $composableBuilder(
+      column: $table.vat, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get optionName => $composableBuilder(
+      column: $table.optionName, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnFilters(column));
+}
+
+class $$OrderItemOptionsDriftTableOrderingComposer
+    extends Composer<_$AppDatabase, $OrderItemOptionsDriftTable> {
+  $$OrderItemOptionsDriftTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get orderItemId => $composableBuilder(
+      column: $table.orderItemId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get optionId => $composableBuilder(
+      column: $table.optionId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get quantity => $composableBuilder(
+      column: $table.quantity, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get unitPrice => $composableBuilder(
+      column: $table.unitPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get vat => $composableBuilder(
+      column: $table.vat, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get optionName => $composableBuilder(
+      column: $table.optionName, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get deletedAt => $composableBuilder(
+      column: $table.deletedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt, builder: (column) => ColumnOrderings(column));
+}
+
+class $$OrderItemOptionsDriftTableAnnotationComposer
+    extends Composer<_$AppDatabase, $OrderItemOptionsDriftTable> {
+  $$OrderItemOptionsDriftTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get orderItemId => $composableBuilder(
+      column: $table.orderItemId, builder: (column) => column);
+
+  GeneratedColumn<String> get optionId =>
+      $composableBuilder(column: $table.optionId, builder: (column) => column);
+
+  GeneratedColumn<int> get quantity =>
+      $composableBuilder(column: $table.quantity, builder: (column) => column);
+
+  GeneratedColumn<double> get unitPrice =>
+      $composableBuilder(column: $table.unitPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get vat =>
+      $composableBuilder(column: $table.vat, builder: (column) => column);
+
+  GeneratedColumn<String> get optionName => $composableBuilder(
+      column: $table.optionName, builder: (column) => column);
+
+  GeneratedColumn<String> get createdById => $composableBuilder(
+      column: $table.createdById, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$OrderItemOptionsDriftTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $OrderItemOptionsDriftTable,
+    OrderItemOptionsDriftData,
+    $$OrderItemOptionsDriftTableFilterComposer,
+    $$OrderItemOptionsDriftTableOrderingComposer,
+    $$OrderItemOptionsDriftTableAnnotationComposer,
+    $$OrderItemOptionsDriftTableCreateCompanionBuilder,
+    $$OrderItemOptionsDriftTableUpdateCompanionBuilder,
+    (
+      OrderItemOptionsDriftData,
+      BaseReferences<_$AppDatabase, $OrderItemOptionsDriftTable,
+          OrderItemOptionsDriftData>
+    ),
+    OrderItemOptionsDriftData,
+    PrefetchHooks Function()> {
+  $$OrderItemOptionsDriftTableTableManager(
+      _$AppDatabase db, $OrderItemOptionsDriftTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$OrderItemOptionsDriftTableFilterComposer(
+                  $db: db, $table: table),
+          createOrderingComposer: () =>
+              $$OrderItemOptionsDriftTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$OrderItemOptionsDriftTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> id = const Value.absent(),
+            Value<String> orderItemId = const Value.absent(),
+            Value<String?> optionId = const Value.absent(),
+            Value<int> quantity = const Value.absent(),
+            Value<double> unitPrice = const Value.absent(),
+            Value<double> vat = const Value.absent(),
+            Value<String> optionName = const Value.absent(),
+            Value<String?> createdById = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            Value<DateTime> createdAt = const Value.absent(),
+            Value<DateTime> updatedAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              OrderItemOptionsDriftCompanion(
+            id: id,
+            orderItemId: orderItemId,
+            optionId: optionId,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            vat: vat,
+            optionName: optionName,
+            createdById: createdById,
+            deletedAt: deletedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String id,
+            required String orderItemId,
+            Value<String?> optionId = const Value.absent(),
+            required int quantity,
+            Value<double> unitPrice = const Value.absent(),
+            Value<double> vat = const Value.absent(),
+            required String optionName,
+            Value<String?> createdById = const Value.absent(),
+            Value<DateTime?> deletedAt = const Value.absent(),
+            required DateTime createdAt,
+            required DateTime updatedAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              OrderItemOptionsDriftCompanion.insert(
+            id: id,
+            orderItemId: orderItemId,
+            optionId: optionId,
+            quantity: quantity,
+            unitPrice: unitPrice,
+            vat: vat,
+            optionName: optionName,
+            createdById: createdById,
+            deletedAt: deletedAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$OrderItemOptionsDriftTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $OrderItemOptionsDriftTable,
+        OrderItemOptionsDriftData,
+        $$OrderItemOptionsDriftTableFilterComposer,
+        $$OrderItemOptionsDriftTableOrderingComposer,
+        $$OrderItemOptionsDriftTableAnnotationComposer,
+        $$OrderItemOptionsDriftTableCreateCompanionBuilder,
+        $$OrderItemOptionsDriftTableUpdateCompanionBuilder,
+        (
+          OrderItemOptionsDriftData,
+          BaseReferences<_$AppDatabase, $OrderItemOptionsDriftTable,
+              OrderItemOptionsDriftData>
+        ),
+        OrderItemOptionsDriftData,
+        PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -8055,4 +10643,10 @@ class $AppDatabaseManager {
       $$RestaurantTableDriftTableTableManager(_db, _db.restaurantTableDrift);
   $$DiscountsDriftTableTableManager get discountsDrift =>
       $$DiscountsDriftTableTableManager(_db, _db.discountsDrift);
+  $$OrderDriftTableTableManager get orderDrift =>
+      $$OrderDriftTableTableManager(_db, _db.orderDrift);
+  $$OrderItemDriftTableTableManager get orderItemDrift =>
+      $$OrderItemDriftTableTableManager(_db, _db.orderItemDrift);
+  $$OrderItemOptionsDriftTableTableManager get orderItemOptionsDrift =>
+      $$OrderItemOptionsDriftTableTableManager(_db, _db.orderItemOptionsDrift);
 }

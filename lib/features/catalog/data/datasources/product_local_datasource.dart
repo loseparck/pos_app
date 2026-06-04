@@ -1,4 +1,5 @@
 import 'package:pos_app/data/local/db/app_database.dart';
+import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
@@ -22,17 +23,17 @@ abstract class ProductLocalDataSource {
 
   Future<Option?> updateOption(Option option);
   Future<Item?> updateItem(Item item);
-
-  //Future<List<Option>> getOptionByProductId(String productId);
-  
   
   Future<Category?> saveCategory(Category category);
   Future<Product?> saveProduct(Product product);
+  Future<Discount?> saveDiscount(Discount discount);
 
   Future<List<Category>> getCategories();
   Future<List<Product>> getProducts();
+  Future<List<Discount>> getDiscounts();
   Future<Category?> getCategory(String id);
   Future<Product?> getProduct(String id);
+  Future<Discount?> getDiscount(String id);
   Future<List<Product>> getProductsByCategory(String categoryId);
   
 
@@ -40,7 +41,10 @@ abstract class ProductLocalDataSource {
   Future<void> removeCategoryWithChildren(String id);
   Future<void> removeProduct(String id);
   Future<void> removeProducts(List<String> ids);
+  Future<void> removeDiscount(String id);
+  Future<void> removeDiscounts(List<String> ids);
 
   Future<Category?> updateCategory(Category category);
   Future<Product?> updateProduct(Product product);
+  Future<Discount?> changeDiscountState(String discountId, bool newState);
 }

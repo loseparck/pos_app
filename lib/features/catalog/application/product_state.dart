@@ -1,3 +1,4 @@
+import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
@@ -6,6 +7,7 @@ import 'package:pos_app/features/catalog/domain/entities/option.dart';
 class ProductState{
   final List<Product> products;
   final List<Category> categories;
+  final List<Discount> dicounts;
   final List<Item> items;
   final List<Option> options;
 
@@ -19,6 +21,7 @@ class ProductState{
     required this.categories,
     required this.options,
     required this.items,
+    required this.dicounts,
     this.selectedCategoryId,
     this.selectedProductId,
     this.selectedOptionGroupId,
@@ -66,20 +69,26 @@ class ProductState{
     List<Category>? categories,
     List<Item>? items,
     List<Option>? options,
+    List<Discount>? dicounts,
     String? selectedProductId,
     String? selectedCategoryId,
     String? selectedOptionId,
     String? selectedOptionGroupId,
+    bool? resetProductId,
+    bool? resetCategoryId,
+    bool? resetOptionId,
+    bool? resetOptionGroupId,
   }){
     return ProductState(
       products: products ?? this.products,
       categories: categories ?? this.categories,
       options: options ?? this.options,
       items: items ?? this.items,
-      selectedProductId: selectedProductId ?? this.selectedProductId,
-      selectedCategoryId: selectedCategoryId ?? this.selectedCategoryId,
-      selectedOptionId: selectedOptionId ?? this.selectedOptionId,
-      selectedOptionGroupId: selectedOptionGroupId ?? this.selectedOptionGroupId
+      dicounts: dicounts ?? this.dicounts,
+      selectedProductId: resetProductId == true ? null : selectedProductId ?? this.selectedProductId,
+      selectedCategoryId: resetCategoryId == true ? null : selectedCategoryId ?? this.selectedCategoryId,
+      selectedOptionId: resetOptionId == true ? null : selectedOptionId ?? this.selectedOptionId,
+      selectedOptionGroupId: resetOptionGroupId == true ? null : selectedOptionGroupId ?? this.selectedOptionGroupId
     );
   }
 }

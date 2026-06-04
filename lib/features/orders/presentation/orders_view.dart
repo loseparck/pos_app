@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
@@ -25,7 +26,7 @@ class OrdersView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Order? order = ref.watch(ordersProvider)!.selectedOrder;
+    Order? order = ref.watch(ordersProvider).selectedOrder;
     
     final orderNotifier = ref.read(ordersProvider.notifier);
     final planNotifier = ref.read(planProvider.notifier);
@@ -46,7 +47,7 @@ class OrdersView extends ConsumerWidget {
 
                 /// ANNULER
                 ElevatedButton(
-                  onPressed: order?.status == OrderStatus.paid || order!.items.isEmpty
+                  onPressed: order?.status == OrderStatus.paid || (order != null && order.items.isEmpty)
                     ? null : () {
                         _showCancelOrderDialog(context, orderNotifier, planNotifier);
                       }
@@ -58,21 +59,21 @@ class OrdersView extends ConsumerWidget {
 
                 /// ENREGISTRER
                 ElevatedButton(
-                  onPressed: order?.status == OrderStatus.paid || order!.items.isEmpty
+                  onPressed: order?.status != OrderStatus.draft && order?.status != OrderStatus.waitingValidation
                     ? null : () {
                         orderNotifier.saveOrder();
                     planNotifier.changeTableState(TableStatus.validated);
                       },
-                  child: const Text("Enregistrera"),
+                  child: const Text("Enregistrer"),
                 ),
 
                 const SizedBox(width: 8),
 
                 /// PAIEMENT
                 ElevatedButton(
-                  onPressed: order?.status == OrderStatus.paid || order!.items.isEmpty
+                  onPressed: order?.status == OrderStatus.paid || (order != null && order.items.isEmpty)
                     ? null : () {
-                      ref.read(paymentProvider.notifier).changeSelectedOrder(order.id);
+                      ref.read(paymentProvider.notifier).changeSelectedOrder('order.id');
                         showDialog( context: context, builder: (_) => const PaymentDialog());
                       },
                   child: const Text("Paiement"),
@@ -176,7 +177,7 @@ class OrdersView extends ConsumerWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor:  const Color.fromARGB(255, 240, 140, 133)),
             onPressed: () {
-              orderNotifier.cancelOrder(context);
+              //orderNotifier.cancelOrder(context);
               planNotifier.changeTableState(TableStatus.empty);
               Navigator.pop(context);
             }, 

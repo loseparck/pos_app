@@ -1,17 +1,24 @@
-import 'package:dio/dio.dart';
-import 'package:pos_app/features/orders/data/models/order_model.dart';
+import 'package:pos_app/features/orders/data/models/dto/create_order_dto.dart';
+import 'package:pos_app/features/orders/data/models/dto/create_order_item_dto.dart';
+import 'package:pos_app/features/orders/domain/entities/order.dart';
+import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 
 abstract class OrderRemoteDatasource {
-  Future<void> sendOrder(OrderModel order);
-}
+  Future<Order> createOrder(CreateOrderDto order);
+  Future<void> validateOrder(String orderId);
+  Future<void> cancelOrder(String orderId);
+  Future<void> deliverOrder(String orderId);
+  Future<void> payOrder(String orderId);
 
-class OrderRemoteDatasourceImpl implements OrderRemoteDatasource {
-  final Dio client;
+  Future<List<Order>> getOrders();
+  Future<List<Order>> getActiveOrders();
+  Future<Order> getOrder(String orderId);
 
-  OrderRemoteDatasourceImpl(this.client);
+  Future<OrderItem> addItem(CreateOrderItemDto orderItem);
+  Future<void> deleteItem(String orderItemId);
+  Future<void> increaseItemQuantity(String orderItemId);
+  Future<void> decreaseItemQuantity(String orderItemId);
 
-  @override
-  Future<void> sendOrder(OrderModel order) async{
-    await client.post('/orders', data: order.toJson());
-  }
-}
+  Future<List<OrderItem>> getItems(String orderId);
+  Future<OrderItem> getItem(String orderItemId);
+}   

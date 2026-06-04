@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:pos_app/core/network/api_endpoints.dart';
 import 'package:pos_app/features/catalog/data/models/dto/create_category_dto.dart';
+import 'package:pos_app/features/catalog/data/models/dto/create_discount_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/create_item_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/create_option_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/create_product_dto.dart';
@@ -9,6 +10,7 @@ import 'package:pos_app/features/catalog/data/models/dto/update_item_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/update_option_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/update_product_dto.dart';
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
+import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
@@ -267,6 +269,65 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     );
 
     return Product.fromJson(response.data['data'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<Discount?> getDiscount(String id) async {
+    final response = await _dio.get(
+      '${ApiEndpoints.discounts}/$id',
+    );
+
+    return Discount.fromJson(response.data['data'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<List<Discount>> getDiscounts() async {
+    final response = await _dio.get(
+      ApiEndpoints.discounts
+    );
+
+    return (response.data['data']['discounts'] as List<dynamic>).map((e) => Discount.fromJson(e)).toList();
+  }
+
+  @override
+  Future<void> removeDiscount(String id) async {
+    final response = await _dio.delete(
+       '${ApiEndpoints.discounts}/$id',
+    );
+    if(response.data['data'] == "0"){
+      throw Exception('Item not found');
+    }
+  }
+
+  @override
+  Future<void> removeDiscounts(List<String> ids) async {
+        final response = await _dio.delete(
+       ApiEndpoints.discounts,
+       data: ids
+    );
+    if(response.data['data'] == "0"){
+      throw Exception('Item not found');
+    }
+  }
+
+  @override
+  Future<Discount> saveDiscount(CreateDiscountDto discount) async {
+    final response = await _dio.post(
+      ApiEndpoints.discounts,
+      data: discount.toJson(),
+    );
+
+    return Discount.fromJson(response.data['data'] as Map<String, dynamic>);
+  }
+  
+  @override
+  Future<Discount> changeDiscountState(String discountId, bool newState) async {
+    final response = await _dio.patch(
+       '${ApiEndpoints.discounts}/$discountId',
+       data: newState
+    );
+
+    return Discount.fromJson(response.data['data'] as Map<String, dynamic>);
   }
   
 }

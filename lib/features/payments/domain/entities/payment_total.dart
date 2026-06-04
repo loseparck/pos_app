@@ -1,4 +1,4 @@
-import 'package:pos_app/features/orders/domain/entities/discount.dart';
+import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_entity.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
 import 'package:json_annotation/json_annotation.dart';

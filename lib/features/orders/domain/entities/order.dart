@@ -11,20 +11,25 @@ class Order {
   final String? tableId;
   final String? groupId;
   final List<OrderItem> items;
-  final DateTime createdAt;
-  final bool synced;
   final OrderStatus status;
   final Payment? payment;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+  final DateTime? deletedAt;
+  final String? createdById;
 
   Order({
     required this.id,
     required this.items,
-    required this.createdAt,
-    this.synced = false,
+    //this.synced = false,
     this.tableId,
     this.groupId,
     this.status = OrderStatus.draft,
     this.payment,
+    this.createdAt,
+    this.updatedAt,
+    this.deletedAt,
+    this.createdById,
   });
 
   double get total => items.fold(0, (sum , item) => sum + item.total);
@@ -32,16 +37,23 @@ class Order {
   double get totalVAT => items.fold(0, (sum , item) => sum + item.vat);
 
   Order copyWith({
+    String? id,
     List<OrderItem>? items,
     OrderStatus? status,
     Payment? payment,
+    String? tableId,
+    String? groupId
   }) {
     return Order(
-      id: id,
-      tableId: tableId,
+      id: id ?? this.id,
+      tableId: tableId ?? this.tableId,
       items: items ?? this.items,
       status: status ?? this.status,
+      groupId: groupId ?? this.groupId,
       createdAt: createdAt,
+      updatedAt: updatedAt,
+      deletedAt: deletedAt,
+      createdById: createdById,
       payment: payment ?? this.payment,
     );
   }

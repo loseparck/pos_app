@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/payments/domain/entities/payment.dart';
@@ -122,7 +123,7 @@ class _PaymentDialogState extends ConsumerState<PaymentDialog> {
                       onPressed: !notifier.checkIfEnableSave(items.length) ? null : (){
                         Payment? payment = ref.read(paymentProvider.notifier).savePayment();
                         if(payment != null){
-                          ref.read(ordersProvider.notifier).payOrder(payment);
+                          //ref.read(ordersProvider.notifier).payOrder(payment);
                           ref.read(planProvider.notifier).changeTableState(TableStatus.empty);
                           Navigator.pop(context);
                         }

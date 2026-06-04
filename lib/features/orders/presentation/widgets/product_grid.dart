@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
+//import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_option_dialog.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
@@ -15,13 +17,15 @@ final currentGroupProvider =
 class ProductGrid extends ConsumerWidget {
   const ProductGrid({super.key});
 
+  static const selectedCategory = null;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
     final searchQuery = ref.watch(productSearchQueryProvider);
-    final groupId = ref.watch(currentGroupProvider);
     final orderNotifier = ref.read(ordersProvider.notifier);
     final planNotifier = ref.read(planProvider.notifier);
+    final state = ref.watch(productsProvider);
     /// 🔎 MODE RECHERCHE
     if (searchQuery.isNotEmpty) {
 
@@ -59,7 +63,7 @@ class ProductGrid extends ConsumerWidget {
                       builder: (_) => ProductOptionDialog(
                         product: p,
                         onSelected: (selectedOptions) {
-                          orderNotifier.addProduct(p, options: selectedOptions);
+                          orderNotifier.addProduct(p, selectedOptions);
                           planNotifier.changeTableState(TableStatus.draft);
                         },
                       ),
@@ -76,7 +80,7 @@ class ProductGrid extends ConsumerWidget {
                   image: p.image,
                   description: p.description,
                   onTap: () {
-                    orderNotifier.addProduct(p);
+                    orderNotifier.addProduct(p, {});
                     planNotifier.changeTableState(TableStatus.draft);
                   },
                 ); 
@@ -88,14 +92,185 @@ class ProductGrid extends ConsumerWidget {
     }
 
     /// 📦 MODE NORMAL
+    return Column(
+              children: [
+                Expanded(
+                  child: Builder(
+                    builder: (context) {
 
-    final groupsAsync  = ref.read(productsProvider.notifier).getCategoryChild(groupId ?? '');
-        //ref.watch(productGroupsProvider(groupId));
+                      final items = <Widget>[];
 
-    final productsAsync = ref.watch(productsProvider).products;
-        //ref.watch(productsProvider(groupId));
+                      // Bouton retour
+                      if (state.selectedCategory != null) {
+                        items.add(
+                          ProductCard(
+                            isGroup: true,
+                            icon: Icons.arrow_back,
+                            name: "Retour",
+                            onTap: () {
+                              ref
+                                  .read(productsProvider.notifier)
+                                  .changeSeletedCategory(
+                                    state.selectedCategory?.parentId,
+                                  );
+                            },
+                          ),
+                        );
+                      }
 
-    return const Text("A completer");/*groupsAsync.when(
+                      // Catégories
+                      final categories = state.categories
+                          .where((c) => c.parentId == state.selectedCategoryId);
+
+                      for (final c in categories) {
+                        items.add(
+                          ProductCard(
+                            isGroup: true,
+                            name: c.name,
+                            onTap: () {
+                              ref
+                                  .read(productsProvider.notifier)
+                                  .changeSeletedCategory(c.id);
+                            },
+                          ),
+                        );
+                      }
+
+                      // Produits
+                      final products = state.products
+                          .where((p) => p.category?.id == state.selectedCategoryId);
+
+                      for (final p in products) {
+                        items.add(
+                          ProductCard(
+                            isGroup: false,
+                            name: p.name,
+                            price: p.price,
+                            image: p.image,
+                            description: p.description,
+                            onTap: () {
+                              if (p.options != null && p.options!.isNotEmpty) {
+
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => ProductOptionDialog(
+                                    product: p,
+                                    onSelected: (selectedOptions) {
+                                      orderNotifier.addProduct(
+                                        p, selectedOptions,
+                                      );
+
+                                      planNotifier.changeTableState(
+                                        TableStatus.draft,
+                                      );
+                                    },
+                                  ),
+                                );
+
+                              } else {
+
+                                orderNotifier.addProduct(p, {});
+
+                                planNotifier.changeTableState(
+                                  TableStatus.draft,
+                                );
+                              }
+                            },
+                          ),
+                        );
+                      }
+
+                      return GridView.builder(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 6,
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: items.length,
+                        itemBuilder: (context, index) {
+                          return items[index];
+                        },
+                      );
+                    },
+                  ),
+                ),
+                /// GRID
+                /*Expanded(
+                  child: GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 6,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: 3,
+                    
+                    itemBuilder: (context, index) {
+
+                      if(selectedCategory != null){
+                        if(index == 0){
+                          return ProductCard(
+                            isGroup: true,
+                            icon: Icons.arrow_back,
+                            name: "Retour",
+                            onTap: () {
+                              ref
+                                  .read(productsProvider.notifier).changeSeletedCategory(state.selectedCategory?.parentId);
+                                  
+                            },
+                          );
+                        }
+                        index = index - 1;
+                      }
+
+                      state.categories.where((c) => c.parentId == state.selectedCategoryId).map((c)
+                      {
+                        return ProductCard(
+                          isGroup: true,
+                          name: c.name,
+                          onTap: () {
+                            ref
+                                  .read(productsProvider.notifier).changeSeletedCategory(c.id);
+                          },
+                        );
+                      });
+
+                      state.products.where((p) => p.category?.id == state.selectedCategoryId).map((p)
+                      {
+                        return ProductCard(
+                          isGroup: false,
+                          name: p.name,
+                          price: p.price,
+                          image: p.image,
+                          description: p.description,
+                          onTap: () {
+                            if (p.options != null && p.options!.isNotEmpty) {
+                              // afficher le dialog pour choisir les options
+                              showDialog(
+                                context: context,
+                                builder: (_) => ProductOptionDialog(
+                                  product: p,
+                                  onSelected: (selectedOptions) {
+                                    orderNotifier.addProduct(p, options: selectedOptions);
+                                    planNotifier.changeTableState(TableStatus.draft);
+                                  },
+                                ),
+                              );
+                            } else {
+                              // ajout direct
+                              orderNotifier.addProduct(p);
+                              planNotifier.changeTableState(TableStatus.draft);
+                            }
+                          }
+                        );
+                      });
+                    },
+                  ),
+                ),*/
+              ],
+            );
+    
+    
+    /*groupsAsync.when(
       loading: () =>
           const Center(child: CircularProgressIndicator()),
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
-class ProductOptionDialog extends StatefulWidget {
+class ProductOptionDialog extends ConsumerStatefulWidget {
   final Product product;
   final void Function(Map<String, List<Item>>) onSelected;
 
@@ -14,12 +16,12 @@ class ProductOptionDialog extends StatefulWidget {
   });
 
   @override
-  State<ProductOptionDialog> createState() =>
+  ConsumerState<ProductOptionDialog> createState() =>
       _ProductOptionDialogState();
 }
 
 class _ProductOptionDialogState
-    extends State<ProductOptionDialog> {
+    extends ConsumerState<ProductOptionDialog> {
 
   Map<String, List<Item>> selectedOptions = {};
 
@@ -31,7 +33,7 @@ class _ProductOptionDialogState
 
   @override
   Widget build(BuildContext context) {
-
+    final state = ref.watch(productsProvider);
     final groups = widget.product.options!;
 
     return Dialog(
@@ -107,7 +109,7 @@ class _ProductOptionDialogState
                       const SizedBox(height: 8),
 
                       /// OPTIONS
-                      ...group.items.map((opt) {
+                      ...state.items.where((i) => i.option.id == group.id).map((opt) {
 
                         final count = selected
                             .where((e) => e.id == opt.id)

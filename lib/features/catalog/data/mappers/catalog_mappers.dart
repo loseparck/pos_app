@@ -351,7 +351,7 @@ extension ProductDtoMapper on CreateProductDto {
       description: description,
       sku: sku,
       price: price,
-      vat: vat,
+      vat: vat ?? 0,
       stockQuantity: stockQuantity,
       color: color,
       category: category,
@@ -391,7 +391,7 @@ extension ProductIsarMapper on ProductsDriftData {
       description: description,
       sku: sku,
       price: price,
-      vat: vat,
+      vat: vat ?? 0,
       stockQuantity: stockQuantity,
       image: image,
       color: color,
@@ -409,7 +409,7 @@ extension ProductIsarMapper on ProductsDriftData {
       description: description,
       sku: sku,
       price: price,
-      vat: vat,
+      vat: vat ?? 0,
       stockQuantity: stockQuantity,
       image: image,
       color: color,
@@ -488,7 +488,7 @@ extension DiscountDtoMapper on CreateDiscountDto {
 }
 
 extension DiscountIsarMapper on DiscountsDriftData {
-  Discount toEntity(Category? category) {
+  Discount toEntity() {
     return Discount(
       id: id,
       name: name,

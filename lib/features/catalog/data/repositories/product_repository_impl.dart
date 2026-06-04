@@ -7,6 +7,7 @@ import 'package:pos_app/features/catalog/domain/entities/category.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -338,7 +339,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<void> removeProducts(List<String> ids) async {
-     if(!kIsWeb) {
+    if(!kIsWeb) {
       await _localDataSource.removeProducts(ids);
     }
 
@@ -415,6 +416,87 @@ class ProductRepositoryImpl implements ProductRepository {
     }
 
     return product;
+  }
+
+  @override
+  Future<Discount?> getDiscount(String id) async {
+    if(!kIsWeb) {
+      final discount = await _localDataSource.getDiscount(id);
+      if(discount != null){
+        return discount;
+      }
+    } 
+    
+    if(await _connectivity.isOnline()) {
+      return _remoteDataSource.getDiscount(id);
+    }
+
+    return null;
+  }
+
+  @override
+  Future<List<Discount>> getDiscounts() async {
+    final List<Discount> discounts = [];
+    if(!kIsWeb) {
+      discounts.addAll(await _localDataSource.getDiscounts());
+      if(discounts.isNotEmpty){
+        return discounts;
+      }
+    }
+
+    if(await _connectivity.isOnline()) {
+      return _remoteDataSource.getDiscounts();
+    }
+
+    return discounts;
+  }
+
+  @override
+  Future<void> removeDiscount(String id) async {
+    if(!kIsWeb) {
+      await _localDataSource.removeDiscount(id);
+    }
+
+    if(await _connectivity.isOnline()) {
+      return await _remoteDataSource.removeDiscount(id);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+  }
+
+  @override
+  Future<Discount> saveDiscount(Discount discount) async {
+    discount = discount.copyWith(
+      id: _uuid.v4(),
+    );
+
+    if(!kIsWeb) {
+      await _localDataSource.saveDiscount(discount);
+    }
+
+    if(await _connectivity.isOnline()) {
+      return await _remoteDataSource.saveDiscount(discount.toCreateDto());
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+
+    return discount;
+  }
+  
+  @override
+  Future<Discount> changeDiscountState(String discountId, bool state) async {
+    var discount;
+    if(!kIsWeb) {
+      discount = _localDataSource.changeDiscountState(discountId, state);
+    } 
+    
+    if(await _connectivity.isOnline()) {
+      return await _remoteDataSource.changeDiscountState(discountId, state);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+
+    return discount;
   }
 
 }

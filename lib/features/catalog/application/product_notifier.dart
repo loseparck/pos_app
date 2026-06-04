@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/application/product_state.dart';
+import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository.dart';
@@ -18,7 +19,8 @@ class ProductNotifier extends StateNotifier<ProductState> {
         products: [], 
         categories: [], 
         options: [], 
-        items: []
+        items: [],
+        dicounts: []
       )
     );
 
@@ -27,11 +29,13 @@ class ProductNotifier extends StateNotifier<ProductState> {
     final options = await _repository.getOptions();
     final categories = await _repository.getCategories();
     final products = await _repository.getProducts();
+    final discounts = await _repository.getDiscounts();
     state = state.copyWith(
       categories: categories,
       products: products,
       items: items,
-      options: options
+      options: options,
+      dicounts: discounts
     );
   } 
 
@@ -134,6 +138,22 @@ class ProductNotifier extends StateNotifier<ProductState> {
     }
   }
 
+  Future<bool> addDiscount(Discount discount) async {
+    try {
+      final saveDiscountUseCase = ref.read(saveDiscountUseCaseProvider);
+      final newDiscount = await saveDiscountUseCase(discount);
+      state = state.copyWith(
+        dicounts: [...state.dicounts, newDiscount],
+      );
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error ${e.toString()}");
+      }
+      return false;
+    }
+  }
+
   Future<bool> addProduct(Product product) async {
     try {
       final saveProductUseCase = ref.read(saveProductUseCaseProvider);
@@ -180,6 +200,15 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
+  Future<void> updateDiscount(String discountId, bool newState) async {
+      final changeDiscountStateUseCase = ref.read(changeDiscountStateUseCaseProvider);
+      changeDiscountStateUseCase(discountId, newState);
+       
+      state = state.copyWith(
+        dicounts: state.dicounts.map((elem) => elem.id != discountId ? elem: elem.copyWith(isActive: newState)).toList(),
+      );
+  }
+
   Future<void> removeCategory(String id) async {
       final removeCategoryUseCase = ref.read(removeCategoryUseCaseProvider);
       removeCategoryUseCase(id);
@@ -217,7 +246,25 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
+  Future<void> removeDiscount(String id) async {
+      final removeDiscountUseCase = ref.read(removeDiscountUseCaseProvider);
+      removeDiscountUseCase(id);
+      state = state.copyWith(
+        dicounts: state.dicounts.where((item) => item.id != id).toList(),
+      );
+  }
 
+  void changeSeletedCategory(String? categoryId){
+    if(categoryId == null){
+      state = state.copyWith(
+        resetCategoryId: true
+      );
+    }else {
+      state = state.copyWith(
+        selectedCategoryId: categoryId
+      );
+    }
+  }
   /*void changeSelectedOption(String optionId){
     state = state.copyWith(
       selectedOptionId: optionId

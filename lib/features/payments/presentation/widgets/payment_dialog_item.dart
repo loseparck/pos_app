@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pos_app/features/catalog/domain/entities/item.dart';
+import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 
 class PaymentDialogItem extends StatelessWidget {
   final String productName;
   final double productPrice;
   final Color backgroundColor;
-  final List<Item>? supplements;
+  final List<OrderItemOption>? supplements;
   final VoidCallback onAdd;
   final VoidCallback onRemove;
 
@@ -20,7 +20,7 @@ class PaymentDialogItem extends StatelessWidget {
   });
 
   double get supplementsTotal =>
-      supplements!.fold(0, (sum, s) => sum + s.price);
+      supplements!.fold(0, (sum, s) => sum + s.unitPrice);
 
   double get totalPrice =>
       (productPrice + supplementsTotal);
@@ -70,7 +70,7 @@ class PaymentDialogItem extends StatelessWidget {
                 ),
                 if (supplements!.isNotEmpty)
                   Text(
-                    supplements?.map((e) => "${e.name} (+${e.price})").join(', ') ?? "",
+                    supplements?.map((e) => "${e.optionName} (+${e.unitPrice})").join(', ') ?? "",
                     style: const TextStyle(
                       fontSize: 13,
                       color: Colors.black54,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/application/orders_notifier.dart';
+import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/payments/presentation/state/payment_notifier.dart';
@@ -57,7 +58,7 @@ class TabItems extends ConsumerWidget {
                 final isSelected = state.selectedIds.contains(item.id);
                 final isPaid = state.paidItems.contains(item.id);
                 return PaymentDialogItem(
-                  productName: item.name,
+                  productName: item.productName,
                   productPrice: item.unitPrice,
                   supplements: item.options,
                   backgroundColor: isPaid ? Colors.green : isSelected ? Colors.orange : Colors.white,
