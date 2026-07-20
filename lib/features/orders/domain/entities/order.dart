@@ -1,7 +1,7 @@
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
-import 'package:pos_app/features/payments/domain/entities/payment.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 
 part 'order.g.dart';
 
@@ -12,7 +12,7 @@ class Order {
   final String? groupId;
   final List<OrderItem> items;
   final OrderStatus status;
-  final Payment? payment;
+  final PaymentSession? payment;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final DateTime? deletedAt;
@@ -21,7 +21,6 @@ class Order {
   Order({
     required this.id,
     required this.items,
-    //this.synced = false,
     this.tableId,
     this.groupId,
     this.status = OrderStatus.draft,
@@ -36,11 +35,13 @@ class Order {
 
   double get totalVAT => items.fold(0, (sum , item) => sum + item.vat);
 
+  double get totalItems => items.fold(0, (sum , item) => sum + item.quantity);
+
   Order copyWith({
     String? id,
     List<OrderItem>? items,
     OrderStatus? status,
-    Payment? payment,
+    PaymentSession? payment,
     String? tableId,
     String? groupId
   }) {

@@ -9,6 +9,7 @@ import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:collection/collection.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 import 'package:uuid/uuid.dart';
 
 class OrdersNotifier extends StateNotifier<OrdersState> {
@@ -28,6 +29,18 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     state = state.copyWith(
       orders: orders
     );
+  } 
+
+  bool clearOrder() {
+    Order? order = state.selectedOrder;
+    if(order != null && (order.status == OrderStatus.paid || order.status == OrderStatus.cancelled || order.status == OrderStatus.delivred)){
+      state = state.copyWith(
+        orders: state.orders.where((ord) => ord.id != state.selectedOrderId).toList(),
+        resetSelectedOrderId: true
+      );
+      return true;
+    }
+    return false;
   } 
 
   OrderItem convertProductToOrderItem(Product p, List<Item> options, String orderId, {String? comment}){
@@ -264,6 +277,19 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     );
   }
 
+  bool isDraftAvailable(){
+    Order? order = state.selectedOrder;
+    if(order != null){
+      for(final item in order.items){
+        if(item.status == OrderStatus.draft || item.status == OrderStatus.waitingValidation){
+          return true;
+        }
+      }
+    }
+     return false;
+  }
+
+
   void saveOrder() {
     if(state.selectedOrderId != null && state.selectedOrderId != "-1"){
       final validateOrderUseCase = ref.read(validateOrderUseCaseProvider);
@@ -273,12 +299,12 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       updatedOrder = updatedOrder?.copyWith(
         items: updatedOrder.items.map((item) {
           if(item.status == OrderStatus.draft){
-            return item.copyWith(status: OrderStatus.validated, validatedAt: DateTime.now());
+            return item.copyWith(status: OrderStatus.waitingForPreparation, validatedAt: DateTime.now());
           } else {
             return item;
           }
         }).toList(),
-        status: OrderStatus.validated
+        status: OrderStatus.waitingForPreparation
       );
 
       state = state.copyWith(
@@ -292,6 +318,85 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       );
     }
   }
+
+  void cancelOrder() {
+    if(state.selectedOrderId != null && state.selectedOrderId != "-1"){
+      final cancelOrderUseCase = ref.read(cancelOrderUseCaseProvider);
+      cancelOrderUseCase(state.selectedOrderId ?? '');
+      Order? updatedOrder = state.selectedOrder;
+
+      updatedOrder = updatedOrder?.copyWith(
+        items: updatedOrder.items.map((item) {
+          //if(item.status == OrderStatus.draft){
+            return item.copyWith(status: OrderStatus.cancelled, validatedAt: DateTime.now());
+         // } else {
+         //   return item;
+         // }
+        }).toList(),
+        status: OrderStatus.cancelled
+      );
+
+      state = state.copyWith(
+        orders: state.orders.map((order) {
+          if(order.id == updatedOrder?.id){
+            return updatedOrder ?? order;
+          }else {
+            return order;
+          }
+        }).toList(),
+      );
+    }
+  }
+
+  void payOrder(PaymentSession payment) {
+    if(state.selectedOrderId != null && state.selectedOrderId != "-1"){
+      final payOrderUseCase = ref.read(payOrderUseCaseProvider);
+      payOrderUseCase(state.selectedOrderId ?? '', payment);
+      Order? updatedOrder = state.selectedOrder;
+
+      updatedOrder = updatedOrder?.copyWith(
+        items: updatedOrder.items.map((item) {
+            return item.copyWith(status: OrderStatus.paid, validatedAt: DateTime.now());
+        }).toList(),
+        status: OrderStatus.paid
+      );
+
+      state = state.copyWith(
+        orders: state.orders.map((order) {
+          if(order.id == updatedOrder?.id){
+            return updatedOrder ?? order;
+          }else {
+            return order;
+          }
+        }).toList(),
+      );
+    }
+  }
+
+  void changeOrderStatus(OrderStatus status){
+    Order? order = state.selectedOrder;
+    if(order != null){
+      final changeOrderStatusUseCase = ref.read(changeOrderStatusUseCaseProvider);
+      changeOrderStatusUseCase(order.id, status);
+    }
+  }
+
+ 
+  OrderStatus getOrderStatus(){
+    Order? order = state.selectedOrder;
+    OrderStatus status = OrderStatus.draft;
+    if(order != null){
+      
+      for(final item in order.items){
+        if(item.status.order == status.order){
+          status = item.status;
+        }
+      }
+    }
+     return status;
+  }
+
+
 /*
   void initSelectedOrderByTableOrGroupId(String id, bool isTable) {
       String? orderId = "-1";

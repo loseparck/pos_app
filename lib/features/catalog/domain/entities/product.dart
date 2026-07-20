@@ -121,6 +121,7 @@ class Product {
       vat: double.tryParse(json['vat'].toString()) ?? 0,
       stockQuantity: double.tryParse(json['stockQuantity'].toString()) ?? 0,
       color: int.tryParse(json['color'] as String? ?? ''),
+      image: json['image'] as String?,
       isActive: (json['isActive'] as bool),
       category: json['category'] != null ? Category.fromJson(json['category'] as Map<String, dynamic>) : null,
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,

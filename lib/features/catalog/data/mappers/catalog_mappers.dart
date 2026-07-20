@@ -449,7 +449,7 @@ extension DiscountMapper on Discount {
     return DiscountsDriftCompanion(
       id: Value(id),
       name: Value(name),
-      value: Value(value ?? 0),
+      value: Value(value),
       discountType: Value(discountTypeEnumMap[discountType] ?? 'amount'),
       isActive: Value(isActive),
       updatedAt: Value(DateTime.now()),
@@ -477,7 +477,7 @@ extension DiscountDtoMapper on CreateDiscountDto {
     return DiscountsDriftCompanion(
       id: Value(id),
       name: Value(name),
-      value: Value(value ?? 0),
+      value: Value(value),
       discountType: Value(discountTypeEnumMap[discountType] ?? 'amount'),
       isActive: Value(isActive),
       updatedAt: Value(DateTime.now()),
@@ -493,7 +493,7 @@ extension DiscountIsarMapper on DiscountsDriftData {
       id: id,
       name: name,
       value: value,
-      discountType: $enumDecodeNullable(discountTypeEnumMap, discountType) ?? DiscountType.amount,
+      discountType: $enumDecodeNullable(discountTypeEnumMap, discountType) ?? DiscountType.fixed,
       isActive: isActive,
       createdAt: createdAt,
       updatedAt: updatedAt,

@@ -5,6 +5,8 @@ import 'package:pos_app/features/orders/data/models/dto/create_order_dto.dart';
 import 'package:pos_app/features/orders/data/models/dto/create_order_item_dto.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 
 class OrderRemoteDatasourceImpl implements OrderRemoteDatasource {
   final Dio _dio;
@@ -133,9 +135,10 @@ class OrderRemoteDatasourceImpl implements OrderRemoteDatasource {
   }
 
   @override
-  Future<void> payOrder(String orderId) async {
+  Future<void> payOrder(String orderId, PaymentSession payment) async {
     final response = await _dio.patch(
-      '${ApiEndpoints.orders}/$orderId/pay'
+      '${ApiEndpoints.orders}/$orderId/pay',
+      data: payment.id
     );
     if(response.data == null){
 
@@ -149,6 +152,18 @@ class OrderRemoteDatasourceImpl implements OrderRemoteDatasource {
       '${ApiEndpoints.orders}/$orderId/validate'
     );
     if(response.data == null){
+
+    }
+    //TODO check if reseult Ok
+  }
+
+  @override
+  Future<void> changeOrderStatus(String orderId, OrderStatus status) async{
+    final response = await _dio.patch(
+        '${ApiEndpoints.orders}/$orderId/status',
+        data: status
+      );
+      if(response.data == null){
 
     }
     //TODO check if reseult Ok

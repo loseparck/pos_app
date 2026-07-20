@@ -54,7 +54,8 @@ class _CategoryDialogState extends ConsumerState<CategoryDialog> {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     setState(() => _isSaving = true);
     if(widget.categoryId == null){
-      ref.read(productsProvider.notifier).addCategory(category.copyWith( name: _nameController.text.trim()).copyWith(parent: selectedParent, resetParent: selectedParent == null));
+      // TODO image picker
+      ref.read(productsProvider.notifier).addCategory(category.copyWith( name: _nameController.text.trim()).copyWith(parent: selectedParent, resetParent: selectedParent == null), null);
     } else {
       ref.read(productsProvider.notifier).updateCategory(category.copyWith( name: _nameController.text.trim()).copyWith(parent: selectedParent, resetParent: selectedParent == null));
     }

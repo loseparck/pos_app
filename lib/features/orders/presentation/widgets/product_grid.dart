@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
 //import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
-import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_option_dialog.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
@@ -64,7 +63,7 @@ class ProductGrid extends ConsumerWidget {
                         product: p,
                         onSelected: (selectedOptions) {
                           orderNotifier.addProduct(p, selectedOptions);
-                          planNotifier.changeTableState(TableStatus.draft);
+                          planNotifier.changeTableState(TableStatus.occuped);
                         },
                       ),
                     );
@@ -81,7 +80,7 @@ class ProductGrid extends ConsumerWidget {
                   description: p.description,
                   onTap: () {
                     orderNotifier.addProduct(p, {});
-                    planNotifier.changeTableState(TableStatus.draft);
+                    planNotifier.changeTableState(TableStatus.occuped);
                   },
                 ); 
               }
@@ -161,7 +160,7 @@ class ProductGrid extends ConsumerWidget {
                                       );
 
                                       planNotifier.changeTableState(
-                                        TableStatus.draft,
+                                        TableStatus.occuped,
                                       );
                                     },
                                   ),
@@ -172,7 +171,7 @@ class ProductGrid extends ConsumerWidget {
                                 orderNotifier.addProduct(p, {});
 
                                 planNotifier.changeTableState(
-                                  TableStatus.draft,
+                                  TableStatus.occuped,
                                 );
                               }
                             },

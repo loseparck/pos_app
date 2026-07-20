@@ -5,6 +5,8 @@ import 'package:pos_app/features/orders/data/mappers/order_mappers.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -227,13 +229,26 @@ class OrderRepositoryImpl implements OrderRepository{
   }
 
   @override
-  Future<void> payOrder(String orderId) async{
+  Future<void> payOrder(String orderId, PaymentSession payment) async{
     if(!kIsWeb) {
-      await _localDataSource.payOrder(orderId);
+      await _localDataSource.payOrder(orderId, payment);
     }
      
     if(await _connectivity.isOnline()) {
-      await _remoteDataSource.payOrder(orderId);
+      await _remoteDataSource.payOrder(orderId, payment);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+  }
+
+  @override
+  Future<void> changeOrderStatus(String orderId, OrderStatus status) async{
+    if(!kIsWeb) {
+      await _localDataSource.changeOrderStatus(orderId, status);
+    }
+     
+    if(await _connectivity.isOnline()) {
+      await _remoteDataSource.changeOrderStatus(orderId, status);
     } else if(!kIsWeb) {
       //TODO add to QUEUE
     }

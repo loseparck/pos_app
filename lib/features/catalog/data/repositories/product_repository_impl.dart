@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 import 'package:pos_app/core/network/connectivity_service.dart';
 import 'package:pos_app/features/catalog/data/datasources/product_local_datasource.dart';
 import 'package:pos_app/features/catalog/data/datasources/product_remote_datasource.dart';
@@ -351,17 +354,27 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Category> saveCategory(Category category) async {
+  Future<Category> saveCategory(Category category, String? picturePath) async {
     category = category.copyWith(
       id: _uuid.v4(),
     );
 
     if(!kIsWeb) {
+      if(picturePath != null){
+        final appDir = await getApplicationDocumentsDirectory();
+        final dir = Directory("${appDir.path}/categories");
+        await dir.create(recursive: true);
+        final newPath = "${dir.path}/${category.id}.jpg";
+        await File(picturePath).copy(newPath);
+        category = category.copyWith(
+          image: newPath
+        );
+      }
       await _localDataSource.saveCategory(category);
     }
 
     if(await _connectivity.isOnline()) {
-      return await _remoteDataSource.saveCategory(category.toCreateDto());
+      return await _remoteDataSource.saveCategory(category.toCreateDto(), picturePath);
     } else if(!kIsWeb) {
       //TODO add to QUEUE
     }
@@ -370,17 +383,27 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Product> saveProduct(Product product) async {
+  Future<Product> saveProduct(Product product, String? picturePath) async {
     product = product.copyWith(
       id: _uuid.v4(),
     );
 
     if(!kIsWeb) {
+      if(picturePath != null){
+        final appDir = await getApplicationDocumentsDirectory();
+        final dir = Directory("${appDir.path}/products");
+        await dir.create(recursive: true);
+        final newPath = "${dir.path}/${product.id}.jpg";
+        await File(picturePath).copy(newPath);
+        product = product.copyWith(
+          image: newPath
+        );
+      }
       await _localDataSource.saveProduct(product);
     }
 
     if(await _connectivity.isOnline()) {
-      return await _remoteDataSource.saveProduct(product.toCreateDto());
+      return await _remoteDataSource.saveProduct(product.toCreateDto(), picturePath);
     } else if(!kIsWeb) {
       //TODO add to QUEUE
     }

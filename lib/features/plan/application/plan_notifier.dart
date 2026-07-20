@@ -472,24 +472,19 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     clearQueue();
   }
 
-  void changeTableState(TableStatus newStatus){
-    /*state = state.copyWith(
-      groups: state.groups.map((group) {
-        if(group.id == state.selectedGroupId){
-          return group.copyWith(
-            tables: group.tables.map((table){
-              if(table.id == state.selectedTableId){
-                return table.copyWith(
+  void changeTableState(TableStatus newStatus) async {
+    final updateTableUseCase = ref.read(updateTableUseCaseProvider);
+    await updateTableUseCase(state.selectedTable!.copyWith(status: newStatus));
+    state = state.copyWith(
+      tables: state.tables.map((table) {
+        if(table.id == state.selectedTableId){
+          return table.copyWith(
                   status: newStatus
                 );
-              }
-              return table;
-            }).toList(),
-          );
         }
-        return group;
+        return table;
       }).toList(),
-    );*/
+    );
   }
 
   String getName(bool isTable){

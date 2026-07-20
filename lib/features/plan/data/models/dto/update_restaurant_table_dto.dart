@@ -7,7 +7,7 @@ class UpdateRestaurantTableDto {
   final double? x;
   final double? y;
   final int? seats;
-  final TableStatus? status;
+  final TableStatus status;
   final double? rotation;
   final TableShape? shape;
   final double? width;
@@ -22,7 +22,7 @@ class UpdateRestaurantTableDto {
     this.x,
     this.y,
     this.seats,
-    this.status,
+    required this.status,
     this.rotation,
     this.shape,
     this.width,
@@ -39,8 +39,7 @@ class UpdateRestaurantTableDto {
       x: double.tryParse(json['x'].toString()) ?? 0,
       y: double.tryParse(json['y'].toString()) ?? 0,
       seats: int.tryParse(json['seats'].toString()) ?? 0,
-      status: $enumDecodeNullable(tableStatusEnumMap, json['status']) ??
-          TableStatus.empty,
+      status: TableStatus.fromLabel(json['status']) ?? TableStatus.empty,
       rotation: double.tryParse(json['rotation'].toString()) ?? 0,
       shape: $enumDecodeNullable(tableShapeEnumMap, json['shape']) ??
           TableShape.circle,
@@ -59,7 +58,7 @@ class UpdateRestaurantTableDto {
       'x': x,
       'y': y,
       'seats': seats,
-      'status': tableStatusEnumMap[status],
+      'status': status.label,
       'rotation': rotation,
       'shape': tableShapeEnumMap[shape]!,
       'width': width,

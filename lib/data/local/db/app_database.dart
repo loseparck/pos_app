@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:pos_app/features/payments/data/mappers/payment_converter.dart';
 import '../../../features/catalog/data/models/drift/products_drift.dart';
 import '../../../features/catalog/data/models/drift/categories_drift.dart';
 import '../../../features/catalog/data/models/drift/options_drift.dart';
@@ -12,6 +13,8 @@ import '../../../features/plan/data/models/drift/restaurant_table_drift.dart';
 import '../../../features/orders/data/models/drift/order_drift.dart';
 import '../../../features/orders/data/models/drift/order_item_drift.dart';
 import '../../../features/orders/data/models/drift/order_item_options_drift.dart';
+import '../../../features/payments/data/models/drift/payment_session_drift.dart';
+import '../../../features/payments/data/models/drift/payment_transaction_drift.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
@@ -27,14 +30,16 @@ part 'app_database.g.dart';
     DiscountsDrift,
     OrderDrift,
     OrderItemDrift,
-    OrderItemOptionsDrift
+    OrderItemOptionsDrift,
+    PaymentSessionDrift,
+    PaymentTransactionDrift,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -72,6 +77,10 @@ class AppDatabase extends _$AppDatabase {
       }
       if (from < 8) {
         await m.alterTable(TableMigration(orderItemDrift));
+      }
+      if (from < 9) {
+        await m.createTable(paymentSessionDrift);
+        await m.createTable(paymentTransactionDrift);
       }
     },
   );

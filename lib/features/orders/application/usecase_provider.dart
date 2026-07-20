@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/usecases/add_item.dart';
 import 'package:pos_app/features/orders/domain/usecases/cancel_order.dart';
+import 'package:pos_app/features/orders/domain/usecases/change_order_status.dart';
 import 'package:pos_app/features/orders/domain/usecases/create_order.dart';
 import 'package:pos_app/features/orders/domain/usecases/decrease_item.dart';
 import 'package:pos_app/features/orders/domain/usecases/increase_item.dart';
@@ -39,4 +40,12 @@ final removeItemUseCaseProvider = Provider<RemoveItem>((ref) {
 
 final validateOrderUseCaseProvider = Provider<ValidateOrder>((ref) {
   return ValidateOrder(ref.read(orderRepositoryProvider));
+});
+
+final updateOrderStatusUseCaseProvider = Provider<ValidateOrder>((ref) {
+  return ValidateOrder(ref.read(orderRepositoryProvider));
+});
+
+final changeOrderStatusUseCaseProvider = Provider<ChangeOrderStatus>((ref) {
+  return ChangeOrderStatus(ref.read(orderRepositoryProvider));
 });

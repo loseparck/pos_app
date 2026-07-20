@@ -6,6 +6,7 @@ import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 
 class OrderLocalDatasourceImpl implements OrderLocalDatasource {
   OrderLocalDatasourceImpl(this._db);
@@ -64,6 +65,13 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
       await ( _db!.update( _db!.orderDrift)
         ..where((tbl) => tbl.id.equals(orderId)))
       .write(order.copyWith(status: OrderStatus.cancelled).toDrift(), );
+
+      await ( _db!.update( _db!.orderItemDrift)
+        ..where((tbl) => tbl.orderId.equals(orderId)))
+        .write(OrderItemDriftCompanion(
+          status: Value(OrderStatus.cancelled.name),
+          updatedAt: Value(DateTime.now())
+        ));
     });
   }
 
@@ -247,13 +255,6 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
     }
     List<OrderItem> result = [];
     await _db?.transaction(() async {
-      final option = await _db!.select(_db!.orderItemOptionsDrift).get();
-      print("*************************************");
-      for(final op in option)
-      {
-        print("++++++ option: $op");
-      }
-      print("*************************************");
       final query = _db!.select(_db!.orderItemDrift).join([
         leftOuterJoin(
           _db!.orderItemOptionsDrift,
@@ -266,7 +267,6 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
 
       final itemMap = <String, OrderItem>{};
       final optionsMap = <String, List<OrderItemOption>>{};
-      print("-------------------------------------");
       for (final row in rows) {
         final itemRow = row.readTable(_db!.orderItemDrift);
         
@@ -276,15 +276,12 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
         );
 
         final optionRow = row.readTableOrNull(_db!.orderItemOptionsDrift);
-        print("++++++++++ itemRow $itemRow");
-        print("++++++++++ optionRow $optionRow");
         if (optionRow != null) {
           optionsMap
               .putIfAbsent(itemRow.id, () => [])
               .add(optionRow.toEntity());
         }
       }
-      print("-------------------------------------");
 
       result = itemMap.values.map((item) {
         return item.copyWith(
@@ -341,11 +338,10 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
     }
     final orders = await ( _db!.select( _db!.orderDrift)
           ..where((tbl) => 
-          tbl.status.isIn([
+          tbl.status.isNotIn([
             OrderStatus.delivred.name,
-            OrderStatus.validated.name,
-            OrderStatus.draft.name,
-            OrderStatus.waitingValidation.name
+            OrderStatus.paid.name,
+            OrderStatus.cancelled.name
             ])))
         .get();
     return Future.wait(orders.map((e) async { return e.toEntity(items: await getActiveItems(e.id)); }).toList());
@@ -369,7 +365,7 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
   }
 
   @override
-  Future<void> payOrder(String orderId) async {
+  Future<void> payOrder(String orderId, PaymentSession payment) async {
     if( _db == null){
       return;
     }
@@ -382,12 +378,55 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
       
       await ( _db!.update( _db!.orderDrift)
         ..where((tbl) => tbl.id.equals(orderId)))
-      .write(order.copyWith(status: OrderStatus.paid).toDrift(), );
+      .write(order.copyWith(status: OrderStatus.paid, payment: payment).toDrift(), );
+
+      await ( _db!.update( _db!.orderItemDrift)
+        ..where((tbl) => tbl.orderId.equals(orderId)))
+        .write(OrderItemDriftCompanion(
+          status: Value(OrderStatus.paid.name),
+          updatedAt : Value(DateTime.now())
+        ));
     });
   }
 
   @override
   Future<void> validateOrder(String orderId) async {
+    if( _db == null){
+      return;
+    }
+    print("order status 1");
+    await  _db?.transaction(() async {
+      final order = await getOrder(orderId);
+      if(order == null){
+        return;
+      }
+      print("order status ${order.status}");
+      if(order.status == OrderStatus.draft){
+        await ( _db!.update( _db!.orderDrift)
+          ..where((tbl) => tbl.id.equals(orderId)))
+        .write(
+          OrderDriftCompanion(
+            status: Value(OrderStatus.waitingForPreparation.name),
+            validatedAt: Value(DateTime.now())
+          )
+        );
+        final fer = await getItems(order.id);
+        for(final v in fer){
+          print("fer $v");
+        }
+        
+        await ( _db!.update( _db!.orderItemDrift)
+        ..where((tbl) => tbl.orderId.equals(orderId) & tbl.status.equals(OrderStatus.draft.name)))
+        .write(OrderItemDriftCompanion(
+          status: Value(OrderStatus.waitingForPreparation.name),
+          validatedAt: Value(DateTime.now())
+        ));
+      }
+    });
+  }
+  
+  @override
+  Future<void> changeOrderStatus(String orderId, OrderStatus status) async {
     if( _db == null){
       return;
     }
@@ -398,24 +437,17 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
         return;
       }
       
-      if(order.status == OrderStatus.draft){
-        await ( _db!.update( _db!.orderDrift)
+      await ( _db!.update( _db!.orderDrift)
           ..where((tbl) => tbl.id.equals(orderId)))
         .write(
           OrderDriftCompanion(
-            status: Value(OrderStatus.validated.name),
+            status: Value(status.name),
             validatedAt: Value(DateTime.now())
           )
         );
-
-        await ( _db!.update( _db!.orderItemDrift)
-        ..where((tbl) => tbl.orderId.equals(orderId) & tbl.status.equals(OrderStatus.draft.name)))
-        .write(OrderItemDriftCompanion(
-          status: Value(OrderStatus.validated.name),
-          validatedAt: Value(DateTime.now())
-        ));
-      }
     });
   }
+
+  
   
 }

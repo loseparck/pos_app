@@ -63,7 +63,7 @@ class OrderPanelItem extends StatelessWidget {
                     ),
 
                     /// Quantité centrée
-                    if(onAdd != null)
+                    if(onAdd != null)...[
                       Flexible(
                         flex: 2,
                         child: Row(
@@ -92,6 +92,23 @@ class OrderPanelItem extends StatelessWidget {
                           ],
                         ),
                       ),
+                    ] else ...[
+                      Flexible(
+                        flex: 2,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "x$quantity",
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
 
                     /// Prix à droite
                     Flexible(

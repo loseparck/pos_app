@@ -1,6 +1,5 @@
 import 'package:pos_app/data/local/db/app_database.dart';
 import 'package:drift/drift.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:pos_app/features/orders/data/models/dto/create_order_dto.dart';
 import 'package:pos_app/features/orders/data/models/dto/create_order_item_dto.dart';
 import 'package:pos_app/features/orders/data/models/dto/create_order_item_option_dto.dart';
@@ -8,7 +7,7 @@ import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
-import 'package:pos_app/features/payments/domain/entities/payment.dart';
+import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 
 
 extension OrderMapper on Order {
@@ -29,12 +28,12 @@ extension OrderMapper on Order {
       id: Value(id),
       tableId: Value(tableId ?? ""),
       groupId: Value(groupId ?? ""),
-      status: Value(orderStatusEnumMap[status] ?? 'draft'),
+      status: Value(status.label),
       createdAt: Value(createdAt ?? DateTime.now()),
       updatedAt: Value(DateTime.now()),
       deletedAt: Value(deletedAt),
       createdById: Value(createdById),
-      paymentId: Value(''),
+      paymentId: Value(payment?.id ?? ''),
     );
   }
 }
@@ -65,14 +64,14 @@ extension CreateOrderDtoMapper on CreateOrderDto {
 }
 
 extension OrderDriftMapper on OrderDriftData {
-  Order toEntity({List<OrderItem>? items, Payment? payment}) {
+  Order toEntity({List<OrderItem>? items, PaymentSession? payment}) {
     return Order(
       id: id,
       tableId: tableId,
       groupId: groupId,
       items: items ?? [],
       payment: payment,
-      status:  $enumDecodeNullable(orderStatusEnumMap, status) ?? OrderStatus.draft,
+      status:  OrderStatus.fromLabel(status) ?? OrderStatus.draft,
       createdAt: createdAt,
       createdById: createdById,
       updatedAt: updatedAt,
@@ -110,7 +109,7 @@ extension OrderItemMapper on OrderItem {
       quantity: Value(quantity),
       unitPrice: Value(unitPrice),
       vat: Value(vat),
-      status: Value(orderStatusEnumMap[status] ?? 'draft'),
+      status: Value(status.label),
       createdAt: Value(createdAt ?? DateTime.now()),
       updatedAt: Value(DateTime.now()),
       deletedAt: Value(deletedAt),
@@ -148,7 +147,7 @@ extension OrderItemDtoMapper on CreateOrderItemDto {
       quantity: Value(quantity),
       unitPrice: Value(unitPrice),
       vat: Value(vat),
-      status: Value(orderStatusEnumMap[status] ?? 'draft'),
+      status: Value(status.label),
       validatedAt: Value(validatedAt ?? DateTime.now()),
       createdAt: Value(createdAt),
       createdById: Value(createdById),
@@ -168,7 +167,7 @@ extension OrderItemDriftMapper on OrderItemDriftData {
       unitPrice: unitPrice,
       vat: vat,
       options: options ?? [],
-      status: $enumDecodeNullable(orderStatusEnumMap, status) ?? OrderStatus.draft,
+      status: OrderStatus.fromLabel(status) ?? OrderStatus.draft,
       validatedAt: validatedAt,
       createdAt: createdAt,
       createdById: createdById

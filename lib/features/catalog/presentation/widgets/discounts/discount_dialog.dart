@@ -17,7 +17,7 @@ class _DiscountDialogState extends ConsumerState<DiscountDialog> {
   final _nameController = TextEditingController();
   final _valueController = TextEditingController();
 
-  DiscountType discountType = DiscountType.amount;
+  DiscountType discountType = DiscountType.fixed;
   bool _isSaving = false;
 
 
@@ -96,14 +96,14 @@ class _DiscountDialogState extends ConsumerState<DiscountDialog> {
             const SizedBox(height: 16),
 
             DropdownButtonFormField<DiscountType>(
-              initialValue: DiscountType.amount,
+              initialValue: DiscountType.fixed,
               decoration: const InputDecoration(
                 labelText: 'Type de la Réduction',
                 border: OutlineInputBorder(),
               ),
               items: [
                 const DropdownMenuItem<DiscountType>(
-                  value: DiscountType.amount,
+                  value: DiscountType.fixed,
                   child: Text('DH'),
                 ),
                 const DropdownMenuItem<DiscountType>(
@@ -112,7 +112,7 @@ class _DiscountDialogState extends ConsumerState<DiscountDialog> {
                 ),
               ],
               onChanged: (value) {
-                setState(() => discountType = (value ?? DiscountType.amount));
+                setState(() => discountType = (value ?? DiscountType.fixed));
               },
             ),
           ],

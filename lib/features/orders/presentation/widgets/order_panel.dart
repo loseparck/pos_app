@@ -15,7 +15,7 @@ class OrderPanel extends ConsumerStatefulWidget {
 
 class _OrderPanel extends ConsumerState<OrderPanel> {
 
-  Color getBackgroundColor(OrderStatus orderStatus,OrderStatus itemStatus) {
+  /*Color getBackgroundColor(OrderStatus orderStatus,OrderStatus itemStatus) {
     if(orderStatus == OrderStatus.paid)
     {
       return Colors.green.shade100;
@@ -25,10 +25,12 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
         return Colors.orange.shade100;
       case OrderStatus.paid:
         return Colors.green.shade100;
+      case OrderStatus.cancelled:
+        return Colors.red.shade100;
       default:
         return Colors.white;
     }
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +55,7 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
                 productPrice: item.unitPrice,
                 quantity: item.quantity,
                 supplements: item.options,
-                backgroundColor: getBackgroundColor(order.status, item.status),
+                backgroundColor: order.status == OrderStatus.paid ? order.status.color : item.status.color,
                 onAdd: item.status != OrderStatus.draft ? null : () {
                   notifier.increaseQuantity(item.id, order.id);
                 },
@@ -64,6 +66,9 @@ class _OrderPanel extends ConsumerState<OrderPanel> {
                       notifier.decreaseQuantity(item.id, order.id);
                     }
                     else{
+                      if(notifier.isDraftAvailable()){
+                        notifier.changeOrderStatus(notifier.getOrderStatus());
+                      }
                       notifier.removeItem(item.id, order.id);
                     }
                   });

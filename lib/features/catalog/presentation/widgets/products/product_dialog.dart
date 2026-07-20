@@ -63,7 +63,7 @@ class _ProductDialogState extends ConsumerState<ProductDialog> {
     descriptionController = TextEditingController(text: p?.description ?? '');
     codeBarresController = TextEditingController(text: p?.codeBarres ?? '');
     priceController = TextEditingController(text: p?.price.toString() ?? '');
-    vatController = TextEditingController(text: p?.vat?.toString() ?? '');
+    vatController = TextEditingController(text: p?.vat.toString() ?? '');
     stockController = TextEditingController(text: p?.stockQuantity?.toString() ?? '');
     imageController = TextEditingController(text: p?.image ?? '');
 
@@ -163,7 +163,7 @@ class _ProductDialogState extends ConsumerState<ProductDialog> {
 
     setState(() {
       selectedImageFile = File(picked.path);
-      imageController.text = picked.path;
+      //imageController.text = picked.path;
     });
   }
 
@@ -193,7 +193,7 @@ class _ProductDialogState extends ConsumerState<ProductDialog> {
       price: double.parse(priceController.text.trim()),
       vat: double.tryParse(vatController.text.trim()) ?? 0,
       stockQuantity: double.tryParse(stockController.text.trim()),
-      image: imageController.text.trim().isEmpty ? null : imageController.text.trim(),
+      //image: imageController.text.trim().isEmpty ? null : imageController.text.trim(),
       color: selectedColor,
       isActive: isActive,
       options: selectedOptions,
@@ -203,7 +203,7 @@ class _ProductDialogState extends ConsumerState<ProductDialog> {
     if(widget.product!=null){
       ref.read(productsProvider.notifier).updateProduct(product);
     } else {
-      ref.read(productsProvider.notifier).addProduct(product);
+      ref.read(productsProvider.notifier).addProduct(product, selectedImageFile?.path);
     }
 
     if (mounted) {

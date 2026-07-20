@@ -16,8 +16,7 @@ OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
       options: (json['options'] as List<dynamic>)
           .map((e) => OrderItemOption.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: $enumDecodeNullable(_$OrderStatusEnumMap, json['status']) ??
-          OrderStatus.draft,
+      status: OrderStatus.fromLabel(json['status']) ?? OrderStatus.draft,
       validatedAt: json['validatedAt'] == null
           ? null
           : DateTime.parse(json['validatedAt'] as String),
@@ -45,19 +44,10 @@ Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
       'unitPrice': instance.unitPrice,
       'vat': instance.vat,
       'options': instance.options,
-      'status': _$OrderStatusEnumMap[instance.status]!,
+      'status': instance.status.label,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'createdById': instance.createdById,
       'validatedAt': instance.validatedAt?.toIso8601String(),
     };
-
-const _$OrderStatusEnumMap = {
-  OrderStatus.draft: 'draft',
-  OrderStatus.waitingValidation: 'waitingValidation',
-  OrderStatus.validated: 'validated',
-  OrderStatus.cancelled: 'cancelled',
-  OrderStatus.delivred: 'delivred',
-  OrderStatus.paid: 'paid',
-};

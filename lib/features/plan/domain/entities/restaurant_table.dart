@@ -1,9 +1,44 @@
+import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pos_app/features/plan/domain/entities/plan.dart';
 
 enum TableShape{ square, circle}
 
-enum TableStatus{ empty, draft, validated}
+enum TableStatus{ 
+  empty(label: "empty", color: Color(0xFF2ECC71)),
+  occuped(label: "occuped", color: Color(0xFF3498DB)),
+  waitingForValidation(label: "waitingForValidation", color: Color(0xFFE67E22)),
+  waitingForService(label: "waitingForService", color: Color(0xFF9B59B6)),
+  served(label: "served", color: Color(0xFF2C3E50)),
+  askForBill(label: "askForBill", color: Color(0xFFF1C40F)),
+  paid(label: "paid", color: Color(0xFFBDC3C7)),
+  toClean(label: "toClean", color: Color(0xFF95A5A6)),
+  reserved(label: "reserved", color: Color(0xFF9B59B6)),
+  outOfService(label: "outOfService", color: Color(0xFFC0392B)),
+  canceled(label: "canceled", color: Color(0xFF34495E));
+
+
+ // draft,
+  //validated,
+  //paid,,;
+  
+  const TableStatus({
+    required this.label,
+    required this.color,
+  });
+
+  final String label;
+  final Color color;
+
+  static TableStatus? fromLabel(String label) {
+    for (final value in TableStatus.values) {
+      if (value.label == label) {
+        return value;
+      }
+    }
+    return null;
+  }
+}
 
 class RestaurantTable{
   final String id;
@@ -109,8 +144,7 @@ class RestaurantTable{
       x: double.tryParse(json['x'].toString()) ?? 0,
       y: double.tryParse(json['y'].toString()) ?? 0,
       seats: int.tryParse(json['seats'].toString()) ?? 0,
-      status: $enumDecodeNullable(tableStatusEnumMap, json['status']) ??
-          TableStatus.empty,
+      status: TableStatus.fromLabel(json['status']) ?? TableStatus.empty,
       rotation: double.tryParse(json['rotation'].toString()) ?? 0,
       shape: $enumDecodeNullable(tableShapeEnumMap, json['shape']) ??
           TableShape.circle,
@@ -132,7 +166,7 @@ class RestaurantTable{
       'x': x,
       'y': y,
       'seats': seats,
-      'status': tableStatusEnumMap[status],
+      'status': status.label,
       'rotation': rotation,
       'shape': tableShapeEnumMap[shape]!,
       'width': width,
@@ -153,8 +187,10 @@ const tableShapeEnumMap = {
   TableShape.square: 'square',
 };
 
+/*
 const tableStatusEnumMap = {
   TableStatus.empty: 'empty',
   TableStatus.draft: 'draft',
   TableStatus.validated: 'validated',
-};
+  TableStatus.paid: 'paid',
+};*/

@@ -26,7 +26,7 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
   Widget build(BuildContext context) {
     final notifier = ref.read(productsProvider.notifier);
     final state = ref.watch(productsProvider);
-    final discounts = state.dicounts;
+    final discounts = state.discounts;
 
     return Column(
       
@@ -80,7 +80,7 @@ class _DiscountViewState extends ConsumerState<DiscountView> {
                                   rows: discounts.map((d) {
                                     return DataRow(cells: [
                                       DataCell(Text(d.name)),
-                                      DataCell(Text("${d.value ?? '0'} ${d.discountType == DiscountType.amount ? 'DH' : '%'}")),
+                                      DataCell(Text("${d.value} ${d.discountType == DiscountType.fixed ? 'DH' : '%'}")),
                                       DataCell(
                                         Switch(
                                             value: d.isActive,

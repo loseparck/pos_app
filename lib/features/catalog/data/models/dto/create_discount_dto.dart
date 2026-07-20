@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 class CreateDiscountDto {
   final String id;
   final String name;
-  final double? value;
+  final double value;
   final DiscountType discountType;
   final bool isActive;
   final DateTime? createdAt;
@@ -26,7 +26,7 @@ class CreateDiscountDto {
       name: json['name']?.toString() ?? '',
       value: double.tryParse(json['value'].toString()) ?? 0,
       discountType: $enumDecodeNullable(discountTypeEnumMap, json['discountType']) ??
-          DiscountType.amount,
+          DiscountType.fixed,
       isActive: bool.tryParse(json['isActive'].toString()) ?? true,
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'].toString()) : null,
       createdById: json['createdById']?.toString() ?? '',

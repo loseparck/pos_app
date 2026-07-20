@@ -1,11 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 
-enum DiscountType{ amount, percentage}
+enum DiscountType{fixed, percentage}
 
 class Discount {
   final String id;
   final String name;
-  final double? value;
+  final double value;
   final DiscountType discountType;
   final bool isActive;
   final DateTime? createdAt;
@@ -17,7 +17,7 @@ class Discount {
     this.id = "",
     required this.name,
     this.value = 0,
-    this.discountType = DiscountType.amount,
+    this.discountType = DiscountType.fixed,
     this.isActive = true,
     this.createdAt,
     this.updatedAt,
@@ -49,6 +49,16 @@ class Discount {
     );
   }
 
+  // Calcule la valeur de la remise sur un montant brut donné
+  double calculateDiscountAmount(double baseAmount) {
+    if (discountType == DiscountType.percentage) {
+      return baseAmount * (value / 100);
+    } else if (discountType == DiscountType.fixed) {
+      return value > baseAmount ? baseAmount : value;
+    }
+    return 0.0;
+  }
+
   @override
   String toString() {
     return toJson().toString();
@@ -60,7 +70,7 @@ class Discount {
       name: json['name'] as String? ?? '',
       value: double.tryParse(json['value'].toString()) ?? 0,
       discountType: $enumDecodeNullable(discountTypeEnumMap, json['discountType']) ??
-          DiscountType.amount,
+          DiscountType.fixed,
       isActive: (json['isActive'] as bool? ?? true),
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
       deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
@@ -86,6 +96,6 @@ class Discount {
 }
 
 const discountTypeEnumMap = {
-  DiscountType.amount: 'amount',
+  DiscountType.fixed: 'fixed',
   DiscountType.percentage: 'percentage',
 };

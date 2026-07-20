@@ -12,7 +12,7 @@ CreateOrderDto _$CreateOrderDtoFromJson(Map<String, dynamic> json) =>
       items: (json['items'] as List<dynamic>)
           .map((e) => CreateOrderItemDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: $enumDecode(_$OrderStatusEnumMap, json['status']),
+      status: OrderStatus.fromLabel(json['status']) ?? OrderStatus.draft,
       tableId: json['tableId'] as String?,
       groupId: json['groupId'] as String?,
       createdAt: json['createdAt'] == null
@@ -27,11 +27,11 @@ Map<String, dynamic> _$CreateOrderDtoToJson(CreateOrderDto instance) =>
       'tableId': instance.tableId,
       'groupId': instance.groupId,
       'items': instance.items,
-      'status': _$OrderStatusEnumMap[instance.status]!,
+      'status': instance.status.label,
       'createdAt': instance.createdAt?.toIso8601String(),
       'createdById': instance.createdById,
     };
-
+/*
 const _$OrderStatusEnumMap = {
   OrderStatus.draft: 'draft',
   OrderStatus.waitingValidation: 'waitingValidation',
@@ -39,4 +39,4 @@ const _$OrderStatusEnumMap = {
   OrderStatus.cancelled: 'cancelled',
   OrderStatus.delivred: 'delivred',
   OrderStatus.paid: 'paid',
-};
+};*/

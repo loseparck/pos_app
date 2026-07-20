@@ -20,7 +20,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
         categories: [], 
         options: [], 
         items: [],
-        dicounts: []
+        discounts: []
       )
     );
 
@@ -35,8 +35,12 @@ class ProductNotifier extends StateNotifier<ProductState> {
       products: products,
       items: items,
       options: options,
-      dicounts: discounts
+      discounts: discounts
     );
+    for(Product p in products){
+        print("image: ${p.image}");
+    }
+    
   } 
 
   List<Item> getItemByOption(String groupId){
@@ -122,10 +126,10 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
-  Future<bool> addCategory(Category category) async {
+  Future<bool> addCategory(Category category, String? picturePath) async {
     try {
       final saveCategoryUseCase = ref.read(saveCategoryUseCaseProvider);
-      final newCategory = await saveCategoryUseCase(category);
+      final newCategory = await saveCategoryUseCase(category, picturePath);
       state = state.copyWith(
         categories: [...state.categories, newCategory],
       );
@@ -138,35 +142,35 @@ class ProductNotifier extends StateNotifier<ProductState> {
     }
   }
 
-  Future<bool> addDiscount(Discount discount) async {
+  Future<Discount?> addDiscount(Discount discount) async {
     try {
       final saveDiscountUseCase = ref.read(saveDiscountUseCaseProvider);
       final newDiscount = await saveDiscountUseCase(discount);
       state = state.copyWith(
-        dicounts: [...state.dicounts, newDiscount],
+        discounts: [...state.discounts, newDiscount],
       );
-      return true;
+      return newDiscount;
     } catch (e) {
       if (kDebugMode) {
         print("Error ${e.toString()}");
       }
-      return false;
+      return null;
     }
   }
 
-  Future<bool> addProduct(Product product) async {
+  Future<String?> addProduct(Product product, String? picturePath) async {
     try {
       final saveProductUseCase = ref.read(saveProductUseCaseProvider);
-      final newProduct = await saveProductUseCase(product);
+      final newProduct = await saveProductUseCase(product, picturePath);
       state = state.copyWith(
         products: [...state.products, newProduct],
       );
-      return true;
+      return newProduct.id;
     } catch (e) {
       if (kDebugMode) {
         print("Error ${e.toString()}");
       }
-      return false;
+      return null;
     }
   }
 
@@ -205,7 +209,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
       changeDiscountStateUseCase(discountId, newState);
        
       state = state.copyWith(
-        dicounts: state.dicounts.map((elem) => elem.id != discountId ? elem: elem.copyWith(isActive: newState)).toList(),
+        discounts: state.discounts.map((elem) => elem.id != discountId ? elem: elem.copyWith(isActive: newState)).toList(),
       );
   }
 
@@ -250,7 +254,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
       final removeDiscountUseCase = ref.read(removeDiscountUseCaseProvider);
       removeDiscountUseCase(id);
       state = state.copyWith(
-        dicounts: state.dicounts.where((item) => item.id != id).toList(),
+        discounts: state.discounts.where((item) => item.id != id).toList(),
       );
   }
 

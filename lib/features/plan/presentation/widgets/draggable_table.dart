@@ -20,16 +20,19 @@ class DraggableTable extends ConsumerStatefulWidget{
 class _DraggableTableState extends ConsumerState<DraggableTable>{
   
 
-  Color _getColor(TableStatus status){
+  /*Color _getColor(TableStatus status){
     switch(status){
       case TableStatus.draft:
-        return Colors.red;
+        return Colors.orange.shade200;
       case TableStatus.validated:
-        return Colors.blue;
+        return Colors.blue.shade200;
+        case TableStatus.paid:
+        return Colors.green.shade200
+        ;
       default:
         return widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) :  Color(0xFF81C784);
     }
-  }
+  }*/
   
    @override
   Widget build(BuildContext context) {
@@ -91,7 +94,7 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
       width: table.width,
       height: table.height,
       decoration: BoxDecoration(
-        color: _getColor(table.status),
+        color: table.status == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : table.status.color,
         borderRadius: BorderRadius.circular(360),
         border: Border.all(
           color: widget.table.id == state.selectedTableId
@@ -111,7 +114,7 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
       width: table.width,
       height: table.height,
       decoration: BoxDecoration(
-        color: _getColor(table.status),
+        color:  table.status == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : table.status.color,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: widget.table.id == state.selectedTableId 

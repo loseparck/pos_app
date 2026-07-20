@@ -7,8 +7,7 @@ import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
 import 'package:pos_app/features/orders/presentation/widgets/order_panel.dart';
-import 'package:pos_app/features/payments/presentation/state/payment_provider.dart';
-import 'package:pos_app/features/payments/presentation/widgets/payment_dialog.dart';
+import 'package:pos_app/features/payments/presentation/widgets/payment_modal.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
 import 'package:pos_app/features/plan/application/plan_notifier.dart';
@@ -47,7 +46,7 @@ class OrdersView extends ConsumerWidget {
 
                 /// ANNULER
                 ElevatedButton(
-                  onPressed: order?.status == OrderStatus.paid || (order != null && order.items.isEmpty)
+                  onPressed: order?.status == OrderStatus.paid || order?.status == OrderStatus.delivred || order?.status == OrderStatus.cancelled || (order != null && order.items.isEmpty)
                     ? null : () {
                         _showCancelOrderDialog(context, orderNotifier, planNotifier);
                       }
@@ -59,10 +58,10 @@ class OrdersView extends ConsumerWidget {
 
                 /// ENREGISTRER
                 ElevatedButton(
-                  onPressed: order?.status != OrderStatus.draft && order?.status != OrderStatus.waitingValidation
+                  onPressed: orderNotifier.isDraftAvailable()
                     ? null : () {
                         orderNotifier.saveOrder();
-                    planNotifier.changeTableState(TableStatus.validated);
+                    planNotifier.changeTableState(TableStatus.waitingForService);
                       },
                   child: const Text("Enregistrer"),
                 ),
@@ -71,12 +70,34 @@ class OrdersView extends ConsumerWidget {
 
                 /// PAIEMENT
                 ElevatedButton(
-                  onPressed: order?.status == OrderStatus.paid || (order != null && order.items.isEmpty)
+                  onPressed: order?.status == OrderStatus.paid || order?.status == OrderStatus.cancelled || (order != null && order.items.isEmpty)
                     ? null : () {
-                      ref.read(paymentProvider.notifier).changeSelectedOrder('order.id');
-                        showDialog( context: context, builder: (_) => const PaymentDialog());
+                     // ref.read(paymentProvider.notifier).changeSelectedOrder('order.id');
+                        showDialog( context: context, builder: (_) => PaymentModal(orderId: order?.id ?? '', payOrder: (payment) {orderNotifier.payOrder(payment); planNotifier.changeTableState(TableStatus.paid);},));
                       },
                   child: const Text("Paiement"),
+                ),
+
+                const SizedBox(width: 8),
+
+                /// PAIEMENT
+                ElevatedButton(
+                  onPressed: order?.status == OrderStatus.paid || order?.status == OrderStatus.cancelled || (order != null && order.items.isEmpty)
+                    ? null : () {// TODO
+                        //showDialog( context: context, builder: (_) => PaymentModal(orderId: order?.id ?? '', payOrder: (payment) {orderNotifier.payOrder(payment); planNotifier.changeTableState(TableStatus.paid);},));
+                      },
+                  child: const Text("Transfert"),
+                ),
+
+                const SizedBox(width: 8),
+
+                /// PAIEMENT
+                ElevatedButton(
+                  onPressed: order?.status == OrderStatus.paid || order?.status == OrderStatus.cancelled || (order != null && order.items.isEmpty)
+                    ? null : () { // TODO
+                        //showDialog( context: context, builder: (_) => PaymentModal(orderId: order?.id ?? '', payOrder: (payment) {orderNotifier.payOrder(payment); planNotifier.changeTableState(TableStatus.askForBill);},));
+                      },
+                  child: const Text("Ticket"),
                 ),
 
                 const Spacer(),
@@ -88,6 +109,9 @@ class OrdersView extends ConsumerWidget {
                 /// RETOUR
                 ElevatedButton(
                   onPressed: () {
+                    //if(order?.status == OrderStatus.paid || order?.status == OrderStatus.cancelled || order?.status == OrderStatus.delivred){
+                      cleanOrderAndTable(ref);
+                    //}
                     Navigator.pop(context);
                   },
                   child: const Text("Retour"),
@@ -157,6 +181,15 @@ class OrdersView extends ConsumerWidget {
     );
   }
 
+  void cleanOrderAndTable(WidgetRef ref){
+    final orderNotifier = ref.read(ordersProvider.notifier);
+    if(orderNotifier.clearOrder()){
+      final planNotifier = ref.read(planProvider.notifier);
+      planNotifier.changeTableState(TableStatus.empty);
+    }
+
+  }
+
   void _showCancelOrderDialog(
     BuildContext context, OrdersNotifier orderNotifier, PlanGroupNotifier planNotifier
   ) {
@@ -166,11 +199,11 @@ class OrdersView extends ConsumerWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Confirmation Suppression Commande"),
+            const Text("Confirmation Annulation Commande"),
           ],
         ),
         content: Text(
-          "Vous voulez bien supprimer cette commande ?"
+          "Vous voulez bien annuler cette commande ?"
         ),
         actionsAlignment: MainAxisAlignment.center,
         actions: [

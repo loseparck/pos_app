@@ -23,8 +23,8 @@ abstract class ProductRepository {
   Future<Item> updateItem(Item item);
 
 
-  Future<Category> saveCategory(Category category);
-  Future<Product> saveProduct(Product product);
+  Future<Category> saveCategory(Category category, String? picturePath);
+  Future<Product> saveProduct(Product product, String? picturePath);
   Future<Discount> saveDiscount(Discount discount);
 
   Future<List<Category>> getCategories();

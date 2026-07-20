@@ -32,10 +32,10 @@ class OrdersState{
     bool? resetSelectedOrderId,
   }){
     return OrdersState(
+      orders: orders ?? this.orders,
       selectedOrderId: resetSelectedOrderId == true ? null : selectedOrderId ?? this.selectedOrderId,
       tableId: resetTableId == true ? null : tableId ?? this.tableId,
       groupId: resetGroupId == true ? null : groupId ?? this.groupId, 
-      orders: orders ?? this.orders
     );
   }
 }

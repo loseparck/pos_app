@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
+import 'package:pos_app/app/unified_p_o_s_payment_modal.dart';
 import 'package:pos_app/features/management/presentation/pages/management.dart';
 import 'package:pos_app/features/plan/presentation/pages/plan_view.dart';
 
@@ -27,7 +28,7 @@ class MainPage extends ConsumerWidget{
                 _buildNavButton(ref, 0, "Dashboard"),
                 _buildNavButton(ref, 1, "Plan"),
                 _buildNavButton(ref, 2, "Stock"),
-                _buildNavButton(ref, 3, "Rapports"),
+                _buildNavButton(ref, 3, "Rapports", context: context),
 
                 const Spacer(),
 
@@ -57,7 +58,7 @@ class MainPage extends ConsumerWidget{
   }
 
   Widget _buildNavButton(
-    WidgetRef ref, int index, String label ){
+    WidgetRef ref, int index, String label, {BuildContext? context}){
     final selectedIndex = ref.watch(selectedTabProvider);
 
     final isSelected = selectedIndex == index;
@@ -67,6 +68,12 @@ class MainPage extends ConsumerWidget{
       child: ElevatedButton(
         onPressed: (){
           ref.read(selectedTabProvider.notifier).state = index;
+          if(context != null){
+             showDialog(
+              context: context,
+              builder: (context) => const UnifiedPOSPaymentModal(),
+            );
+          }
         }, 
         style: ElevatedButton.styleFrom(
           backgroundColor: isSelected ? Colors.blue : Colors.grey,

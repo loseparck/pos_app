@@ -9,6 +9,7 @@ class Category {
   final DateTime? updatedAt;
   final DateTime? deletedAt;
   final String? createdById;
+  final String? image;
 
   const Category({
     required this.name,
@@ -20,6 +21,7 @@ class Category {
     this.deletedAt,
     this.createdById,
     this.parentId,
+    this.image,
   });
 
   Category copyWith({
@@ -31,7 +33,8 @@ class Category {
     DateTime? updatedAt,
     DateTime? deletedAt,
     String? createdById,
-    bool? resetParent
+    bool? resetParent,
+    String? image,
   }) {
     return Category(
       id: id ?? this.id,
@@ -42,7 +45,8 @@ class Category {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
-      createdById: createdById ?? this.createdById
+      createdById: createdById ?? this.createdById,
+      image: image ?? this.image
     );
   }
 
@@ -78,6 +82,7 @@ class Category {
       deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
       createdById: json['createdById'] as String?,
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      image: json['image'] as String?,
     );
   }
 
@@ -87,6 +92,7 @@ class Category {
       'name': name,
       'parentId': parentId,
       'parent': parent?.toJson(),
+      'image': image,
       'isActive': isActive,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),

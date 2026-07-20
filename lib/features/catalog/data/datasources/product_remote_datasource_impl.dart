@@ -233,19 +233,34 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   }
 
   @override
-  Future<Category> saveCategory(CreateCategoryDto category) async {
+  Future<Category> saveCategory(CreateCategoryDto category, String? picturePath) async {
+    final formData = FormData.fromMap({
+      'category': category.toJson(),
+      'image': picturePath != null ? await MultipartFile.fromFile(
+        picturePath
+      ) : null,
+    });
     final response = await _dio.post(
       ApiEndpoints.categories,
-      data: category.toJson(),
+      //data: category.toJson(),
+      data: formData
     );
     return Category.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
   @override
-  Future<Product> saveProduct(CreateProductDto product) async {
+  Future<Product> saveProduct(CreateProductDto product, String? picturePath) async {
+    final formData = FormData.fromMap({
+      'product': product.toJson(),
+      'image': picturePath != null ? await MultipartFile.fromFile(
+        picturePath
+      ) : null,
+    });
+
     final response = await _dio.post(
       ApiEndpoints.products,
-      data: product.toJson(),
+      //data: product.toJson(),
+      data: formData
     );
 
     return Product.fromJson(response.data['data'] as Map<String, dynamic>);

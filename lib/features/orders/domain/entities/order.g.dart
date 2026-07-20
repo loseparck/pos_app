@@ -13,11 +13,10 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
           .toList(),
       tableId: json['tableId'] as String?,
       groupId: json['groupId'] as String?,
-      status: $enumDecodeNullable(_$OrderStatusEnumMap, json['status']) ??
-          OrderStatus.draft,
+      status: OrderStatus.fromLabel(json['status']) ?? OrderStatus.draft,
       payment: json['payment'] == null
           ? null
-          : Payment.fromJson(json['payment'] as Map<String, dynamic>),
+          : PaymentSession.fromJson(json['payment'] as Map<String, dynamic>),
       createdAt: json['createdAt'] == null
           ? null
           : DateTime.parse(json['createdAt'] as String),
@@ -34,20 +33,11 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'id': instance.id,
       'tableId': instance.tableId,
       'groupId': instance.groupId,
-      'status': _$OrderStatusEnumMap[instance.status]!,
+      'items': instance.items,
+      'status':instance.status.label,
       'payment': instance.payment,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'createdById': instance.createdById,
-      'items': instance.items,
     };
-
-const _$OrderStatusEnumMap = {
-  OrderStatus.draft: 'draft',
-  OrderStatus.waitingValidation: 'waitingValidation',
-  OrderStatus.validated: 'validated',
-  OrderStatus.cancelled: 'cancelled',
-  OrderStatus.delivred: 'delivred',
-  OrderStatus.paid: 'paid',
-};

@@ -7,7 +7,7 @@ import 'package:pos_app/features/catalog/domain/entities/option.dart';
 class ProductState{
   final List<Product> products;
   final List<Category> categories;
-  final List<Discount> dicounts;
+  final List<Discount> discounts;
   final List<Item> items;
   final List<Option> options;
 
@@ -15,17 +15,19 @@ class ProductState{
   final String? selectedCategoryId;
   final String? selectedOptionId;
   final String? selectedOptionGroupId;
+  final String? selectedDiscountId;
 
   ProductState({
     required this.products,
     required this.categories,
     required this.options,
     required this.items,
-    required this.dicounts,
+    required this.discounts,
     this.selectedCategoryId,
     this.selectedProductId,
     this.selectedOptionGroupId,
     this.selectedOptionId,
+    this.selectedDiscountId,
   });
 
   Product? get selectedProduct {
@@ -64,31 +66,43 @@ class ProductState{
     }
   } 
 
+  Discount? get selectedDiscount {
+    if(selectedDiscountId == null) return null;
+    try{
+      return discounts.firstWhere((discount) => discount.id == selectedDiscountId);
+    } catch(_){
+      return null;
+    }
+  } 
+
   ProductState copyWith({
     List<Product>? products,
     List<Category>? categories,
     List<Item>? items,
     List<Option>? options,
-    List<Discount>? dicounts,
+    List<Discount>? discounts,
     String? selectedProductId,
     String? selectedCategoryId,
     String? selectedOptionId,
     String? selectedOptionGroupId,
+    String? selectedDiscountId,
     bool? resetProductId,
     bool? resetCategoryId,
     bool? resetOptionId,
     bool? resetOptionGroupId,
+    bool? resetDiscountId,
   }){
     return ProductState(
       products: products ?? this.products,
       categories: categories ?? this.categories,
       options: options ?? this.options,
       items: items ?? this.items,
-      dicounts: dicounts ?? this.dicounts,
+      discounts: discounts ?? this.discounts,
       selectedProductId: resetProductId == true ? null : selectedProductId ?? this.selectedProductId,
       selectedCategoryId: resetCategoryId == true ? null : selectedCategoryId ?? this.selectedCategoryId,
       selectedOptionId: resetOptionId == true ? null : selectedOptionId ?? this.selectedOptionId,
-      selectedOptionGroupId: resetOptionGroupId == true ? null : selectedOptionGroupId ?? this.selectedOptionGroupId
+      selectedOptionGroupId: resetOptionGroupId == true ? null : selectedOptionGroupId ?? this.selectedOptionGroupId,
+      selectedDiscountId: resetDiscountId == true ? null : selectedDiscountId ?? this.selectedDiscountId
     );
   }
 }

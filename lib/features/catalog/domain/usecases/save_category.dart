@@ -7,7 +7,7 @@ class SaveCategory {
 
   final ProductRepository _repository;
 
-  Future<Category> call(Category category) {
-    return _repository.saveCategory(category);
+  Future<Category> call(Category category, String? picturePath) {
+    return _repository.saveCategory(category, picturePath);
   }
 }

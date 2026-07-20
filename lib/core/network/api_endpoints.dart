@@ -12,4 +12,5 @@ class ApiEndpoints {
   static const String discounts = "/discounts";
   static const String plans = "/plans";
   static const String tables = "/tables";
+  static const String payments = "/payments";
 }

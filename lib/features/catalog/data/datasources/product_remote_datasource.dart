@@ -35,8 +35,8 @@ abstract class ProductRemoteDataSource {
   Future<List<Item>> getItemByOptionId(String optionId);*/
   
   
-  Future<Category> saveCategory(CreateCategoryDto category);
-  Future<Product> saveProduct(CreateProductDto product);
+  Future<Category> saveCategory(CreateCategoryDto category, String? picturePath);
+  Future<Product> saveProduct(CreateProductDto product, String? picturePath);
   Future<Discount> saveDiscount(CreateDiscountDto product);
 
   Future<List<Category>> getCategories();

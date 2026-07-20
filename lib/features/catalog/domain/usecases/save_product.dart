@@ -7,7 +7,7 @@ class SaveProduct {
 
   final ProductRepository _repository;
 
-  Future<Product> call(Product product) {
-    return _repository.saveProduct(product);
+  Future<Product> call(Product product, String? picturePath) {
+    return _repository.saveProduct(product, picturePath);
   }
 }
