@@ -37,10 +37,6 @@ class ProductNotifier extends StateNotifier<ProductState> {
       options: options,
       discounts: discounts
     );
-    for(Product p in products){
-        print("image: ${p.image}");
-    }
-    
   } 
 
   List<Item> getItemByOption(String groupId){

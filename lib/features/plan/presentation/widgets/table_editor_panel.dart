@@ -78,8 +78,244 @@ class _TableEditorPanelState extends ConsumerState<TableEditorPanel>{
     }
     
     nameController ??= TextEditingController(text: table.name);
+return Container(
+  color: Colors.grey.shade100,
+  padding: const EdgeInsets.all(12),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      const Text(
+        "Configuration Table",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
+      ),
 
-    return Container(
+      const SizedBox(height: 10),
+
+      Expanded(
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Form(
+                key: _nameFormKey,
+                child: TextFormField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nom / Numéro *',
+                  ),
+                  onChanged: (value) {
+                    notifier.changeTableName(value);
+                  },
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Le nom est obligatoire';
+                    }
+
+                    if (value.trim().length < 2) {
+                      return 'Le nom doit contenir au moins 2 caractères';
+                    }
+
+                    return null;
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              /// SEATS
+              Row(
+                children: [
+                  const Text("Places: "),
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      notifier.updateSeatPlaces(-1);
+                    },
+                  ),
+                  Text("${table.seats}"),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      notifier.updateSeatPlaces(1);
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              /// FORME
+              Row(
+                children: [
+                  ChoiceChip(
+                    label: const Text("Carré"),
+                    selected: table.shape == TableShape.square,
+                    onSelected: (_) {
+                      notifier.toggleShape(TableShape.square);
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  ChoiceChip(
+                    label: const Text("Cercle"),
+                    selected: table.shape == TableShape.circle,
+                    onSelected: (_) {
+                      notifier.toggleShape(TableShape.circle);
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              /// WIDTH
+              Row(
+                children: [
+                  const Text("Largeur"),
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      notifier.scaleHorizentally(-10);
+                    },
+                  ),
+                  Text("${table.width}"),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      notifier.scaleHorizentally(10);
+                    },
+                  ),
+                ],
+              ),
+
+              /// HEIGHT
+              Row(
+                children: [
+                  const Text("Hauteur"),
+                  IconButton(
+                    icon: const Icon(Icons.remove),
+                    onPressed: () {
+                      notifier.scaleVertically(-10);
+                    },
+                  ),
+                  Text("${table.height}"),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      notifier.scaleVertically(10);
+                    },
+                  ),
+                ],
+              ),
+
+              /// ROTATION
+              Row(
+                children: [
+                  const Text("Rotation"),
+                  IconButton(
+                    icon: const Icon(Icons.rotate_left),
+                    onPressed: () {
+                      notifier.rotateTable(-0.25);
+                    },
+                  ),
+                  Text("${table.rotation}"),
+                  IconButton(
+                    icon: const Icon(Icons.rotate_right),
+                    onPressed: () {
+                      notifier.rotateTable(0.25);
+                    },
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+
+              /// COULEURS
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _buildColorPalette(),
+              ),
+
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 10),
+
+      /// ACTIONS
+      Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                padding: const EdgeInsets.all(10),
+              ),
+              onPressed: () {
+                notifier.removeTable();
+              },
+              child: const Text(
+                "Supprimer",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.orange,
+                padding: const EdgeInsets.all(10),
+              ),
+              onPressed: () {
+                notifier.cancelEditTable();
+              },
+              child: const Text(
+                "Annuler",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 8),
+
+          Expanded(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green.shade300,
+                padding: const EdgeInsets.all(10),
+              ),
+              onPressed: () {
+                if (_nameFormKey.currentState?.validate() ?? false) {
+                  notifier.validateTable();
+                }
+              },
+              child: const Text(
+                "Valider",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  ),
+);
+    /*return Container(
       color: Colors.grey.shade100,
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -285,5 +521,6 @@ class _TableEditorPanelState extends ConsumerState<TableEditorPanel>{
         ],
       ),
     );
+  */
   }
 }

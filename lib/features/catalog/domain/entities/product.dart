@@ -1,6 +1,23 @@
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
+extension ProductImageExtension on Product {
+
+  String? get imagePath {
+
+    return image;
+
+  }
+
+  bool get hasImage {
+
+    return imagePath != null &&
+           imagePath!.isNotEmpty;
+
+  }
+
+}
+
 class Product {
   final String id;
   final String name;

@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Category {
 
   final String id;
@@ -10,6 +12,7 @@ class Category {
   final DateTime? deletedAt;
   final String? createdById;
   final String? image;
+  final Color? color;
 
   const Category({
     required this.name,
@@ -22,6 +25,7 @@ class Category {
     this.createdById,
     this.parentId,
     this.image,
+    this.color,
   });
 
   Category copyWith({
@@ -35,6 +39,7 @@ class Category {
     String? createdById,
     bool? resetParent,
     String? image,
+    Color? color,
   }) {
     return Category(
       id: id ?? this.id,
@@ -46,7 +51,8 @@ class Category {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       createdById: createdById ?? this.createdById,
-      image: image ?? this.image
+      image: image ?? this.image,
+      color: color ?? this.color
     );
   }
 
@@ -94,6 +100,7 @@ class Category {
       'parent': parent?.toJson(),
       'image': image,
       'isActive': isActive,
+      'color': color,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'deletedAt': deletedAt?.toIso8601String(),

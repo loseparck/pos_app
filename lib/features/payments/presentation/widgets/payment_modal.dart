@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/payments/data/repositories/payment_repository_provider.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
@@ -15,13 +16,14 @@ import 'mode_articles_view.dart';
 import 'right_keypad_panel.dart';
 
 class PaymentModal extends ConsumerStatefulWidget {
-  const PaymentModal({super.key,
-   required this.orderId,
-   required this.payOrder,});
-
   final Function(PaymentSession) payOrder;
-
   final String orderId;
+
+  const PaymentModal({
+    super.key,
+    required this.orderId,
+    required this.payOrder,
+  });
 
   @override
   ConsumerState<PaymentModal> createState() => _PaymentModalState();
@@ -58,10 +60,8 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
 
   @override
   Widget build(BuildContext context) {
-    bool isAllPaid = ref.watch(paymentsProvider.notifier).isAllOrderPaid(order!);
-    if(isAllPaid){
-      widget.payOrder.call(ref.watch(paymentsProvider).payment!);
-    }
+  bool isAllPaid = ref.read(paymentsProvider.notifier).isAllOrderPaid(order!);
+
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -73,7 +73,7 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
           children: [
             _buildTopBar(),
             Opacity(
-              opacity: isAllPaid ? 0.5 : 1.0,
+              opacity: order?.status == OrderStatus.paid ? 0.5 : 1.0,
               child: AbsorbPointer(
                 absorbing: isAllPaid,
                 child:  _buildTabBar(),
@@ -371,19 +371,26 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                 )
               ),
               ElevatedButton(
-                onPressed: getTotalAmount() <= 0 || ref.watch(paymentsProvider.notifier).isAllOrderPaid(order!) ? null : () {
-                  setState(() {
-                    Set<String> checkedList = ref.watch(paymentsProvider).checkedItems;
-                    
-                    notifier.addItemPayment(
+                onPressed: getTotalAmount() <= 0 || ref.watch(paymentsProvider.notifier).isAllOrderPaid(order!) ? null : () async {
+                 // setState(() {
+                    Set<String> checkedList = ref.read(paymentsProvider).checkedItems;
+                   final payment = await notifier.addItemPayment(
                       double.tryParse(_amountInput) ?? 0,
                       getTotalAmount(),
                       order!,
-                      _paymentMethod == 'Espèce' ? PaymentMethod.cash : _paymentMethod == 'Carte' ? PaymentMethod.card : PaymentMethod.other,
+                      _paymentMethod == 'Espèces' ? PaymentMethod.cash : _paymentMethod == 'Carte' ? PaymentMethod.card : PaymentMethod.other,
                       _activeTab == 0 ? PaymentMode.total : _activeTab == 1 ? PaymentMode.split : PaymentMode.item,
-                      itemQte: _activeTab == 2 ? Map.fromEntries(checkedList.map((item) => MapEntry(item, ref.watch(paymentsProvider.notifier).getQuantity(item)))) : null
+                      itemQte: _activeTab == 2 ? Map.fromEntries(checkedList.map((item) => MapEntry(item, notifier.getQuantity(item)))) : null
                     );
-                  });
+
+                    if (payment != null && mounted) {
+                      widget.payOrder(payment);
+                    }
+
+                    //if(isAllPaid){
+                      //widget.payOrder.call(ref.watch(paymentsProvider).payment!);
+                    //}
+                 // });
                 },
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), elevation: 0),
                 child: Wrap(
@@ -423,9 +430,9 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
       final order = ref.watch(ordersProvider).selectedOrder ?? Order(id: '', items: []);
       double total = 0;
       for (var item in order.items) {
-        if(ref.watch(paymentsProvider).checkedItems.contains(item.productId))
+        if(ref.watch(paymentsProvider).checkedItems.contains(item.id))
         {
-          total += (ref.watch(paymentsProvider).itemsQuantity[item.productId] ?? 0) * item.unitPrice;
+          total += (ref.watch(paymentsProvider).itemsQuantity[item.id] ?? 0) * (item.unitPrice + item.options.fold(0, (total, option) => total+= option.quantity * option.unitPrice));
         }
       }
       return total;

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
+import 'package:pos_app/features/orders/domain/entities/order_item.dart';
+import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 import 'package:pos_app/features/payments/data/repositories/payment_repository_provider.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 import 'package:pos_app/features/payments/presentation/widgets/discount_selector_widget.dart';
@@ -43,12 +45,12 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
             itemCount: order.items.length,
             itemBuilder: (context, index) {
               final art = order.items[index];
-              final paidQte = notifier.isPaid(art.productId);
-              final bool checked = paidQte == art.quantity || notifier.isItemChecked(art.productId);
+              final paidQte = notifier.isPaid(art.id);
+              final bool checked = paidQte == art.quantity || notifier.isItemChecked(art.id);
               bool isEncaisse = art.quantity == paidQte;
               bool hasMultipleQty = art.quantity > 1;
-              if(!isEncaisse && !notifier.isQuantityFiled(art.productId)){
-                notifier.setQuantity(art.productId, 1);
+              if(!isEncaisse && !notifier.isQuantityFiled(art.id)){
+                notifier.setQuantity(art.id, 1);
               }
               final String status = isEncaisse ? 'Paid': hasMultipleQty ? 'Partiel ($paidQte/${art.quantity})' :'To Pay';
 
@@ -67,10 +69,10 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
                         value: checked,
                         activeColor: isEncaisse ? Colors.green : Colors.black,
                         onChanged: isEncaisse ? null : (val) => setState(() {
-                          if(notifier.isItemChecked(art.productId)){
-                            notifier.uncheckItem(art.productId);
+                          if(notifier.isItemChecked(art.id)){
+                            notifier.uncheckItem(art.id);
                           } else {
-                            notifier.checkItem(art.productId);
+                            notifier.checkItem(art.id);
                           }
                            widget.changeAmountToPay.call();
                         }),
@@ -90,21 +92,21 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
                           decoration: BoxDecoration(color: Colors.grey[100], borderRadius: BorderRadius.circular(6)),
                           child: Row(
                             children: [
-                              _buildMiniButton(Icons.remove, () => notifier.getQuantity(art.productId) <= 1 ? null : setState(() {
-                                notifier.increaseQuantity(art.productId, -1);
-                                if(!notifier.isItemChecked(art.productId)){
-                                  notifier.checkItem(art.productId);
+                              _buildMiniButton(Icons.remove, () => notifier.getQuantity(art.id) <= 1 ? null : setState(() {
+                                notifier.increaseQuantity(art.id, -1);
+                                if(!notifier.isItemChecked(art.id)){
+                                  notifier.checkItem(art.id);
                                 }
                                 widget.changeAmountToPay.call();
                               })),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Text("${notifier.getQuantity(art.productId) + paidQte} / ${art.quantity}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                                child: Text("${notifier.getQuantity(art.id) + paidQte} / ${art.quantity}", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                               ),
-                              _buildMiniButton(Icons.add, () =>  notifier.getQuantity(art.productId) + paidQte >= art.quantity ? null : setState(() {
-                                notifier.increaseQuantity(art.productId, 1);
-                                if(!notifier.isItemChecked(art.productId)){
-                                  notifier.checkItem(art.productId);
+                              _buildMiniButton(Icons.add, () =>  notifier.getQuantity(art.id) + paidQte >= art.quantity ? null : setState(() {
+                                notifier.increaseQuantity(art.id, 1);
+                                if(!notifier.isItemChecked(art.id)){
+                                  notifier.checkItem(art.id);
                                 }
                                 widget.changeAmountToPay.call();
                               })),
@@ -119,7 +121,7 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text("${((isEncaisse ? art.quantity :notifier.getQuantity(art.productId)) * art.unitPrice).toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${getItemTotal(art, isEncaisse ? art.quantity : notifier.getQuantity(art.id))} €", style: const TextStyle(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -148,5 +150,13 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
         child: Icon(icon, size: 12, color: Colors.black87),
       ),
     );
+  }
+
+  String getItemTotal(OrderItem item, int qte){
+    double total = item.unitPrice;
+    for(OrderItemOption option in item.options){
+      total+= option.quantity * option.unitPrice;
+    }
+    return (total * qte).toStringAsFixed(2);
   }
 }

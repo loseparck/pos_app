@@ -135,6 +135,54 @@ class OrderRemoteDatasourceImpl implements OrderRemoteDatasource {
   }
 
   @override
+  Future<void> updateComment(String orderItemId, String comment) async {
+    final response = await _dio.patch(
+      '${ApiEndpoints.orders}/items/$orderItemId/comment',
+      data: comment
+    );
+    if(response.data == null){
+
+    }
+    //TODO check if reseult Ok
+  }
+
+  @override
+  Future<void> switchOrder(String orderId, String newTableId) async {
+    final response = await _dio.patch(
+      '${ApiEndpoints.orders}/$orderId/switch',
+      data: {'newTable': newTableId}
+    );
+    if(response.data == null){
+
+    }
+    //TODO check if reseult Ok
+  }
+
+  @override
+  Future<void> mergeOrder(String sourceId, String targetId, OrderStatus newStatus) async {
+    final response = await _dio.patch(
+      '${ApiEndpoints.orders}/$sourceId/merde',
+      data: {'target': targetId, 'newStatus': newStatus}
+    );
+    if(response.data == null){
+
+    }
+    //TODO check if reseult Ok
+  }
+
+  @override
+  Future<void> switchOrderItem(String orderItemId, String newOrderId) async {
+    final response = await _dio.patch(
+      '${ApiEndpoints.orders}/items/$orderItemId/switch',
+      data: {'orderId': newOrderId}
+    );
+    if(response.data == null){
+
+    }
+    //TODO check if reseult Ok
+  }
+
+  @override
   Future<void> payOrder(String orderId, PaymentSession payment) async {
     final response = await _dio.patch(
       '${ApiEndpoints.orders}/$orderId/pay',

@@ -365,6 +365,83 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
   }
 
   @override
+  Future<void> updateComment(String orderItemId, String comment) async{
+    if( _db == null){
+      return;
+    }
+    
+    await  _db?.transaction(() async {
+      final orderItem = await getItem(orderItemId);
+      if(orderItem == null){
+        return;
+      }
+      await ( _db!.update( _db!.orderItemDrift)
+        ..where((tbl) => tbl.id.equals(orderItemId)))
+      .write( orderItem.copyWith(updatedAt: DateTime.now(), comment: comment).toDrift(), );
+    });
+  }
+
+  @override
+  Future<void> switchOrder(String orderId, String newTableId) async{
+    if( _db == null){
+      return;
+    }
+    
+    await  _db?.transaction(() async {
+      final order = await getOrder(orderId);
+      if(order == null){
+        return;
+      }
+      await ( _db!.update( _db!.orderDrift)
+        ..where((tbl) => tbl.id.equals(orderId)))
+      .write( order.copyWith(updatedAt: DateTime.now(), tableId: newTableId).toDrift(),);
+    });
+  }
+
+  @override
+  Future<void> switchOrderItem(String orderItemId, String newOrderId) async{
+    if( _db == null){
+      return;
+    }
+    
+    await  _db?.transaction(() async {
+      final orderItem = await getItem(orderItemId);
+      if(orderItem == null){
+        return;
+      }
+      await ( _db!.update( _db!.orderItemDrift)
+        ..where((tbl) => tbl.id.equals(orderItemId)))
+      .write( orderItem.copyWith(updatedAt: DateTime.now(), orderId: newOrderId).toDrift(),);
+    });
+  }
+
+  @override
+  Future<void> mergeOrder(String sourceId, String targetId, OrderStatus newStatus) async{
+    if( _db == null){
+      return;
+    }
+    
+    await  _db?.transaction(() async {
+
+      final sourceOrder = await getOrder(sourceId);
+      
+      if (sourceOrder == null) { return; }
+
+      final targetOrder = await getOrder(targetId);
+      
+      if (targetOrder == null) { return; }
+
+      await ( _db!.update( _db!.orderItemDrift)
+        ..where((tbl) => tbl.orderId.equals(sourceId)))
+        .write( OrderItemDriftCompanion(orderId: Value(targetId), status: Value(newStatus.name)));
+
+      await (_db!.delete(_db!.orderDrift)
+        ..where( (tbl) => tbl.id.equals(sourceId), ))
+        .go();
+    });
+  }
+
+  @override
   Future<void> payOrder(String orderId, PaymentSession payment) async {
     if( _db == null){
       return;
@@ -394,13 +471,11 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
     if( _db == null){
       return;
     }
-    print("order status 1");
     await  _db?.transaction(() async {
       final order = await getOrder(orderId);
       if(order == null){
         return;
       }
-      print("order status ${order.status}");
       if(order.status == OrderStatus.draft){
         await ( _db!.update( _db!.orderDrift)
           ..where((tbl) => tbl.id.equals(orderId)))
@@ -410,11 +485,7 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
             validatedAt: Value(DateTime.now())
           )
         );
-        final fer = await getItems(order.id);
-        for(final v in fer){
-          print("fer $v");
-        }
-        
+
         await ( _db!.update( _db!.orderItemDrift)
         ..where((tbl) => tbl.orderId.equals(orderId) & tbl.status.equals(OrderStatus.draft.name)))
         .write(OrderItemDriftCompanion(

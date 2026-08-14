@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
-import 'package:pos_app/features/orders/presentation/orders_view.dart';
-import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
+import 'package:pos_app/features/orders/presentation/pages/pos_page.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
 import 'package:pos_app/features/plan/application/plan_state.dart';
@@ -19,29 +18,15 @@ class DraggableTable extends ConsumerStatefulWidget{
 
 class _DraggableTableState extends ConsumerState<DraggableTable>{
   
-
-  /*Color _getColor(TableStatus status){
-    switch(status){
-      case TableStatus.draft:
-        return Colors.orange.shade200;
-      case TableStatus.validated:
-        return Colors.blue.shade200;
-        case TableStatus.paid:
-        return Colors.green.shade200
-        ;
-      default:
-        return widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) :  Color(0xFF81C784);
-    }
-  }*/
-  
-   @override
+  @override
   Widget build(BuildContext context) {
     final table = widget.table;
     final notifer = ref.read(planProvider.notifier);
+    final tableStatus = table.getstatus(ref.watch(ordersProvider).getOrderByTable(widget.table.id)?.status);
     final state = ref.watch(planProvider);
     final tableWidget = table.shape == TableShape.circle
-      ? roundShape(state)
-      : squareShape(state);
+      ? roundShape(state, tableStatus)
+      : squareShape(state, tableStatus);
 
     if(!widget.editMode){
       return Positioned(
@@ -55,8 +40,9 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
           onTap: () {
             notifer.selectTable(table.id);
             ref.read(ordersProvider.notifier).setTableAndGroupId(tableId :table.id);
-            ref.read(currentGroupProvider.notifier).state = null;
-            Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId: table.id, isTable: true,)));
+            //ref.read(currentGroupProvider.notifier).state = null;
+            //Navigator.push(context, MaterialPageRoute(builder: (context) => OrdersView(supportId: table.id, isTable: true,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => PosPage( isTable: true)));
           }
         ),
       );
@@ -88,13 +74,13 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
     );
   }
 
-  Widget roundShape(PlanGroupState state){
+  Widget roundShape(PlanGroupState state, TableStatus tableStatus){
     final table = widget.table;
     return Container(
       width: table.width,
       height: table.height,
       decoration: BoxDecoration(
-        color: table.status == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : table.status.color,
+        color: tableStatus == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : tableStatus.color,
         borderRadius: BorderRadius.circular(360),
         border: Border.all(
           color: widget.table.id == state.selectedTableId
@@ -108,13 +94,13 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
     );
   }
 
-  Widget squareShape(PlanGroupState state){
+  Widget squareShape(PlanGroupState state, TableStatus tableStatus){
     final table = widget.table;
     return Container(
       width: table.width,
       height: table.height,
       decoration: BoxDecoration(
-        color:  table.status == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : table.status.color,
+        color:  tableStatus == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : tableStatus.color,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: widget.table.id == state.selectedTableId 

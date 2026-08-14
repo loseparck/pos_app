@@ -90,7 +90,9 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
         tables: [...state.tables, draftTable!],
         selectedTableId: draftTable?.id
       );
+      tablesToCreate.add(draftTable!.id);
       draftTable = null;
+      
     } else {
       draftTable = state.selectedTable;
     }
@@ -493,5 +495,13 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     } else {
       return state.selectedPlan!.name;
     }
+  }
+
+  String getNameById(String tableId){
+    return state.tables.where((table) => table.id == tableId).first.name;
+  }
+
+  RestaurantTable getTable(String tableId){
+    return state.tables.where((table) => table.id == tableId).first;
   }
 }

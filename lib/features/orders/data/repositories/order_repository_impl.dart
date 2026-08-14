@@ -229,6 +229,58 @@ class OrderRepositoryImpl implements OrderRepository{
   }
 
   @override
+  Future<void> updateComment(String orderItemId, String comment) async {
+    if(!kIsWeb) {
+      await _localDataSource.updateComment(orderItemId, comment);
+    }
+     
+    if(await _connectivity.isOnline()) {
+      await _remoteDataSource.updateComment(orderItemId, comment);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+  }
+
+  @override
+  Future<void> switchOrder(String orderId, String newTableId) async {
+    if(!kIsWeb) {
+      await _localDataSource.switchOrder(orderId, newTableId);
+    }
+     
+    if(await _connectivity.isOnline()) {
+      await _remoteDataSource.switchOrder(orderId, newTableId);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+  }
+
+  @override
+  Future<void> mergeOrder(String sourceId, String targetId, OrderStatus newStatus) async {
+    if(!kIsWeb) {
+      await _localDataSource.mergeOrder(sourceId, targetId, newStatus);
+    }
+     
+    if(await _connectivity.isOnline()) {
+      await _remoteDataSource.mergeOrder(sourceId, targetId, newStatus);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+  }
+
+  @override
+  Future<void> switchOrderItem(String orderItemId, String newOrderId) async {
+    if(!kIsWeb) {
+      await _localDataSource.switchOrderItem(orderItemId, newOrderId);
+    }
+     
+    if(await _connectivity.isOnline()) {
+      await _remoteDataSource.switchOrderItem(orderItemId, newOrderId);
+    } else if(!kIsWeb) {
+      //TODO add to QUEUE
+    }
+  }  
+
+  @override
   Future<void> payOrder(String orderId, PaymentSession payment) async{
     if(!kIsWeb) {
       await _localDataSource.payOrder(orderId, payment);

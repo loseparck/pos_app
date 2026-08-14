@@ -6,8 +6,12 @@ import 'package:pos_app/features/orders/domain/usecases/change_order_status.dart
 import 'package:pos_app/features/orders/domain/usecases/create_order.dart';
 import 'package:pos_app/features/orders/domain/usecases/decrease_item.dart';
 import 'package:pos_app/features/orders/domain/usecases/increase_item.dart';
+import 'package:pos_app/features/orders/domain/usecases/merge_order.dart';
 import 'package:pos_app/features/orders/domain/usecases/pay_order.dart';
 import 'package:pos_app/features/orders/domain/usecases/remove_item.dart';
+import 'package:pos_app/features/orders/domain/usecases/switch_order.dart';
+import 'package:pos_app/features/orders/domain/usecases/switch_order_item.dart';
+import 'package:pos_app/features/orders/domain/usecases/update_comment.dart';
 import 'package:pos_app/features/orders/domain/usecases/validate_order.dart';
 
 final createOrderUseCaseProvider = Provider<CreateOrder>((ref) {
@@ -48,4 +52,20 @@ final updateOrderStatusUseCaseProvider = Provider<ValidateOrder>((ref) {
 
 final changeOrderStatusUseCaseProvider = Provider<ChangeOrderStatus>((ref) {
   return ChangeOrderStatus(ref.read(orderRepositoryProvider));
+});
+
+final updateCommentUseCaseProvider = Provider<UpdateComment>((ref) {
+  return UpdateComment(ref.read(orderRepositoryProvider));
+});
+
+final switchOrderUseCaseProvider = Provider<SwitchOrder>((ref) {
+  return SwitchOrder(ref.read(orderRepositoryProvider));
+});
+
+final mergeOrderUseCaseProvider = Provider<MergeOrder>((ref) {
+  return MergeOrder(ref.read(orderRepositoryProvider));
+});
+
+final switchOrderItemUseCaseProvider = Provider<SwitchOrderItem>((ref) {
+  return SwitchOrderItem(ref.read(orderRepositoryProvider));
 });

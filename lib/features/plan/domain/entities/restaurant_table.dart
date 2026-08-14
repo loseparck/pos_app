@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:pos_app/features/plan/domain/entities/plan.dart';
 
 enum TableShape{ square, circle}
@@ -17,11 +18,6 @@ enum TableStatus{
   outOfService(label: "outOfService", color: Color(0xFFC0392B)),
   canceled(label: "canceled", color: Color(0xFF34495E));
 
-
- // draft,
-  //validated,
-  //paid,,;
-  
   const TableStatus({
     required this.label,
     required this.color,
@@ -38,6 +34,7 @@ enum TableStatus{
     }
     return null;
   }
+  
 }
 
 class RestaurantTable{
@@ -114,6 +111,31 @@ class RestaurantTable{
       updatedAt: updatedAt ?? this.updatedAt, 
       deletedAt: deletedAt ?? this.deletedAt, 
     );
+  }
+
+  TableStatus getstatus(OrderStatus? orderStatus){
+    if (orderStatus == null) {
+      return TableStatus.empty;
+    }
+
+    if(status == TableStatus.reserved && status == TableStatus.askForBill && status == TableStatus.outOfService){
+      return status;
+    }
+
+    return switch (orderStatus) {
+      OrderStatus.draft => TableStatus.occuped,
+      OrderStatus.waitingValidation => TableStatus.waitingForValidation,
+      OrderStatus.waitingForPreparation => TableStatus.waitingForService,
+      OrderStatus.preparationInProgress => TableStatus.occuped,
+      OrderStatus.toServe => TableStatus.occuped,
+      OrderStatus.served => TableStatus.served,
+      OrderStatus.toBeDelivered => TableStatus.occuped,
+      OrderStatus.delivred => TableStatus.served,
+      OrderStatus.waitingForPayment => TableStatus.askForBill,
+      OrderStatus.paid => TableStatus.paid,
+      OrderStatus.cancelled => TableStatus.canceled,
+      OrderStatus.ended => TableStatus.empty,
+    };
   }
 
   factory RestaurantTable.create(Plan plan) {

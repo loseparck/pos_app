@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/orders/application/orders_state.dart';
 import 'package:pos_app/features/orders/application/usecase_provider.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository.dart';
@@ -43,7 +42,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     return false;
   } 
 
-  OrderItem convertProductToOrderItem(Product p, List<Item> options, String orderId, {String? comment}){
+  /*OrderItem convertProductToOrderItem(Product p, List<Item> options, String orderId, {String? comment}){
     String orderItemId = Uuid().v4();
     return OrderItem(
       id: orderItemId,
@@ -57,49 +56,62 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       status: OrderStatus.draft,
       options: mergeOptions(options.map((option) => convertItemToOrderItemOption(option, orderItemId)).toList())
     );
-  }
+  }*/
 
   List<OrderItemOption> mergeOptions(List<OrderItemOption> options) {
     final grouped = <String, OrderItemOption>{};
 
     for (final option in options) {
-      if (grouped.containsKey(option.optionId)) {
-        final existing = grouped[option.optionId]!;
+      if (grouped.containsKey(option.itemId)) {
+        final existing = grouped[option.itemId]!;
 
-        grouped[option.optionId ?? ''] = existing.copyWith(
+        grouped[option.itemId ?? ''] = existing.copyWith(
           quantity: existing.quantity + option.quantity,
         );
       } else {
-        grouped[option.optionId ?? ''] = option;
+        grouped[option.itemId ?? ''] = option;
       }
     }
 
     return grouped.values.toList();
   }
 
-  OrderItemOption convertItemToOrderItemOption(Item item, String orderItem){
+  /*OrderItemOption convertItemToOrderItemOption(Item item, String orderItem){
     return OrderItemOption(
       id: Uuid().v4(),
-      optionId: item.id,
-      optionName: item.name,
+      itemId: item.id,
+      itemName: item.name,
       quantity: 1,
       unitPrice: item.price,
       vat: item.vat,
       orderItemId: orderItem
     );
-  }
+  }*/
   
-  void addProduct(Product product, Map<String, List<Item>> options,
-      ) async {
+  OrderItem buildOrderItem(Product p, List<OrderItemOption> options, String orderId, {String? comment}){
+    String orderItemId = Uuid().v4();
+    return OrderItem(
+      id: orderItemId,
+      productId: p.id,
+      productName: p.name,
+      quantity: 1,
+      unitPrice: p.price,
+      orderId: orderId,
+      comment: comment,
+      vat: p.vat,
+      status: OrderStatus.draft,
+      options: options.map((option) => option.copyWith(orderItemId: orderItemId, id: Uuid().v4())).toList()
+    );
+  }
 
-    /// récupérer la commande actuelle
+  void addItem(Product product, List<OrderItemOption> options, {String? note}) async {
     Order? order = state.selectedOrder;
 
     if(order != null){
-      final orderItem = convertProductToOrderItem(product, options.values.expand((items) => items).toList(), order.id);
+      final orderItem = buildOrderItem(product, options, order.id, comment: note);
       bool found = false;
       for(final item in order.items){
-        if(item.productId == orderItem.productId && item.status == OrderStatus.draft){
+        if(item.status == OrderStatus.draft && item.productId == orderItem.productId && item.comment == orderItem.comment){
           if(checkSameOption(item.options, orderItem.options)){
             final increaseItemUseCase = ref.read(increaseItemUseCaseProvider);
             increaseItemUseCase(item.id);
@@ -149,6 +161,79 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         tableId: state.tableId,
         groupId: state.groupId,
         status: OrderStatus.draft,
+        items: [buildOrderItem(product, options, orderId)]
+      );
+      final createOrderUseCase = ref.read(createOrderUseCaseProvider);
+      final order = await createOrderUseCase(orderDraft);
+      state = state.copyWith(
+        selectedOrderId: order.id,
+        orders: [...state.orders, order],
+      );
+    }
+  }
+
+  /*void addProduct(Product product, Map<String, List<Item>> options,{String? note}
+      ) async {
+
+    /// récupérer la commande actuelle
+    Order? order = state.selectedOrder;
+
+    if(order != null){
+      final orderItem = convertProductToOrderItem(product, options.values.expand((items) => items).toList(), order.id, comment: note);
+      bool found = false;
+      for(final item in order.items){
+        if(item.status == OrderStatus.draft && item.productId == orderItem.productId && item.comment == orderItem.comment){
+          if(checkSameOption(item.options, orderItem.options)){
+            final increaseItemUseCase = ref.read(increaseItemUseCaseProvider);
+            increaseItemUseCase(item.id);
+            state = state.copyWith(
+             // selectedOrderItemId: orderItem.id,
+              orders: state.orders.map((elem) {
+                if(elem.id != order.id){
+                  return elem;
+                }else{
+                  return order.copyWith(
+                    status: OrderStatus.draft,
+                    items: elem.items.map((tbl){
+                      if(tbl.id == item.id){
+                        return item.copyWith(quantity: item.quantity + 1);
+                      } else {
+                        return tbl;
+                      }
+                    }).toList(),
+                  );
+                }
+              }).toList(),
+            );
+            found = true;
+          }
+        }
+      }
+
+      if(!found){
+        final addItemUseCase = ref.read(addItemUseCaseProvider);
+        final savedOrderItem = await addItemUseCase(orderItem);
+        state = state.copyWith(
+          //selectedOrderItemId: savedOrderItem.id,
+          orders: state.orders.map((elem) {
+            if(elem.id != order.id){
+              return elem;
+            }else{
+              return order.copyWith(
+                status: OrderStatus.draft,
+                items: [...elem.items, savedOrderItem]
+              );
+            }
+          }).toList(),
+        );
+      }
+    } else {
+      final String orderId = Uuid().v4();
+      final orderDraft = Order(
+        id: orderId,
+        tableId: state.tableId,
+        groupId: state.groupId,
+        status: OrderStatus.draft,
         items: [convertProductToOrderItem(product, options.values.expand((items) => items).toList(), orderId)]
       );
       final createOrderUseCase = ref.read(createOrderUseCaseProvider);
@@ -156,6 +241,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       state = state.copyWith(
         selectedOrderId: order.id,
         orders: [...state.orders, order],
+        //selectedOrderItemId: order.items.first.id,
       );
     }
 /*
@@ -202,7 +288,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
 
     _updateOrder(order);*/
   }
-
+*/
   bool checkSameOption(
     List<OrderItemOption>? options,
     List<OrderItemOption> newOptions,
@@ -212,13 +298,13 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     const eq = UnorderedIterableEquality();
 
     return eq.equals(
-      newOptions.map((e) => (e.optionId, e.quantity)),
-      options.map((e) => (e.optionId, e.quantity)),
+      newOptions.map((e) => (e.itemId, e.quantity)),
+      options.map((e) => (e.itemId, e.quantity)),
     );
   }
 
   void setTableAndGroupId({String? tableId, String? groupId}) {
-    final selectedOrderId = state.orders.where((order) => order.tableId == tableId || order.groupId == groupId).firstOrNull?.id ?? null;
+    final selectedOrderId = state.orders.where((order) => (tableId !=null && order.tableId == tableId) || (groupId != null && order.groupId == groupId)).firstOrNull?.id ?? null;
     state = state.copyWith(
       selectedOrderId: selectedOrderId,
       tableId: tableId,
@@ -229,7 +315,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     );
   }
 
-  void updateItemQte(String orderItemId, String orderId, int qte){
+  bool updateItemQte(String orderItemId, String orderId, int qte){
+    bool isDelated = false;
     state = state.copyWith(
       orders: state.orders.map((order){
         if(order.id != orderId){
@@ -240,13 +327,16 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
               if(item.id != orderItemId){
                 return item;
               } else {
+                isDelated = item.quantity == 1;
                 return item.copyWith(quantity: item.quantity + qte);
               }
-            }).toList(),
+            }).where((item) => item.quantity > 0).toList(),
           );
         }
       }).toList()
     );
+
+    return isDelated;
   }
 
   void increaseQuantity(String orderItemId, String orderId){
@@ -255,22 +345,85 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     updateItemQte(orderItemId, orderId, 1);
   }
 
-  void decreaseQuantity(String orderItemId, String orderId){
+  void increaseItemQuantity(String orderItemId){
+    final increaseItemUseCase = ref.read(increaseItemUseCaseProvider);
+    increaseItemUseCase(orderItemId);
+    if(state.selectedOrderId != null){
+      final String orderId = state.selectedOrderId ?? "";
+      updateItemQte(orderItemId, orderId, 1);
+    }
+  }
+
+  bool decreaseQuantity(String orderItemId, String orderId){
     final decreaseItemUseCase = ref.read(decreaseItemUseCaseProvider);
     decreaseItemUseCase(orderItemId);
-    updateItemQte(orderItemId, orderId, -1);
+    return updateItemQte(orderItemId, orderId, -1);
+  }
+
+  bool decreaseItemQuantity(String orderItemId){
+    final decreaseItemUseCase = ref.read(decreaseItemUseCaseProvider);
+    decreaseItemUseCase(orderItemId);
+    if(state.selectedOrderId != null){
+      final String orderId = state.selectedOrderId ?? "";
+      return updateItemQte(orderItemId, orderId, -1);
+    }
+    return false;
   }
 
   void removeItem(String orderItemId, String orderId){
     final removeItemUseCase = ref.read(removeItemUseCaseProvider);
     removeItemUseCase(orderItemId);
     state = state.copyWith(
+      //resetSelectedOrderItemId: true,
       orders: state.orders.map((order){
         if(order.id != orderId){
           return order;
         } else {
           return order.copyWith(
             items: order.items.whereNot((item) => item.id == orderItemId).toList()
+          );
+        }
+      }).toList()
+    );
+  }
+
+  void removeItemFromOrder(String orderItemId){
+    final removeItemUseCase = ref.read(removeItemUseCaseProvider);
+    removeItemUseCase(orderItemId);
+    if(state.selectedOrderId != null){
+      final String orderId = state.selectedOrderId ?? "";
+      state = state.copyWith(
+      //resetSelectedOrderItemId: true,
+      orders: state.orders.map((order){
+        if(order.id != orderId){
+          return order;
+        } else {
+          return order.copyWith(
+            items: order.items.whereNot((item) => item.id == orderItemId).toList()
+          );
+        }
+      }).toList()
+    );
+    }
+  }
+
+  void updateComment(String orderItemId, String comment){
+    final updateCommentUseCase = ref.read(updateCommentUseCaseProvider);
+    updateCommentUseCase(orderItemId, comment);
+    final String orderId = state.selectedOrderId ?? "";
+    state = state.copyWith(
+      orders: state.orders.map((order){
+        if(order.id != orderId){
+          return order;
+        } else {
+          return order.copyWith(
+            items: order.items.map((item) {
+              if(item.id != orderItemId){
+                return item;
+              } else {
+                return item.copyWith(comment: comment);
+              }
+            }).toList(),
           );
         }
       }).toList()
@@ -286,9 +439,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
         }
       }
     }
-     return false;
+    return false;
   }
-
 
   void saveOrder() {
     if(state.selectedOrderId != null && state.selectedOrderId != "-1"){
@@ -381,14 +533,13 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     }
   }
 
- 
   OrderStatus getOrderStatus(){
     Order? order = state.selectedOrder;
-    OrderStatus status = OrderStatus.draft;
+    OrderStatus status = OrderStatus.ended;
     if(order != null){
       
       for(final item in order.items){
-        if(item.status.order == status.order){
+        if(item.status.order < status.order){
           status = item.status;
         }
       }
@@ -396,6 +547,123 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
      return status;
   }
 
+  OrderStatus getOrderStatusById(String orderId){
+    Order? order = state.getOrderById(orderId);
+    OrderStatus status = OrderStatus.ended;
+    if(order != null){
+      for(final item in order.items){
+        if(item.status.order < status.order){
+          status = item.status;
+        }
+      }
+    }
+    return status;
+  }
+
+   OrderStatus getOrderStatusByTableId(String tableId){
+    Order? order = state.getOrderByTable(tableId);
+    OrderStatus status = OrderStatus.ended;
+    if(order != null){
+      for(final item in order.items){
+        if(item.status.order < status.order){
+          status = item.status;
+        }
+      }
+    }
+    return status;
+  }
+
+  void fusionOrMove(String targetTableId, {String? sourceTableId}){
+    Order? targetOrder = state.orders.where((order) => order.tableId == targetTableId).firstOrNull;
+    String sourceOrderId = (sourceTableId == null ? state.selectedOrder?.id : state.orders.where((order) => order.tableId != sourceTableId).firstOrNull?.id)  ?? "";
+    if(targetOrder == null){
+      final switchOrderUseCase = ref.read(switchOrderUseCaseProvider);
+      switchOrderUseCase(sourceOrderId, targetTableId);
+      state = state.copyWith(
+        resetSelectedOrderId: true,
+        orders: state.orders.map((order){
+          if(order.id != sourceOrderId){
+            return order;
+          } else {
+            return order.copyWith(
+              tableId: targetTableId
+            );
+          }
+        }).toList()
+      );
+    } else {
+      OrderStatus sourceStatus = getOrderStatus();
+      OrderStatus targetStatus = getOrderStatusById(targetOrder.id);
+      OrderStatus finalStatus = sourceStatus.order < targetStatus.order ? sourceStatus : targetStatus;
+      final mergeOrderUseCase = ref.read(mergeOrderUseCaseProvider);
+      mergeOrderUseCase(sourceOrderId, targetOrder.id, finalStatus);
+      state = state.copyWith(
+        orders: state.orders.map((order){
+          if(order.id != targetOrder.id){
+            return order;
+          } else {
+            return order.copyWith(
+              status: finalStatus,
+              items: [...order.items, ...(state.selectedOrder?.items ?? [])] 
+            );
+          }
+        }).where((order) => order.id != sourceOrderId).toList()
+      );
+    }
+  }
+
+  void switcheOrderItem(String orderItemId, String targetTableId) async {
+    Order? targetOrder = state.orders.where((order) => order.tableId == targetTableId).firstOrNull;
+    Order sourceOrder = state.orders.where((order) => order.id == state.selectedOrderId).first;
+
+    if(targetOrder == null) {
+      final String orderId = Uuid().v4();
+      targetOrder = Order(
+        id: orderId,
+        tableId: targetTableId,
+        groupId: null,
+        status: OrderStatus.draft,
+        items: []
+      );
+      final createOrderUseCase = ref.read(createOrderUseCaseProvider);
+      targetOrder= await createOrderUseCase(targetOrder);
+      state = state.copyWith(
+        orders: [...state.orders, targetOrder],
+      );
+    }
+
+    if(sourceOrder.items.length == 1){
+      fusionOrMove(targetTableId);
+    } else {
+      OrderStatus sourceStatus = getOrderStatus();
+      OrderStatus targetStatus = getOrderStatusById(targetOrder.id);
+      OrderStatus finalStatus = sourceStatus.order < targetStatus.order ? sourceStatus : targetStatus;
+      
+      final switchOrderItemUseCase = ref.read(switchOrderItemUseCaseProvider);
+      switchOrderItemUseCase(orderItemId, targetOrder.id);
+      if(sourceStatus != targetStatus){
+        final changeOrderStatusUseCase = ref.read(changeOrderStatusUseCaseProvider);
+        changeOrderStatusUseCase(targetOrder.id, finalStatus);
+      }
+      final orderItem = state.orders.where((order) => order.id == sourceOrder.id).first.items.where((item) => item.id == orderItemId).first;
+      state = state.copyWith(
+        orders: state.orders.map((order){
+          if(order.id != sourceOrder.id && order.id != targetOrder!.id){
+            return order;
+          }else if(order.id == targetOrder!.id){
+            return order.copyWith(
+              status: finalStatus,
+              items: [...order.items, orderItem]
+            );
+          }else  {
+            return order.copyWith(
+              items: order.items.where((item) => item.id != orderItemId).toList()
+            );
+          }
+        }).toList()
+      );
+    }
+  }
 
 /*
   void initSelectedOrderByTableOrGroupId(String id, bool isTable) {

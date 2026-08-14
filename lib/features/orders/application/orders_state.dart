@@ -16,11 +16,19 @@ class OrdersState{
   Order? get selectedOrder {
     if(selectedOrderId == null) return null;
     try{
-      return orders.firstWhere((order) => order.id == selectedOrderId);
+      return orders.where((o) => o.id == selectedOrderId).firstOrNull;
     } catch(_){
       return null;
     }
-  } 
+  }
+
+  Order? getOrderByTable(String tableId) {
+      return orders.where((o) => o.tableId == tableId).firstOrNull;
+  }
+
+  Order? getOrderById(String orderId) {
+      return orders.where((o) => o.id == orderId).firstOrNull;
+  }
 
   OrdersState copyWith({
     List<Order>? orders,

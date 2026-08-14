@@ -129,6 +129,13 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
     );
   }
 
+  void clearPayment(String orderId){
+    state = PaymentsState(
+        itemsQuantity: {},
+        checkedItems: {},
+    );
+  }
+
   bool isAllOrderPaid(Order order){
     if(state.payment == null){
       return false;
@@ -151,7 +158,8 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
     return 0;
   }
 
-  void addItemPayment(double givenAmount, double total, Order order, PaymentMethod paymentMethod, PaymentMode paymentMode, {Map<String, int>? itemQte}) async {
+  Future<PaymentSession?> addItemPayment(double givenAmount, double total, Order order, PaymentMethod paymentMethod, PaymentMode paymentMode, {Map<String, int>? itemQte}) async {
+    print("payment: ${itemQte}");
     if(state.discount != null && state.discount!.id == ''){
       state = state.copyWith(
         discount: await ref.read(productsProvider.notifier).addDiscount(state.discount!)
@@ -173,21 +181,17 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
         ),
       );
     }
-    
-    /*if(state.payment == null){
-      PaymentTransaction transaction = buildTransaction(state.payment!, paymentMethod, total, givenAmount, itemQte:itemQte, paidPartCount: paymentMode == PaymentMode.split ? state.qteToPay : 0);
-      state = state.copyWith(
-        payment: PaymentSession(id: Uuid().v4(), order: order, mode: paymentMode, partCounts: paymentMode == PaymentMode.split ? state.totalPartsCount : 0, history: [transaction]),
-      );
+
+    for(PaymentTransaction hist in state.payment?.history ?? []){
+        print("payment: ${hist}");
     }
-    else{
-      state = state.copyWith(
-        payment: state.payment?.copyWith(
-          history: [...state.payment!.history, buildTransaction(state.payment!, paymentMethod, total, givenAmount, itemQte:itemQte, paidPartCount: paymentMode == PaymentMode.split ? state.qteToPay : 0)]
-        ),
-      );
-    }*/
+    
     clearItem();
+
+    if(isAllOrderPaid(order)){
+      return state.payment;
+    }
+    return null;
   }
 
   PaymentTransaction buildTransaction(PaymentSession payment,PaymentMethod paymentMethod, double total, double givenAmount, {Map<String, int>? itemQte, int? paidPartCount}){

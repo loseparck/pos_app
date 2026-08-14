@@ -68,12 +68,12 @@ class MainPage extends ConsumerWidget{
       child: ElevatedButton(
         onPressed: (){
           ref.read(selectedTabProvider.notifier).state = index;
-          if(context != null){
+          /*if(context != null){
              showDialog(
               context: context,
               builder: (context) => const UnifiedPOSPaymentModal(),
             );
-          }
+          }*/
         }, 
         style: ElevatedButton.styleFrom(
           backgroundColor: isSelected ? Colors.blue : Colors.grey,

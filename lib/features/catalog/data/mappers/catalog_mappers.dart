@@ -114,7 +114,7 @@ extension OptionMapper on Option {
       isMandatory: isMandatory,
       minToSelect: minToSelect,
       maxToSelect: maxToSelect,
-      multipleSelect: multipleSelect,
+      multipleSelect: allowDuplicateSelection,
       isActive: isActive,
       items: items.map((e) => e.toCreateDto()).toList(),
       createdAt: createdAt,
@@ -128,7 +128,7 @@ extension OptionMapper on Option {
       isMandatory: isMandatory,
       minToSelect: minToSelect,
       maxToSelect: maxToSelect,
-      multipleSelect: multipleSelect,
+      multipleSelect: allowDuplicateSelection,
       isActive: isActive,
       updatedAt: updatedAt ?? DateTime.now(),
     );
@@ -141,7 +141,7 @@ extension OptionMapper on Option {
       isMandatory: Value(isMandatory),
       minToSelect: Value(minToSelect),
       maxToSelect: Value(maxToSelect),
-      multipleSelect: Value(multipleSelect),
+      multipleSelect: Value(allowDuplicateSelection),
       isActive: Value(isActive),
       createdAt: Value(createdAt ?? DateTime.now()),
       updatedAt: Value(DateTime.now()),
@@ -159,7 +159,7 @@ extension OptionDtoMapper on CreateOptionDto {
       isMandatory: isMandatory,
       minToSelect: minToSelect,
       maxToSelect: maxToSelect,
-      multipleSelect: multipleSelect,
+      allowDuplicateSelection: multipleSelect,
       items: items.map((e) => e.toEntity(
         Option(
           name: name, 
@@ -168,7 +168,7 @@ extension OptionDtoMapper on CreateOptionDto {
           isMandatory: isMandatory,
           minToSelect: minToSelect,
           maxToSelect: maxToSelect,
-          multipleSelect: multipleSelect,
+          allowDuplicateSelection: multipleSelect,
           createdAt: createdAt,
           createdById: createdById
         )
@@ -198,7 +198,7 @@ extension OptionDriftMapper on OptionsDriftData {
       isMandatory: isMandatory,
       minToSelect: minToSelect,
       maxToSelect: maxToSelect,
-      multipleSelect: multipleSelect,
+      allowDuplicateSelection: multipleSelect,
       items: [],
       
     );

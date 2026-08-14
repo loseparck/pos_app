@@ -9,8 +9,10 @@ part of 'order_item_option.dart';
 OrderItemOption _$OrderItemOptionFromJson(Map<String, dynamic> json) =>
     OrderItemOption(
       id: json['id'] as String,
+      itemId: json['itemId'] as String?,
+      itemName: json['itemName'] as String,
       optionId: json['optionId'] as String?,
-      optionName: json['optionName'] as String,
+      optionName: json['optionName'] as String?,
       quantity: (json['quantity'] as num).toInt(),
       unitPrice: (json['unitPrice'] as num).toDouble(),
       orderItemId: json['orderItemId'] as String,
@@ -31,6 +33,8 @@ Map<String, dynamic> _$OrderItemOptionToJson(OrderItemOption instance) =>
     <String, dynamic>{
       'id': instance.id,
       'orderItemId': instance.orderItemId,
+      'itemId': instance.itemId,
+      'itemName': instance.itemName,
       'optionId': instance.optionId,
       'optionName': instance.optionName,
       'quantity': instance.quantity,

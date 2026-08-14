@@ -6,7 +6,7 @@ class Option {
   final bool isMandatory;
   final int minToSelect;
   final int maxToSelect;
-  final bool multipleSelect;
+  final bool allowDuplicateSelection;
   final bool isActive;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -20,7 +20,7 @@ class Option {
     this.isMandatory = false,
     this.minToSelect = 0,
     this.maxToSelect = -1,
-    this.multipleSelect = false,
+    this.allowDuplicateSelection = false,
     this.id = "",
     this.isActive = true,
     this.createdAt,
@@ -35,7 +35,7 @@ class Option {
     bool? isMandatory,
     int? minToSelect,
     int? maxToSelect,
-    bool? multipleSelect,
+    bool? allowDuplicateSelection,
     bool? isActive,
     List<Item>? items,
     DateTime? createdAt,
@@ -49,7 +49,7 @@ class Option {
       isMandatory: isMandatory ?? this.isMandatory,
       minToSelect: minToSelect ?? this.minToSelect,
       maxToSelect: maxToSelect ?? this.maxToSelect,
-      multipleSelect: multipleSelect ?? this.multipleSelect,
+      allowDuplicateSelection: allowDuplicateSelection ?? this.allowDuplicateSelection,
       isActive: isActive ?? this.isActive,
       items: items ?? this.items,
       createdAt: createdAt ?? this.createdAt,
@@ -71,7 +71,7 @@ class Option {
       isMandatory: (json['isMandatory'] as bool? ?? false),
       minToSelect: int.tryParse(json['minToSelect'].toString()) ?? 0,
       maxToSelect: int.tryParse(json['maxToSelect'].toString()) ?? 0,
-      multipleSelect: (json['multipleSelect'] as bool? ?? false),
+      allowDuplicateSelection: (json['allowDuplicateSelection'] as bool? ?? false),
       isActive: (json['isActive'] as bool? ?? true),
       items: json['items'] != null ? (json['items'] as List<dynamic>).map((e) => Item.fromJson(e)).toList() : [],
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
@@ -88,7 +88,7 @@ class Option {
       'isMandatory': isMandatory,
       'minToSelect': minToSelect,
       'maxToSelect': maxToSelect,
-      'multipleSelect': multipleSelect,
+      'allowDuplicateSelection': allowDuplicateSelection,
       'isActive': isActive,
       'items': items.map((e) => e.toJson()).toList(),
       'createdAt': createdAt?.toIso8601String(),

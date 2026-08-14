@@ -6,8 +6,10 @@ part 'order_item_option.g.dart';
 class OrderItemOption {
   final String id;
   final String orderItemId;
+  final String? itemId;
+  final String itemName;
   final String? optionId;
-  final String optionName;
+  final String? optionName;
   final int quantity;
   final double unitPrice;
   final double vat;
@@ -18,8 +20,10 @@ class OrderItemOption {
 
   OrderItemOption({
     required this.id,
-    required this.optionId,
-    required this.optionName,
+    required this.itemId,
+    required this.itemName,
+    this.optionId,
+    this.optionName,
     required this.quantity,
     required this.unitPrice,
     required this.orderItemId,
@@ -32,19 +36,20 @@ class OrderItemOption {
 
   OrderItemOption copyWith({
     String? id,
-    String? optionId,
-    String? optionName,
+    String? itemId,
+    String? itemName,
     int? quantity,
     double? unitPrice,
     double? vat,
     DateTime? createdAt,
     DateTime? updatedAt,
-    DateTime? deletedAt
+    DateTime? deletedAt,
+    String? orderItemId,
   }) {
     return OrderItemOption(
       id: id ?? this.id,
-      optionId: optionId ?? this.optionId,
-      optionName: optionName ?? this.optionName,
+      itemId: itemId ?? this.itemId,
+      itemName: itemName ?? this.itemName,
       unitPrice: unitPrice ?? this.unitPrice,
       vat: vat ?? this.vat,
       quantity: quantity ?? this.quantity,
@@ -52,7 +57,7 @@ class OrderItemOption {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       createdById: createdById,
-      orderItemId: orderItemId
+      orderItemId: orderItemId ?? this.orderItemId,
     );
   }
 

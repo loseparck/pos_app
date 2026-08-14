@@ -40,7 +40,7 @@ class _OptionDialogState extends ConsumerState<OptionDialog> {
       minController = TextEditingController(text: '${option.minToSelect}');
       maxController = TextEditingController(text: '${option.maxToSelect}');
       isMandatory = option.isMandatory;
-      multipleSelect = option.multipleSelect;
+      multipleSelect = option.allowDuplicateSelection;
       isActive = option.isActive;
     }
   }
@@ -160,7 +160,7 @@ class _OptionDialogState extends ConsumerState<OptionDialog> {
       isMandatory: isMandatory,
       minToSelect: min,
       maxToSelect: max,
-      multipleSelect: multipleSelect,
+      allowDuplicateSelection: multipleSelect,
       items: options,
     );
 

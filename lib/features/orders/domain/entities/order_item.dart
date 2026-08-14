@@ -55,6 +55,7 @@ class OrderItem {
     String? id,
     String? productId,
     String? productName,
+    String? orderId,
     int? quantity,
     OrderStatus? status,
     DateTime? validatedAt,
@@ -79,7 +80,7 @@ class OrderItem {
       options: options ?? this.options,
       status: status ?? this.status,
       validatedAt: validatedAt ?? this.validatedAt,
-      orderId: orderId
+      orderId: orderId ?? this.orderId,
     );
   }
 

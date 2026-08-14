@@ -132,7 +132,7 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
       isMandatory: row.isMandatory,
       minToSelect: row.minToSelect,
       maxToSelect: row.maxToSelect,
-      multipleSelect: row.multipleSelect,
+      allowDuplicateSelection: row.multipleSelect,
       isActive: row.isActive,
       items: itemRows.map((e) {
         return Item(

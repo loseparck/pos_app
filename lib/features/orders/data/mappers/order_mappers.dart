@@ -181,8 +181,8 @@ extension OrderItemOptionMapper on OrderItemOption {
     return CreateOrderItemOptionDto(
       id: id,
       orderItemId: orderItemId,
-      optionId: optionId,
-      optionName: optionName,
+      optionId: itemId,
+      optionName: itemName,
       quantity: quantity,
       unitPrice: unitPrice,
       vat: vat,
@@ -195,8 +195,8 @@ extension OrderItemOptionMapper on OrderItemOption {
     return OrderItemOptionsDriftCompanion(
       id: Value(id),
       orderItemId: Value(orderItemId),
-      optionId: Value(optionId),
-      optionName: Value(optionName),
+      optionId: Value(itemId),
+      optionName: Value(itemName),
       quantity: Value(quantity),
       unitPrice: Value(unitPrice),
       vat: Value(vat),
@@ -213,8 +213,8 @@ extension OrderItemOptionDtoMapper on CreateOrderItemOptionDto {
     return OrderItemOption(
       id: id,
       orderItemId: orderItemId,
-      optionId: optionId,
-      optionName: optionName,
+      itemId: optionId,
+      itemName: optionName,
       quantity: quantity,
       unitPrice: unitPrice,
       vat: vat,
@@ -243,8 +243,8 @@ extension OrderItemOptionsDriftCompanionsarMapper on OrderItemOptionsDriftData {
     return OrderItemOption(
       id: id,
       orderItemId:orderItemId,
-      optionId: optionId,
-      optionName: optionName,
+      itemId: optionId,
+      itemName: optionName,
       quantity: quantity,
       unitPrice: unitPrice,
       vat: vat,

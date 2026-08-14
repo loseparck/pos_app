@@ -43,7 +43,8 @@ class Order {
     OrderStatus? status,
     PaymentSession? payment,
     String? tableId,
-    String? groupId
+    String? groupId,
+    DateTime? updatedAt
   }) {
     return Order(
       id: id ?? this.id,
@@ -52,7 +53,7 @@ class Order {
       status: status ?? this.status,
       groupId: groupId ?? this.groupId,
       createdAt: createdAt,
-      updatedAt: updatedAt,
+      updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt,
       createdById: createdById,
       payment: payment ?? this.payment,

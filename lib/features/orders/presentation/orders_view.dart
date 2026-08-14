@@ -5,8 +5,6 @@ import 'package:pos_app/features/orders/application/orders_notifier.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
-import 'package:pos_app/features/orders/presentation/widgets/product_grid.dart';
-import 'package:pos_app/features/orders/presentation/widgets/order_panel.dart';
 import 'package:pos_app/features/payments/presentation/widgets/payment_modal.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
 import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
@@ -107,7 +105,7 @@ class OrdersView extends ConsumerWidget {
                 const Spacer(),
 
                 /// RETOUR
-                ElevatedButton(
+                /*ElevatedButton(
                   onPressed: () {
                     //if(order?.status == OrderStatus.paid || order?.status == OrderStatus.cancelled || order?.status == OrderStatus.delivred){
                       cleanOrderAndTable(ref);
@@ -115,7 +113,7 @@ class OrdersView extends ConsumerWidget {
                     Navigator.pop(context);
                   },
                   child: const Text("Retour"),
-                ),
+                ),*/
               ],
             ),
           ),
@@ -132,11 +130,11 @@ class OrdersView extends ConsumerWidget {
                 /// ORDER PANEL (LEFT)
                 /// =============================
 
-                SizedBox(
+               /* SizedBox(
                   width: 350,
                   child: OrderPanel(
                   ),
-                ),
+                ),*/
 
                 const VerticalDivider(width: 1),
 
@@ -167,9 +165,9 @@ class OrdersView extends ConsumerWidget {
                         ),
                       ),
                       /// PRODUCT GRID
-                      const Expanded(
+                      /*const Expanded(
                         child: ProductGrid(),
-                      ),
+                      ),*/
                     ],
                   ),
                 ),

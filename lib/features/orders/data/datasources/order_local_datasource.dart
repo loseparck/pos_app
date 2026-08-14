@@ -21,6 +21,10 @@ abstract class OrderLocalDatasource {
   Future<void> cancelItem(String orderItemId);
   Future<void> increaseItemQuantity(String orderItemId);
   Future<void> decreaseItemQuantity(String orderItemId);
+  Future<void> updateComment(String orderItemId, String comment);
+  Future<void> switchOrder(String orderId, String newTableId);
+  Future<void> mergeOrder(String sourceId, String targetId, OrderStatus newStatus);
+  Future<void> switchOrderItem(String orderItemId, String newOrderId);
 
   Future<List<OrderItem>> getItems(String orderId);
   Future<OrderItem?> getItem(String orderItemId);

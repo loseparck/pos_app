@@ -28,6 +28,10 @@ class PlanLocalDataSourceImpl implements PlanLocalDataSource {
     if( _db == null){
       return [];
     }
+    //await _db!.delete(_db!.orderItemDrift).go();
+    //await _db!.delete(_db!.orderDrift).go();
+   // await _db!.delete(_db!.restaurantTableDrift).go();
+    //await _db!.delete(_db!.planDrift).go();
     final plans = await ( _db!.select( _db!.planDrift)
           ..where((tbl) => tbl.deletedAt.isNull()))
         .get();

@@ -12,7 +12,7 @@ CreateOrderDto _$CreateOrderDtoFromJson(Map<String, dynamic> json) =>
       items: (json['items'] as List<dynamic>)
           .map((e) => CreateOrderItemDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: OrderStatus.fromLabel(json['status']) ?? OrderStatus.draft,
+      status: $enumDecode(_$OrderStatusEnumMap, json['status']),
       tableId: json['tableId'] as String?,
       groupId: json['groupId'] as String?,
       createdAt: json['createdAt'] == null
@@ -27,16 +27,21 @@ Map<String, dynamic> _$CreateOrderDtoToJson(CreateOrderDto instance) =>
       'tableId': instance.tableId,
       'groupId': instance.groupId,
       'items': instance.items,
-      'status': instance.status.label,
+      'status': _$OrderStatusEnumMap[instance.status]!,
       'createdAt': instance.createdAt?.toIso8601String(),
       'createdById': instance.createdById,
     };
-/*
+
 const _$OrderStatusEnumMap = {
   OrderStatus.draft: 'draft',
   OrderStatus.waitingValidation: 'waitingValidation',
-  OrderStatus.validated: 'validated',
-  OrderStatus.cancelled: 'cancelled',
+  OrderStatus.waitingForPreparation: 'waitingForPreparation',
+  OrderStatus.preparationInProgress: 'preparationInProgress',
+  OrderStatus.toServe: 'toServe',
+  OrderStatus.served: 'served',
+  OrderStatus.toBeDelivered: 'toBeDelivered',
   OrderStatus.delivred: 'delivred',
+  OrderStatus.waitingForPayment: 'waitingForPayment',
   OrderStatus.paid: 'paid',
-};*/
+  OrderStatus.cancelled: 'cancelled',
+};
