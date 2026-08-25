@@ -1,59 +1,65 @@
-import 'create_item_dto.dart';
 
 class CreateOptionDto {
   final String id;
   final String name;
-  final bool isMandatory;
-  final int minToSelect;
-  final int maxToSelect;
-  final bool multipleSelect;
-  final bool? isActive;
-  final List<CreateItemDto> items;
+  final String? description;
+  final bool mandatory;
+  final int minSelection;
+  final int maxSelection;
+  final bool allowDuplicateSelection;
+  final String? image;
+  final String? color;
+  final bool active;
   final DateTime? createdAt;
   final String? createdById;
 
   const CreateOptionDto({
     required this.id,
     required this.name,
-    required this.isMandatory,
-    required this.minToSelect,
-    required this.maxToSelect,
-    required this.multipleSelect,
-    required this.items,
-    required this.isActive,
+    this.description,
+    this.image,
+    this.color = "0xFF7352D6",
+    this.mandatory = false,
+    this.minSelection = 0,
+    this.maxSelection = 0,
+    this.allowDuplicateSelection = false,
+    this.active = true,
     this.createdAt,
-    this.createdById
+    this.createdById,
   });
 
   factory CreateOptionDto.fromJson(Map<String, dynamic> json) {
     return CreateOptionDto(
-      id: json['id'].toString(),
-      name: json['name']?.toString() ?? '',
-      isMandatory: json['isMandatory'] == true,
-      minToSelect: int.tryParse(json['minToSelect'].toString()) ?? 0,
-      maxToSelect: int.tryParse(json['maxToSelect'].toString()) ?? 0,
-      multipleSelect: json['multipleSelect'] == true,
-      items: (json['items'] as List<dynamic>? ?? [])
-          .map((e) => CreateItemDto.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      isActive: json['isActive'] as bool? ?? true,
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt'].toString()) : null,
-      createdById: json['createdById']?.toString() ?? '',
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      mandatory: json['mandatory'] ?? false,
+      minSelection: json['minSelection'] ?? 0,
+      maxSelection: json['maxSelection'] ?? 0,
+      allowDuplicateSelection: json['allowDuplicateSelection'] ?? false,
+      image: json['image'],
+      color: json['color'],
+      active: json['active'] ?? true,
+      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
+      createdById: json['createdById'],
     );
   }
 
+  // --- TO JSON ---
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'name': name,
-      'isMandatory': isMandatory,
-      'minToSelect': minToSelect,
-      'maxToSelect': maxToSelect,
-      'multipleSelect': multipleSelect,
-      'items': items.map((e) => e.toJson()).toList(),
-      'isActive': isActive,
+      'description': description,
+      'mandatory': mandatory,
+      'minSelection': minSelection,
+      'maxSelection': maxSelection,
+      'allowDuplicateSelection': allowDuplicateSelection,
+      'image': image,
+      'color': color,
+      'active': active,
       'createdAt': createdAt?.toIso8601String(),
-      'createdById': createdById,  
+      'createdById': createdById,
     };
   }
 }

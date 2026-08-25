@@ -129,17 +129,17 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
     return Option(
       id: row.id,
       name: row.name,
-      isMandatory: row.isMandatory,
-      minToSelect: row.minToSelect,
-      maxToSelect: row.maxToSelect,
-      allowDuplicateSelection: row.multipleSelect,
-      isActive: row.isActive,
+      mandatory: row.mandatory,
+      minSelection: row.minSelection,
+      maxSelection: row.maxSelection,
+      allowDuplicateSelection: row.allowDuplicateSelection,
+      active: row.active,
       items: itemRows.map((e) {
         return Item(
           id: e.id,
           name: e.name,
-          price: e.price,
-          isActive: e.isActive,
+          additionalPrice: e.additionalPrice,
+          active: e.active,
           option: row.toEntity()
         );
       }).toList(),
@@ -386,17 +386,18 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
     if( _db == null){
       return [];
     }
+    print("arrive ici0");
     final products = await ( _db!.select( _db!.productsDrift)
           ..where((tbl) => tbl.deletedAt.isNull()))
         .get();
-
+print("arrive ici1");
     final optionRows = await (_db!.select(_db!.optionsDrift).join([
           innerJoin(
             _db!.productsOptionsDrift,
             _db!.productsOptionsDrift.optionId.equalsExp(_db!.optionsDrift.id),
           ),
         ])).get();
-
+print("arrive ici2");
     final optionsByProductId = <String, List<Option>>{};
 
     for (final row in optionRows) {
@@ -407,7 +408,7 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
           .putIfAbsent(relation.productId, () => [])
           .add(option.toEntity());
     }
-
+    print("arrive ici");
     return products.map((e) {
       return e.toEntityWithOption(e.categoryId != null ? Category(name: '', id: e.categoryId ?? ''): null, optionsByProductId[e.id] ?? []);
     }).toList();

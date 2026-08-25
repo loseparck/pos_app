@@ -32,15 +32,25 @@ class ProductRepositoryImpl implements ProductRepository {
   Future<Option> saveOption(Option option) async {
     option = option.copyWith(
       id: _uuid.v4(),
-      items: option.items.map((item) {
+      /*items: option.items.map((item) {
         if(item.id.isEmpty) {
           item = item.copyWith(id: _uuid.v4());
         }
         return item;
-      }).toList()
+      }).toList()*/
     );
-    
+
     if(!kIsWeb) {
+      if(option.image != null){
+        final appDir = await getApplicationDocumentsDirectory();
+        final dir = Directory("${appDir.path}/options");
+        await dir.create(recursive: true);
+        final newPath = "${dir.path}/${option.id}.jpg";
+        await File(option.image ?? "").copy(newPath);
+        option = option.copyWith(
+          image: newPath
+        );
+      }
       await _localDataSource.saveOption(option);
     }
 
@@ -60,6 +70,16 @@ class ProductRepositoryImpl implements ProductRepository {
     );
 
     if(!kIsWeb) {
+      if(item.image != null){
+        final appDir = await getApplicationDocumentsDirectory();
+        final dir = Directory("${appDir.path}/items");
+        await dir.create(recursive: true);
+        final newPath = "${dir.path}/${item.id}.jpg";
+        await File(item.image ?? "").copy(newPath);
+        item = item.copyWith(
+          image: newPath
+        );
+      }
       await _localDataSource.saveItem(item);
     }
 
@@ -354,18 +374,18 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<Category> saveCategory(Category category, String? picturePath) async {
+  Future<Category> saveCategory(Category category) async {
     category = category.copyWith(
       id: _uuid.v4(),
     );
 
     if(!kIsWeb) {
-      if(picturePath != null){
+      if(category.image != null){
         final appDir = await getApplicationDocumentsDirectory();
         final dir = Directory("${appDir.path}/categories");
         await dir.create(recursive: true);
         final newPath = "${dir.path}/${category.id}.jpg";
-        await File(picturePath).copy(newPath);
+        await File(category.image ?? "").copy(newPath);
         category = category.copyWith(
           image: newPath
         );
@@ -374,7 +394,7 @@ class ProductRepositoryImpl implements ProductRepository {
     }
 
     if(await _connectivity.isOnline()) {
-      return await _remoteDataSource.saveCategory(category.toCreateDto(), picturePath);
+      return await _remoteDataSource.saveCategory(category.toCreateDto(), "picturePath");
     } else if(!kIsWeb) {
       //TODO add to QUEUE
     }
@@ -413,6 +433,26 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<Category> updateCategory(Category category) async {
+
+    if(!kIsWeb) {
+      final appDir = await getApplicationDocumentsDirectory();
+      final dir = Directory("${appDir.path}/categories");
+      await dir.create(recursive: true);
+      final newPath = "${dir.path}/${category.id}.jpg";
+      final file = File(newPath);
+      if(category.image != newPath){
+        if(category.image != null){
+          await File(category.image ?? "").copy(newPath);
+          category = category.copyWith(
+            image: newPath
+          );
+        } else if(await file.exists()){
+          await file.delete();
+        }
+      }
+      await _localDataSource.saveCategory(category);
+    }
+
     if(!kIsWeb) {
       _localDataSource.updateCategory(category);
     } 

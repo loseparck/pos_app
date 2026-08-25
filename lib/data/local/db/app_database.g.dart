@@ -13,14 +13,22 @@ class $CategoriesDriftTable extends CategoriesDrift
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _imageMeta = const VerificationMeta('image');
+  @override
+  late final GeneratedColumn<String> image = GeneratedColumn<String>(
+      'image', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
+  @override
+  late final GeneratedColumn<int> color = GeneratedColumn<int>(
+      'color', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _isActiveMeta =
       const VerificationMeta('isActive');
   @override
@@ -68,6 +76,8 @@ class $CategoriesDriftTable extends CategoriesDrift
   List<GeneratedColumn> get $columns => [
         id,
         name,
+        image,
+        color,
         isActive,
         parentId,
         createdById,
@@ -96,6 +106,14 @@ class $CategoriesDriftTable extends CategoriesDrift
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('image')) {
+      context.handle(
+          _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+          _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
     }
     if (data.containsKey('is_active')) {
       context.handle(_isActiveMeta,
@@ -140,6 +158,10 @@ class $CategoriesDriftTable extends CategoriesDrift
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      image: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image']),
+      color: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}color']),
       isActive: attachedDatabase.typeMapping
           .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
       parentId: attachedDatabase.typeMapping
@@ -165,6 +187,8 @@ class CategoriesDriftData extends DataClass
     implements Insertable<CategoriesDriftData> {
   final String id;
   final String name;
+  final String? image;
+  final int? color;
   final bool isActive;
   final String? parentId;
   final String? createdById;
@@ -174,6 +198,8 @@ class CategoriesDriftData extends DataClass
   const CategoriesDriftData(
       {required this.id,
       required this.name,
+      this.image,
+      this.color,
       required this.isActive,
       this.parentId,
       this.createdById,
@@ -185,6 +211,12 @@ class CategoriesDriftData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || image != null) {
+      map['image'] = Variable<String>(image);
+    }
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<int>(color);
+    }
     map['is_active'] = Variable<bool>(isActive);
     if (!nullToAbsent || parentId != null) {
       map['parent_id'] = Variable<String>(parentId);
@@ -204,6 +236,10 @@ class CategoriesDriftData extends DataClass
     return CategoriesDriftCompanion(
       id: Value(id),
       name: Value(name),
+      image:
+          image == null && nullToAbsent ? const Value.absent() : Value(image),
+      color:
+          color == null && nullToAbsent ? const Value.absent() : Value(color),
       isActive: Value(isActive),
       parentId: parentId == null && nullToAbsent
           ? const Value.absent()
@@ -225,6 +261,8 @@ class CategoriesDriftData extends DataClass
     return CategoriesDriftData(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
+      image: serializer.fromJson<String?>(json['image']),
+      color: serializer.fromJson<int?>(json['color']),
       isActive: serializer.fromJson<bool>(json['isActive']),
       parentId: serializer.fromJson<String?>(json['parentId']),
       createdById: serializer.fromJson<String?>(json['createdById']),
@@ -239,6 +277,8 @@ class CategoriesDriftData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
+      'image': serializer.toJson<String?>(image),
+      'color': serializer.toJson<int?>(color),
       'isActive': serializer.toJson<bool>(isActive),
       'parentId': serializer.toJson<String?>(parentId),
       'createdById': serializer.toJson<String?>(createdById),
@@ -251,6 +291,8 @@ class CategoriesDriftData extends DataClass
   CategoriesDriftData copyWith(
           {String? id,
           String? name,
+          Value<String?> image = const Value.absent(),
+          Value<int?> color = const Value.absent(),
           bool? isActive,
           Value<String?> parentId = const Value.absent(),
           Value<String?> createdById = const Value.absent(),
@@ -260,6 +302,8 @@ class CategoriesDriftData extends DataClass
       CategoriesDriftData(
         id: id ?? this.id,
         name: name ?? this.name,
+        image: image.present ? image.value : this.image,
+        color: color.present ? color.value : this.color,
         isActive: isActive ?? this.isActive,
         parentId: parentId.present ? parentId.value : this.parentId,
         createdById: createdById.present ? createdById.value : this.createdById,
@@ -271,6 +315,8 @@ class CategoriesDriftData extends DataClass
     return CategoriesDriftData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
+      image: data.image.present ? data.image.value : this.image,
+      color: data.color.present ? data.color.value : this.color,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
       parentId: data.parentId.present ? data.parentId.value : this.parentId,
       createdById:
@@ -286,6 +332,8 @@ class CategoriesDriftData extends DataClass
     return (StringBuffer('CategoriesDriftData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('image: $image, ')
+          ..write('color: $color, ')
           ..write('isActive: $isActive, ')
           ..write('parentId: $parentId, ')
           ..write('createdById: $createdById, ')
@@ -297,14 +345,16 @@ class CategoriesDriftData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, name, isActive, parentId, createdById,
-      createdAt, updatedAt, deletedAt);
+  int get hashCode => Object.hash(id, name, image, color, isActive, parentId,
+      createdById, createdAt, updatedAt, deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is CategoriesDriftData &&
           other.id == this.id &&
           other.name == this.name &&
+          other.image == this.image &&
+          other.color == this.color &&
           other.isActive == this.isActive &&
           other.parentId == this.parentId &&
           other.createdById == this.createdById &&
@@ -316,6 +366,8 @@ class CategoriesDriftData extends DataClass
 class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
   final Value<String> id;
   final Value<String> name;
+  final Value<String?> image;
+  final Value<int?> color;
   final Value<bool> isActive;
   final Value<String?> parentId;
   final Value<String?> createdById;
@@ -326,6 +378,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
   const CategoriesDriftCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
+    this.image = const Value.absent(),
+    this.color = const Value.absent(),
     this.isActive = const Value.absent(),
     this.parentId = const Value.absent(),
     this.createdById = const Value.absent(),
@@ -337,6 +391,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
   CategoriesDriftCompanion.insert({
     required String id,
     required String name,
+    this.image = const Value.absent(),
+    this.color = const Value.absent(),
     this.isActive = const Value.absent(),
     this.parentId = const Value.absent(),
     this.createdById = const Value.absent(),
@@ -351,6 +407,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
   static Insertable<CategoriesDriftData> custom({
     Expression<String>? id,
     Expression<String>? name,
+    Expression<String>? image,
+    Expression<int>? color,
     Expression<bool>? isActive,
     Expression<String>? parentId,
     Expression<String>? createdById,
@@ -362,6 +420,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
+      if (image != null) 'image': image,
+      if (color != null) 'color': color,
       if (isActive != null) 'is_active': isActive,
       if (parentId != null) 'parent_id': parentId,
       if (createdById != null) 'created_by_id': createdById,
@@ -375,6 +435,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
   CategoriesDriftCompanion copyWith(
       {Value<String>? id,
       Value<String>? name,
+      Value<String?>? image,
+      Value<int?>? color,
       Value<bool>? isActive,
       Value<String?>? parentId,
       Value<String?>? createdById,
@@ -385,6 +447,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
     return CategoriesDriftCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
+      image: image ?? this.image,
+      color: color ?? this.color,
       isActive: isActive ?? this.isActive,
       parentId: parentId ?? this.parentId,
       createdById: createdById ?? this.createdById,
@@ -403,6 +467,12 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (image.present) {
+      map['image'] = Variable<String>(image.value);
+    }
+    if (color.present) {
+      map['color'] = Variable<int>(color.value);
     }
     if (isActive.present) {
       map['is_active'] = Variable<bool>(isActive.value);
@@ -433,6 +503,8 @@ class CategoriesDriftCompanion extends UpdateCompanion<CategoriesDriftData> {
     return (StringBuffer('CategoriesDriftCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
+          ..write('image: $image, ')
+          ..write('color: $color, ')
           ..write('isActive: $isActive, ')
           ..write('parentId: $parentId, ')
           ..write('createdById: $createdById, ')
@@ -455,9 +527,7 @@ class $ProductsDriftTable extends ProductsDrift
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
@@ -476,30 +546,135 @@ class $ProductsDriftTable extends ProductsDrift
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _codeBarresMeta =
-      const VerificationMeta('codeBarres');
+  static const VerificationMeta _barcodeMeta =
+      const VerificationMeta('barcode');
   @override
-  late final GeneratedColumn<String> codeBarres = GeneratedColumn<String>(
-      'code_barres', aliasedName, true,
+  late final GeneratedColumn<String> barcode = GeneratedColumn<String>(
+      'barcode', aliasedName, true,
       type: DriftSqlType.string,
       requiredDuringInsert: false,
       defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
-  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  static const VerificationMeta _salePriceMeta =
+      const VerificationMeta('salePrice');
   @override
-  late final GeneratedColumn<double> price = GeneratedColumn<double>(
-      'price', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
-  static const VerificationMeta _vatMeta = const VerificationMeta('vat');
+  late final GeneratedColumn<double> salePrice = GeneratedColumn<double>(
+      'sale_price', aliasedName, true,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _purchasePriceMeta =
+      const VerificationMeta('purchasePrice');
   @override
-  late final GeneratedColumn<double> vat = GeneratedColumn<double>(
-      'vat', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+  late final GeneratedColumn<double> purchasePrice = GeneratedColumn<double>(
+      'purchase_price', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _costPriceMeta =
+      const VerificationMeta('costPrice');
+  @override
+  late final GeneratedColumn<double> costPrice = GeneratedColumn<double>(
+      'cost_price', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _taxRateMeta =
+      const VerificationMeta('taxRate');
+  @override
+  late final GeneratedColumn<double> taxRate = GeneratedColumn<double>(
+      'tax_rate', aliasedName, true,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _stockEnabledMeta =
+      const VerificationMeta('stockEnabled');
+  @override
+  late final GeneratedColumn<bool> stockEnabled = GeneratedColumn<bool>(
+      'stock_enabled', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("stock_enabled" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _weightedMeta =
+      const VerificationMeta('weighted');
+  @override
+  late final GeneratedColumn<bool> weighted = GeneratedColumn<bool>(
+      'weighted', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("weighted" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _serviceMeta =
+      const VerificationMeta('service');
+  @override
+  late final GeneratedColumn<bool> service = GeneratedColumn<bool>(
+      'service', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("service" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _favoriteMeta =
+      const VerificationMeta('favorite');
+  @override
+  late final GeneratedColumn<bool> favorite = GeneratedColumn<bool>(
+      'favorite', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("favorite" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _allowNegativeStockMeta =
+      const VerificationMeta('allowNegativeStock');
+  @override
+  late final GeneratedColumn<bool> allowNegativeStock = GeneratedColumn<bool>(
+      'allow_negative_stock', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("allow_negative_stock" IN (0, 1))'),
+      defaultValue: const Constant(true));
   static const VerificationMeta _stockQuantityMeta =
       const VerificationMeta('stockQuantity');
   @override
   late final GeneratedColumn<double> stockQuantity = GeneratedColumn<double>(
-      'stock_quantity', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+      'stock_quantity', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _stockMinMeta =
+      const VerificationMeta('stockMin');
+  @override
+  late final GeneratedColumn<double> stockMin = GeneratedColumn<double>(
+      'stock_min', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _stockMaxMeta =
+      const VerificationMeta('stockMax');
+  @override
+  late final GeneratedColumn<double> stockMax = GeneratedColumn<double>(
+      'stock_max', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _reorderPointMeta =
+      const VerificationMeta('reorderPoint');
+  @override
+  late final GeneratedColumn<double> reorderPoint = GeneratedColumn<double>(
+      'reorder_point', aliasedName, false,
+      type: DriftSqlType.double,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _unitMeta = const VerificationMeta('unit');
+  @override
+  late final GeneratedColumn<String> unit = GeneratedColumn<String>(
+      'unit', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('Piece'));
   static const VerificationMeta _imageMeta = const VerificationMeta('image');
   @override
   late final GeneratedColumn<String> image = GeneratedColumn<String>(
@@ -559,10 +734,21 @@ class $ProductsDriftTable extends ProductsDrift
         name,
         description,
         sku,
-        codeBarres,
-        price,
-        vat,
+        barcode,
+        salePrice,
+        purchasePrice,
+        costPrice,
+        taxRate,
+        stockEnabled,
+        weighted,
+        service,
+        favorite,
+        allowNegativeStock,
         stockQuantity,
+        stockMin,
+        stockMax,
+        reorderPoint,
+        unit,
         image,
         color,
         isActive,
@@ -603,27 +789,75 @@ class $ProductsDriftTable extends ProductsDrift
       context.handle(
           _skuMeta, sku.isAcceptableOrUnknown(data['sku']!, _skuMeta));
     }
-    if (data.containsKey('code_barres')) {
-      context.handle(
-          _codeBarresMeta,
-          codeBarres.isAcceptableOrUnknown(
-              data['code_barres']!, _codeBarresMeta));
+    if (data.containsKey('barcode')) {
+      context.handle(_barcodeMeta,
+          barcode.isAcceptableOrUnknown(data['barcode']!, _barcodeMeta));
     }
-    if (data.containsKey('price')) {
-      context.handle(
-          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
-    } else if (isInserting) {
-      context.missing(_priceMeta);
+    if (data.containsKey('sale_price')) {
+      context.handle(_salePriceMeta,
+          salePrice.isAcceptableOrUnknown(data['sale_price']!, _salePriceMeta));
     }
-    if (data.containsKey('vat')) {
+    if (data.containsKey('purchase_price')) {
       context.handle(
-          _vatMeta, vat.isAcceptableOrUnknown(data['vat']!, _vatMeta));
+          _purchasePriceMeta,
+          purchasePrice.isAcceptableOrUnknown(
+              data['purchase_price']!, _purchasePriceMeta));
+    }
+    if (data.containsKey('cost_price')) {
+      context.handle(_costPriceMeta,
+          costPrice.isAcceptableOrUnknown(data['cost_price']!, _costPriceMeta));
+    }
+    if (data.containsKey('tax_rate')) {
+      context.handle(_taxRateMeta,
+          taxRate.isAcceptableOrUnknown(data['tax_rate']!, _taxRateMeta));
+    }
+    if (data.containsKey('stock_enabled')) {
+      context.handle(
+          _stockEnabledMeta,
+          stockEnabled.isAcceptableOrUnknown(
+              data['stock_enabled']!, _stockEnabledMeta));
+    }
+    if (data.containsKey('weighted')) {
+      context.handle(_weightedMeta,
+          weighted.isAcceptableOrUnknown(data['weighted']!, _weightedMeta));
+    }
+    if (data.containsKey('service')) {
+      context.handle(_serviceMeta,
+          service.isAcceptableOrUnknown(data['service']!, _serviceMeta));
+    }
+    if (data.containsKey('favorite')) {
+      context.handle(_favoriteMeta,
+          favorite.isAcceptableOrUnknown(data['favorite']!, _favoriteMeta));
+    }
+    if (data.containsKey('allow_negative_stock')) {
+      context.handle(
+          _allowNegativeStockMeta,
+          allowNegativeStock.isAcceptableOrUnknown(
+              data['allow_negative_stock']!, _allowNegativeStockMeta));
     }
     if (data.containsKey('stock_quantity')) {
       context.handle(
           _stockQuantityMeta,
           stockQuantity.isAcceptableOrUnknown(
               data['stock_quantity']!, _stockQuantityMeta));
+    }
+    if (data.containsKey('stock_min')) {
+      context.handle(_stockMinMeta,
+          stockMin.isAcceptableOrUnknown(data['stock_min']!, _stockMinMeta));
+    }
+    if (data.containsKey('stock_max')) {
+      context.handle(_stockMaxMeta,
+          stockMax.isAcceptableOrUnknown(data['stock_max']!, _stockMaxMeta));
+    }
+    if (data.containsKey('reorder_point')) {
+      context.handle(
+          _reorderPointMeta,
+          reorderPoint.isAcceptableOrUnknown(
+              data['reorder_point']!, _reorderPointMeta));
+    }
+    if (data.containsKey('unit')) {
+      context.handle(
+          _unitMeta, unit.isAcceptableOrUnknown(data['unit']!, _unitMeta));
     }
     if (data.containsKey('image')) {
       context.handle(
@@ -682,14 +916,36 @@ class $ProductsDriftTable extends ProductsDrift
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       sku: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}sku']),
-      codeBarres: attachedDatabase.typeMapping
-          .read(DriftSqlType.string, data['${effectivePrefix}code_barres']),
-      price: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
-      vat: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}vat']),
+      barcode: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}barcode']),
+      salePrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}sale_price']),
+      purchasePrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}purchase_price'])!,
+      costPrice: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}cost_price'])!,
+      taxRate: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tax_rate']),
+      stockEnabled: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}stock_enabled'])!,
+      weighted: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}weighted'])!,
+      service: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}service'])!,
+      favorite: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}favorite'])!,
+      allowNegativeStock: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool, data['${effectivePrefix}allow_negative_stock'])!,
       stockQuantity: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}stock_quantity']),
+          .read(DriftSqlType.double, data['${effectivePrefix}stock_quantity'])!,
+      stockMin: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}stock_min'])!,
+      stockMax: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}stock_max'])!,
+      reorderPoint: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}reorder_point'])!,
+      unit: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}unit'])!,
       image: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}image']),
       color: attachedDatabase.typeMapping
@@ -721,10 +977,21 @@ class ProductsDriftData extends DataClass
   final String name;
   final String? description;
   final String? sku;
-  final String? codeBarres;
-  final double price;
-  final double? vat;
-  final double? stockQuantity;
+  final String? barcode;
+  final double? salePrice;
+  final double purchasePrice;
+  final double costPrice;
+  final double? taxRate;
+  final bool stockEnabled;
+  final bool weighted;
+  final bool service;
+  final bool favorite;
+  final bool allowNegativeStock;
+  final double stockQuantity;
+  final double stockMin;
+  final double stockMax;
+  final double reorderPoint;
+  final String unit;
   final String? image;
   final int? color;
   final bool isActive;
@@ -738,10 +1005,21 @@ class ProductsDriftData extends DataClass
       required this.name,
       this.description,
       this.sku,
-      this.codeBarres,
-      required this.price,
-      this.vat,
-      this.stockQuantity,
+      this.barcode,
+      this.salePrice,
+      required this.purchasePrice,
+      required this.costPrice,
+      this.taxRate,
+      required this.stockEnabled,
+      required this.weighted,
+      required this.service,
+      required this.favorite,
+      required this.allowNegativeStock,
+      required this.stockQuantity,
+      required this.stockMin,
+      required this.stockMax,
+      required this.reorderPoint,
+      required this.unit,
       this.image,
       this.color,
       required this.isActive,
@@ -761,16 +1039,27 @@ class ProductsDriftData extends DataClass
     if (!nullToAbsent || sku != null) {
       map['sku'] = Variable<String>(sku);
     }
-    if (!nullToAbsent || codeBarres != null) {
-      map['code_barres'] = Variable<String>(codeBarres);
+    if (!nullToAbsent || barcode != null) {
+      map['barcode'] = Variable<String>(barcode);
     }
-    map['price'] = Variable<double>(price);
-    if (!nullToAbsent || vat != null) {
-      map['vat'] = Variable<double>(vat);
+    if (!nullToAbsent || salePrice != null) {
+      map['sale_price'] = Variable<double>(salePrice);
     }
-    if (!nullToAbsent || stockQuantity != null) {
-      map['stock_quantity'] = Variable<double>(stockQuantity);
+    map['purchase_price'] = Variable<double>(purchasePrice);
+    map['cost_price'] = Variable<double>(costPrice);
+    if (!nullToAbsent || taxRate != null) {
+      map['tax_rate'] = Variable<double>(taxRate);
     }
+    map['stock_enabled'] = Variable<bool>(stockEnabled);
+    map['weighted'] = Variable<bool>(weighted);
+    map['service'] = Variable<bool>(service);
+    map['favorite'] = Variable<bool>(favorite);
+    map['allow_negative_stock'] = Variable<bool>(allowNegativeStock);
+    map['stock_quantity'] = Variable<double>(stockQuantity);
+    map['stock_min'] = Variable<double>(stockMin);
+    map['stock_max'] = Variable<double>(stockMax);
+    map['reorder_point'] = Variable<double>(reorderPoint);
+    map['unit'] = Variable<String>(unit);
     if (!nullToAbsent || image != null) {
       map['image'] = Variable<String>(image);
     }
@@ -800,14 +1089,27 @@ class ProductsDriftData extends DataClass
           ? const Value.absent()
           : Value(description),
       sku: sku == null && nullToAbsent ? const Value.absent() : Value(sku),
-      codeBarres: codeBarres == null && nullToAbsent
+      barcode: barcode == null && nullToAbsent
           ? const Value.absent()
-          : Value(codeBarres),
-      price: Value(price),
-      vat: vat == null && nullToAbsent ? const Value.absent() : Value(vat),
-      stockQuantity: stockQuantity == null && nullToAbsent
+          : Value(barcode),
+      salePrice: salePrice == null && nullToAbsent
           ? const Value.absent()
-          : Value(stockQuantity),
+          : Value(salePrice),
+      purchasePrice: Value(purchasePrice),
+      costPrice: Value(costPrice),
+      taxRate: taxRate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(taxRate),
+      stockEnabled: Value(stockEnabled),
+      weighted: Value(weighted),
+      service: Value(service),
+      favorite: Value(favorite),
+      allowNegativeStock: Value(allowNegativeStock),
+      stockQuantity: Value(stockQuantity),
+      stockMin: Value(stockMin),
+      stockMax: Value(stockMax),
+      reorderPoint: Value(reorderPoint),
+      unit: Value(unit),
       image:
           image == null && nullToAbsent ? const Value.absent() : Value(image),
       color:
@@ -835,10 +1137,21 @@ class ProductsDriftData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String?>(json['description']),
       sku: serializer.fromJson<String?>(json['sku']),
-      codeBarres: serializer.fromJson<String?>(json['codeBarres']),
-      price: serializer.fromJson<double>(json['price']),
-      vat: serializer.fromJson<double?>(json['vat']),
-      stockQuantity: serializer.fromJson<double?>(json['stockQuantity']),
+      barcode: serializer.fromJson<String?>(json['barcode']),
+      salePrice: serializer.fromJson<double?>(json['salePrice']),
+      purchasePrice: serializer.fromJson<double>(json['purchasePrice']),
+      costPrice: serializer.fromJson<double>(json['costPrice']),
+      taxRate: serializer.fromJson<double?>(json['taxRate']),
+      stockEnabled: serializer.fromJson<bool>(json['stockEnabled']),
+      weighted: serializer.fromJson<bool>(json['weighted']),
+      service: serializer.fromJson<bool>(json['service']),
+      favorite: serializer.fromJson<bool>(json['favorite']),
+      allowNegativeStock: serializer.fromJson<bool>(json['allowNegativeStock']),
+      stockQuantity: serializer.fromJson<double>(json['stockQuantity']),
+      stockMin: serializer.fromJson<double>(json['stockMin']),
+      stockMax: serializer.fromJson<double>(json['stockMax']),
+      reorderPoint: serializer.fromJson<double>(json['reorderPoint']),
+      unit: serializer.fromJson<String>(json['unit']),
       image: serializer.fromJson<String?>(json['image']),
       color: serializer.fromJson<int?>(json['color']),
       isActive: serializer.fromJson<bool>(json['isActive']),
@@ -857,10 +1170,21 @@ class ProductsDriftData extends DataClass
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String?>(description),
       'sku': serializer.toJson<String?>(sku),
-      'codeBarres': serializer.toJson<String?>(codeBarres),
-      'price': serializer.toJson<double>(price),
-      'vat': serializer.toJson<double?>(vat),
-      'stockQuantity': serializer.toJson<double?>(stockQuantity),
+      'barcode': serializer.toJson<String?>(barcode),
+      'salePrice': serializer.toJson<double?>(salePrice),
+      'purchasePrice': serializer.toJson<double>(purchasePrice),
+      'costPrice': serializer.toJson<double>(costPrice),
+      'taxRate': serializer.toJson<double?>(taxRate),
+      'stockEnabled': serializer.toJson<bool>(stockEnabled),
+      'weighted': serializer.toJson<bool>(weighted),
+      'service': serializer.toJson<bool>(service),
+      'favorite': serializer.toJson<bool>(favorite),
+      'allowNegativeStock': serializer.toJson<bool>(allowNegativeStock),
+      'stockQuantity': serializer.toJson<double>(stockQuantity),
+      'stockMin': serializer.toJson<double>(stockMin),
+      'stockMax': serializer.toJson<double>(stockMax),
+      'reorderPoint': serializer.toJson<double>(reorderPoint),
+      'unit': serializer.toJson<String>(unit),
       'image': serializer.toJson<String?>(image),
       'color': serializer.toJson<int?>(color),
       'isActive': serializer.toJson<bool>(isActive),
@@ -877,10 +1201,21 @@ class ProductsDriftData extends DataClass
           String? name,
           Value<String?> description = const Value.absent(),
           Value<String?> sku = const Value.absent(),
-          Value<String?> codeBarres = const Value.absent(),
-          double? price,
-          Value<double?> vat = const Value.absent(),
-          Value<double?> stockQuantity = const Value.absent(),
+          Value<String?> barcode = const Value.absent(),
+          Value<double?> salePrice = const Value.absent(),
+          double? purchasePrice,
+          double? costPrice,
+          Value<double?> taxRate = const Value.absent(),
+          bool? stockEnabled,
+          bool? weighted,
+          bool? service,
+          bool? favorite,
+          bool? allowNegativeStock,
+          double? stockQuantity,
+          double? stockMin,
+          double? stockMax,
+          double? reorderPoint,
+          String? unit,
           Value<String?> image = const Value.absent(),
           Value<int?> color = const Value.absent(),
           bool? isActive,
@@ -894,11 +1229,21 @@ class ProductsDriftData extends DataClass
         name: name ?? this.name,
         description: description.present ? description.value : this.description,
         sku: sku.present ? sku.value : this.sku,
-        codeBarres: codeBarres.present ? codeBarres.value : this.codeBarres,
-        price: price ?? this.price,
-        vat: vat.present ? vat.value : this.vat,
-        stockQuantity:
-            stockQuantity.present ? stockQuantity.value : this.stockQuantity,
+        barcode: barcode.present ? barcode.value : this.barcode,
+        salePrice: salePrice.present ? salePrice.value : this.salePrice,
+        purchasePrice: purchasePrice ?? this.purchasePrice,
+        costPrice: costPrice ?? this.costPrice,
+        taxRate: taxRate.present ? taxRate.value : this.taxRate,
+        stockEnabled: stockEnabled ?? this.stockEnabled,
+        weighted: weighted ?? this.weighted,
+        service: service ?? this.service,
+        favorite: favorite ?? this.favorite,
+        allowNegativeStock: allowNegativeStock ?? this.allowNegativeStock,
+        stockQuantity: stockQuantity ?? this.stockQuantity,
+        stockMin: stockMin ?? this.stockMin,
+        stockMax: stockMax ?? this.stockMax,
+        reorderPoint: reorderPoint ?? this.reorderPoint,
+        unit: unit ?? this.unit,
         image: image.present ? image.value : this.image,
         color: color.present ? color.value : this.color,
         isActive: isActive ?? this.isActive,
@@ -915,13 +1260,31 @@ class ProductsDriftData extends DataClass
       description:
           data.description.present ? data.description.value : this.description,
       sku: data.sku.present ? data.sku.value : this.sku,
-      codeBarres:
-          data.codeBarres.present ? data.codeBarres.value : this.codeBarres,
-      price: data.price.present ? data.price.value : this.price,
-      vat: data.vat.present ? data.vat.value : this.vat,
+      barcode: data.barcode.present ? data.barcode.value : this.barcode,
+      salePrice: data.salePrice.present ? data.salePrice.value : this.salePrice,
+      purchasePrice: data.purchasePrice.present
+          ? data.purchasePrice.value
+          : this.purchasePrice,
+      costPrice: data.costPrice.present ? data.costPrice.value : this.costPrice,
+      taxRate: data.taxRate.present ? data.taxRate.value : this.taxRate,
+      stockEnabled: data.stockEnabled.present
+          ? data.stockEnabled.value
+          : this.stockEnabled,
+      weighted: data.weighted.present ? data.weighted.value : this.weighted,
+      service: data.service.present ? data.service.value : this.service,
+      favorite: data.favorite.present ? data.favorite.value : this.favorite,
+      allowNegativeStock: data.allowNegativeStock.present
+          ? data.allowNegativeStock.value
+          : this.allowNegativeStock,
       stockQuantity: data.stockQuantity.present
           ? data.stockQuantity.value
           : this.stockQuantity,
+      stockMin: data.stockMin.present ? data.stockMin.value : this.stockMin,
+      stockMax: data.stockMax.present ? data.stockMax.value : this.stockMax,
+      reorderPoint: data.reorderPoint.present
+          ? data.reorderPoint.value
+          : this.reorderPoint,
+      unit: data.unit.present ? data.unit.value : this.unit,
       image: data.image.present ? data.image.value : this.image,
       color: data.color.present ? data.color.value : this.color,
       isActive: data.isActive.present ? data.isActive.value : this.isActive,
@@ -942,10 +1305,21 @@ class ProductsDriftData extends DataClass
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('sku: $sku, ')
-          ..write('codeBarres: $codeBarres, ')
-          ..write('price: $price, ')
-          ..write('vat: $vat, ')
+          ..write('barcode: $barcode, ')
+          ..write('salePrice: $salePrice, ')
+          ..write('purchasePrice: $purchasePrice, ')
+          ..write('costPrice: $costPrice, ')
+          ..write('taxRate: $taxRate, ')
+          ..write('stockEnabled: $stockEnabled, ')
+          ..write('weighted: $weighted, ')
+          ..write('service: $service, ')
+          ..write('favorite: $favorite, ')
+          ..write('allowNegativeStock: $allowNegativeStock, ')
           ..write('stockQuantity: $stockQuantity, ')
+          ..write('stockMin: $stockMin, ')
+          ..write('stockMax: $stockMax, ')
+          ..write('reorderPoint: $reorderPoint, ')
+          ..write('unit: $unit, ')
           ..write('image: $image, ')
           ..write('color: $color, ')
           ..write('isActive: $isActive, ')
@@ -959,23 +1333,35 @@ class ProductsDriftData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(
-      id,
-      name,
-      description,
-      sku,
-      codeBarres,
-      price,
-      vat,
-      stockQuantity,
-      image,
-      color,
-      isActive,
-      categoryId,
-      createdById,
-      createdAt,
-      updatedAt,
-      deletedAt);
+  int get hashCode => Object.hashAll([
+        id,
+        name,
+        description,
+        sku,
+        barcode,
+        salePrice,
+        purchasePrice,
+        costPrice,
+        taxRate,
+        stockEnabled,
+        weighted,
+        service,
+        favorite,
+        allowNegativeStock,
+        stockQuantity,
+        stockMin,
+        stockMax,
+        reorderPoint,
+        unit,
+        image,
+        color,
+        isActive,
+        categoryId,
+        createdById,
+        createdAt,
+        updatedAt,
+        deletedAt
+      ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -984,10 +1370,21 @@ class ProductsDriftData extends DataClass
           other.name == this.name &&
           other.description == this.description &&
           other.sku == this.sku &&
-          other.codeBarres == this.codeBarres &&
-          other.price == this.price &&
-          other.vat == this.vat &&
+          other.barcode == this.barcode &&
+          other.salePrice == this.salePrice &&
+          other.purchasePrice == this.purchasePrice &&
+          other.costPrice == this.costPrice &&
+          other.taxRate == this.taxRate &&
+          other.stockEnabled == this.stockEnabled &&
+          other.weighted == this.weighted &&
+          other.service == this.service &&
+          other.favorite == this.favorite &&
+          other.allowNegativeStock == this.allowNegativeStock &&
           other.stockQuantity == this.stockQuantity &&
+          other.stockMin == this.stockMin &&
+          other.stockMax == this.stockMax &&
+          other.reorderPoint == this.reorderPoint &&
+          other.unit == this.unit &&
           other.image == this.image &&
           other.color == this.color &&
           other.isActive == this.isActive &&
@@ -1003,10 +1400,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
   final Value<String> name;
   final Value<String?> description;
   final Value<String?> sku;
-  final Value<String?> codeBarres;
-  final Value<double> price;
-  final Value<double?> vat;
-  final Value<double?> stockQuantity;
+  final Value<String?> barcode;
+  final Value<double?> salePrice;
+  final Value<double> purchasePrice;
+  final Value<double> costPrice;
+  final Value<double?> taxRate;
+  final Value<bool> stockEnabled;
+  final Value<bool> weighted;
+  final Value<bool> service;
+  final Value<bool> favorite;
+  final Value<bool> allowNegativeStock;
+  final Value<double> stockQuantity;
+  final Value<double> stockMin;
+  final Value<double> stockMax;
+  final Value<double> reorderPoint;
+  final Value<String> unit;
   final Value<String?> image;
   final Value<int?> color;
   final Value<bool> isActive;
@@ -1021,10 +1429,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
     this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.sku = const Value.absent(),
-    this.codeBarres = const Value.absent(),
-    this.price = const Value.absent(),
-    this.vat = const Value.absent(),
+    this.barcode = const Value.absent(),
+    this.salePrice = const Value.absent(),
+    this.purchasePrice = const Value.absent(),
+    this.costPrice = const Value.absent(),
+    this.taxRate = const Value.absent(),
+    this.stockEnabled = const Value.absent(),
+    this.weighted = const Value.absent(),
+    this.service = const Value.absent(),
+    this.favorite = const Value.absent(),
+    this.allowNegativeStock = const Value.absent(),
     this.stockQuantity = const Value.absent(),
+    this.stockMin = const Value.absent(),
+    this.stockMax = const Value.absent(),
+    this.reorderPoint = const Value.absent(),
+    this.unit = const Value.absent(),
     this.image = const Value.absent(),
     this.color = const Value.absent(),
     this.isActive = const Value.absent(),
@@ -1040,10 +1459,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
     required String name,
     this.description = const Value.absent(),
     this.sku = const Value.absent(),
-    this.codeBarres = const Value.absent(),
-    required double price,
-    this.vat = const Value.absent(),
+    this.barcode = const Value.absent(),
+    this.salePrice = const Value.absent(),
+    this.purchasePrice = const Value.absent(),
+    this.costPrice = const Value.absent(),
+    this.taxRate = const Value.absent(),
+    this.stockEnabled = const Value.absent(),
+    this.weighted = const Value.absent(),
+    this.service = const Value.absent(),
+    this.favorite = const Value.absent(),
+    this.allowNegativeStock = const Value.absent(),
     this.stockQuantity = const Value.absent(),
+    this.stockMin = const Value.absent(),
+    this.stockMax = const Value.absent(),
+    this.reorderPoint = const Value.absent(),
+    this.unit = const Value.absent(),
     this.image = const Value.absent(),
     this.color = const Value.absent(),
     this.isActive = const Value.absent(),
@@ -1055,7 +1485,6 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
-        price = Value(price),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<ProductsDriftData> custom({
@@ -1063,10 +1492,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
     Expression<String>? name,
     Expression<String>? description,
     Expression<String>? sku,
-    Expression<String>? codeBarres,
-    Expression<double>? price,
-    Expression<double>? vat,
+    Expression<String>? barcode,
+    Expression<double>? salePrice,
+    Expression<double>? purchasePrice,
+    Expression<double>? costPrice,
+    Expression<double>? taxRate,
+    Expression<bool>? stockEnabled,
+    Expression<bool>? weighted,
+    Expression<bool>? service,
+    Expression<bool>? favorite,
+    Expression<bool>? allowNegativeStock,
     Expression<double>? stockQuantity,
+    Expression<double>? stockMin,
+    Expression<double>? stockMax,
+    Expression<double>? reorderPoint,
+    Expression<String>? unit,
     Expression<String>? image,
     Expression<int>? color,
     Expression<bool>? isActive,
@@ -1082,10 +1522,22 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
       if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (sku != null) 'sku': sku,
-      if (codeBarres != null) 'code_barres': codeBarres,
-      if (price != null) 'price': price,
-      if (vat != null) 'vat': vat,
+      if (barcode != null) 'barcode': barcode,
+      if (salePrice != null) 'sale_price': salePrice,
+      if (purchasePrice != null) 'purchase_price': purchasePrice,
+      if (costPrice != null) 'cost_price': costPrice,
+      if (taxRate != null) 'tax_rate': taxRate,
+      if (stockEnabled != null) 'stock_enabled': stockEnabled,
+      if (weighted != null) 'weighted': weighted,
+      if (service != null) 'service': service,
+      if (favorite != null) 'favorite': favorite,
+      if (allowNegativeStock != null)
+        'allow_negative_stock': allowNegativeStock,
       if (stockQuantity != null) 'stock_quantity': stockQuantity,
+      if (stockMin != null) 'stock_min': stockMin,
+      if (stockMax != null) 'stock_max': stockMax,
+      if (reorderPoint != null) 'reorder_point': reorderPoint,
+      if (unit != null) 'unit': unit,
       if (image != null) 'image': image,
       if (color != null) 'color': color,
       if (isActive != null) 'is_active': isActive,
@@ -1103,10 +1555,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
       Value<String>? name,
       Value<String?>? description,
       Value<String?>? sku,
-      Value<String?>? codeBarres,
-      Value<double>? price,
-      Value<double?>? vat,
-      Value<double?>? stockQuantity,
+      Value<String?>? barcode,
+      Value<double?>? salePrice,
+      Value<double>? purchasePrice,
+      Value<double>? costPrice,
+      Value<double?>? taxRate,
+      Value<bool>? stockEnabled,
+      Value<bool>? weighted,
+      Value<bool>? service,
+      Value<bool>? favorite,
+      Value<bool>? allowNegativeStock,
+      Value<double>? stockQuantity,
+      Value<double>? stockMin,
+      Value<double>? stockMax,
+      Value<double>? reorderPoint,
+      Value<String>? unit,
       Value<String?>? image,
       Value<int?>? color,
       Value<bool>? isActive,
@@ -1121,10 +1584,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
       name: name ?? this.name,
       description: description ?? this.description,
       sku: sku ?? this.sku,
-      codeBarres: codeBarres ?? this.codeBarres,
-      price: price ?? this.price,
-      vat: vat ?? this.vat,
+      barcode: barcode ?? this.barcode,
+      salePrice: salePrice ?? this.salePrice,
+      purchasePrice: purchasePrice ?? this.purchasePrice,
+      costPrice: costPrice ?? this.costPrice,
+      taxRate: taxRate ?? this.taxRate,
+      stockEnabled: stockEnabled ?? this.stockEnabled,
+      weighted: weighted ?? this.weighted,
+      service: service ?? this.service,
+      favorite: favorite ?? this.favorite,
+      allowNegativeStock: allowNegativeStock ?? this.allowNegativeStock,
       stockQuantity: stockQuantity ?? this.stockQuantity,
+      stockMin: stockMin ?? this.stockMin,
+      stockMax: stockMax ?? this.stockMax,
+      reorderPoint: reorderPoint ?? this.reorderPoint,
+      unit: unit ?? this.unit,
       image: image ?? this.image,
       color: color ?? this.color,
       isActive: isActive ?? this.isActive,
@@ -1152,17 +1626,50 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
     if (sku.present) {
       map['sku'] = Variable<String>(sku.value);
     }
-    if (codeBarres.present) {
-      map['code_barres'] = Variable<String>(codeBarres.value);
+    if (barcode.present) {
+      map['barcode'] = Variable<String>(barcode.value);
     }
-    if (price.present) {
-      map['price'] = Variable<double>(price.value);
+    if (salePrice.present) {
+      map['sale_price'] = Variable<double>(salePrice.value);
     }
-    if (vat.present) {
-      map['vat'] = Variable<double>(vat.value);
+    if (purchasePrice.present) {
+      map['purchase_price'] = Variable<double>(purchasePrice.value);
+    }
+    if (costPrice.present) {
+      map['cost_price'] = Variable<double>(costPrice.value);
+    }
+    if (taxRate.present) {
+      map['tax_rate'] = Variable<double>(taxRate.value);
+    }
+    if (stockEnabled.present) {
+      map['stock_enabled'] = Variable<bool>(stockEnabled.value);
+    }
+    if (weighted.present) {
+      map['weighted'] = Variable<bool>(weighted.value);
+    }
+    if (service.present) {
+      map['service'] = Variable<bool>(service.value);
+    }
+    if (favorite.present) {
+      map['favorite'] = Variable<bool>(favorite.value);
+    }
+    if (allowNegativeStock.present) {
+      map['allow_negative_stock'] = Variable<bool>(allowNegativeStock.value);
     }
     if (stockQuantity.present) {
       map['stock_quantity'] = Variable<double>(stockQuantity.value);
+    }
+    if (stockMin.present) {
+      map['stock_min'] = Variable<double>(stockMin.value);
+    }
+    if (stockMax.present) {
+      map['stock_max'] = Variable<double>(stockMax.value);
+    }
+    if (reorderPoint.present) {
+      map['reorder_point'] = Variable<double>(reorderPoint.value);
+    }
+    if (unit.present) {
+      map['unit'] = Variable<String>(unit.value);
     }
     if (image.present) {
       map['image'] = Variable<String>(image.value);
@@ -1201,10 +1708,21 @@ class ProductsDriftCompanion extends UpdateCompanion<ProductsDriftData> {
           ..write('name: $name, ')
           ..write('description: $description, ')
           ..write('sku: $sku, ')
-          ..write('codeBarres: $codeBarres, ')
-          ..write('price: $price, ')
-          ..write('vat: $vat, ')
+          ..write('barcode: $barcode, ')
+          ..write('salePrice: $salePrice, ')
+          ..write('purchasePrice: $purchasePrice, ')
+          ..write('costPrice: $costPrice, ')
+          ..write('taxRate: $taxRate, ')
+          ..write('stockEnabled: $stockEnabled, ')
+          ..write('weighted: $weighted, ')
+          ..write('service: $service, ')
+          ..write('favorite: $favorite, ')
+          ..write('allowNegativeStock: $allowNegativeStock, ')
           ..write('stockQuantity: $stockQuantity, ')
+          ..write('stockMin: $stockMin, ')
+          ..write('stockMax: $stockMax, ')
+          ..write('reorderPoint: $reorderPoint, ')
+          ..write('unit: $unit, ')
           ..write('image: $image, ')
           ..write('color: $color, ')
           ..write('isActive: $isActive, ')
@@ -1229,53 +1747,73 @@ class $OptionsDriftTable extends OptionsDrift
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _isMandatoryMeta =
-      const VerificationMeta('isMandatory');
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
   @override
-  late final GeneratedColumn<bool> isMandatory = GeneratedColumn<bool>(
-      'is_mandatory', aliasedName, false,
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _mandatoryMeta =
+      const VerificationMeta('mandatory');
+  @override
+  late final GeneratedColumn<bool> mandatory = GeneratedColumn<bool>(
+      'mandatory', aliasedName, false,
       type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("is_mandatory" IN (0, 1))'));
-  static const VerificationMeta _minToSelectMeta =
-      const VerificationMeta('minToSelect');
-  @override
-  late final GeneratedColumn<int> minToSelect = GeneratedColumn<int>(
-      'min_to_select', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _maxToSelectMeta =
-      const VerificationMeta('maxToSelect');
-  @override
-  late final GeneratedColumn<int> maxToSelect = GeneratedColumn<int>(
-      'max_to_select', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
-  static const VerificationMeta _multipleSelectMeta =
-      const VerificationMeta('multipleSelect');
-  @override
-  late final GeneratedColumn<bool> multipleSelect = GeneratedColumn<bool>(
-      'multiple_select', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways(
-          'CHECK ("multiple_select" IN (0, 1))'));
-  static const VerificationMeta _isActiveMeta =
-      const VerificationMeta('isActive');
-  @override
-  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
-      'is_active', aliasedName, false,
-      type: DriftSqlType.bool,
-      requiredDuringInsert: true,
+      requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_active" IN (0, 1))'));
+          GeneratedColumn.constraintIsAlways('CHECK ("mandatory" IN (0, 1))'),
+      defaultValue: const Constant(false));
+  static const VerificationMeta _minSelectionMeta =
+      const VerificationMeta('minSelection');
+  @override
+  late final GeneratedColumn<int> minSelection = GeneratedColumn<int>(
+      'min_selection', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _maxSelectionMeta =
+      const VerificationMeta('maxSelection');
+  @override
+  late final GeneratedColumn<int> maxSelection = GeneratedColumn<int>(
+      'max_selection', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(0));
+  static const VerificationMeta _allowDuplicateSelectionMeta =
+      const VerificationMeta('allowDuplicateSelection');
+  @override
+  late final GeneratedColumn<bool> allowDuplicateSelection =
+      GeneratedColumn<bool>('allow_duplicate_selection', aliasedName, false,
+          type: DriftSqlType.bool,
+          requiredDuringInsert: false,
+          defaultConstraints: GeneratedColumn.constraintIsAlways(
+              'CHECK ("allow_duplicate_selection" IN (0, 1))'),
+          defaultValue: const Constant(false));
+  static const VerificationMeta _imageMeta = const VerificationMeta('image');
+  @override
+  late final GeneratedColumn<String> image = GeneratedColumn<String>(
+      'image', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
+  @override
+  late final GeneratedColumn<String> color = GeneratedColumn<String>(
+      'color', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _activeMeta = const VerificationMeta('active');
+  @override
+  late final GeneratedColumn<bool> active = GeneratedColumn<bool>(
+      'active', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("active" IN (0, 1))'),
+      defaultValue: const Constant(true));
   static const VerificationMeta _createdByIdMeta =
       const VerificationMeta('createdById');
   @override
@@ -1304,11 +1842,14 @@ class $OptionsDriftTable extends OptionsDrift
   List<GeneratedColumn> get $columns => [
         id,
         name,
-        isMandatory,
-        minToSelect,
-        maxToSelect,
-        multipleSelect,
-        isActive,
+        description,
+        mandatory,
+        minSelection,
+        maxSelection,
+        allowDuplicateSelection,
+        image,
+        color,
+        active,
         createdById,
         deletedAt,
         createdAt,
@@ -1335,43 +1876,46 @@ class $OptionsDriftTable extends OptionsDrift
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('is_mandatory')) {
+    if (data.containsKey('description')) {
       context.handle(
-          _isMandatoryMeta,
-          isMandatory.isAcceptableOrUnknown(
-              data['is_mandatory']!, _isMandatoryMeta));
-    } else if (isInserting) {
-      context.missing(_isMandatoryMeta);
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
     }
-    if (data.containsKey('min_to_select')) {
+    if (data.containsKey('mandatory')) {
+      context.handle(_mandatoryMeta,
+          mandatory.isAcceptableOrUnknown(data['mandatory']!, _mandatoryMeta));
+    }
+    if (data.containsKey('min_selection')) {
       context.handle(
-          _minToSelectMeta,
-          minToSelect.isAcceptableOrUnknown(
-              data['min_to_select']!, _minToSelectMeta));
-    } else if (isInserting) {
-      context.missing(_minToSelectMeta);
+          _minSelectionMeta,
+          minSelection.isAcceptableOrUnknown(
+              data['min_selection']!, _minSelectionMeta));
     }
-    if (data.containsKey('max_to_select')) {
+    if (data.containsKey('max_selection')) {
       context.handle(
-          _maxToSelectMeta,
-          maxToSelect.isAcceptableOrUnknown(
-              data['max_to_select']!, _maxToSelectMeta));
-    } else if (isInserting) {
-      context.missing(_maxToSelectMeta);
+          _maxSelectionMeta,
+          maxSelection.isAcceptableOrUnknown(
+              data['max_selection']!, _maxSelectionMeta));
     }
-    if (data.containsKey('multiple_select')) {
+    if (data.containsKey('allow_duplicate_selection')) {
       context.handle(
-          _multipleSelectMeta,
-          multipleSelect.isAcceptableOrUnknown(
-              data['multiple_select']!, _multipleSelectMeta));
-    } else if (isInserting) {
-      context.missing(_multipleSelectMeta);
+          _allowDuplicateSelectionMeta,
+          allowDuplicateSelection.isAcceptableOrUnknown(
+              data['allow_duplicate_selection']!,
+              _allowDuplicateSelectionMeta));
     }
-    if (data.containsKey('is_active')) {
-      context.handle(_isActiveMeta,
-          isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta));
-    } else if (isInserting) {
-      context.missing(_isActiveMeta);
+    if (data.containsKey('image')) {
+      context.handle(
+          _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+          _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
+    }
+    if (data.containsKey('active')) {
+      context.handle(_activeMeta,
+          active.isAcceptableOrUnknown(data['active']!, _activeMeta));
     }
     if (data.containsKey('created_by_id')) {
       context.handle(
@@ -1408,16 +1952,23 @@ class $OptionsDriftTable extends OptionsDrift
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      isMandatory: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_mandatory'])!,
-      minToSelect: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}min_to_select'])!,
-      maxToSelect: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}max_to_select'])!,
-      multipleSelect: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}multiple_select'])!,
-      isActive: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      mandatory: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}mandatory'])!,
+      minSelection: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}min_selection'])!,
+      maxSelection: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}max_selection'])!,
+      allowDuplicateSelection: attachedDatabase.typeMapping.read(
+          DriftSqlType.bool,
+          data['${effectivePrefix}allow_duplicate_selection'])!,
+      image: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image']),
+      color: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}color']),
+      active: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}active'])!,
       createdById: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}created_by_id']),
       deletedAt: attachedDatabase.typeMapping
@@ -1439,11 +1990,14 @@ class OptionsDriftData extends DataClass
     implements Insertable<OptionsDriftData> {
   final String id;
   final String name;
-  final bool isMandatory;
-  final int minToSelect;
-  final int maxToSelect;
-  final bool multipleSelect;
-  final bool isActive;
+  final String? description;
+  final bool mandatory;
+  final int minSelection;
+  final int maxSelection;
+  final bool allowDuplicateSelection;
+  final String? image;
+  final String? color;
+  final bool active;
   final String? createdById;
   final DateTime? deletedAt;
   final DateTime createdAt;
@@ -1451,11 +2005,14 @@ class OptionsDriftData extends DataClass
   const OptionsDriftData(
       {required this.id,
       required this.name,
-      required this.isMandatory,
-      required this.minToSelect,
-      required this.maxToSelect,
-      required this.multipleSelect,
-      required this.isActive,
+      this.description,
+      required this.mandatory,
+      required this.minSelection,
+      required this.maxSelection,
+      required this.allowDuplicateSelection,
+      this.image,
+      this.color,
+      required this.active,
       this.createdById,
       this.deletedAt,
       required this.createdAt,
@@ -1465,11 +2022,20 @@ class OptionsDriftData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
-    map['is_mandatory'] = Variable<bool>(isMandatory);
-    map['min_to_select'] = Variable<int>(minToSelect);
-    map['max_to_select'] = Variable<int>(maxToSelect);
-    map['multiple_select'] = Variable<bool>(multipleSelect);
-    map['is_active'] = Variable<bool>(isActive);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    map['mandatory'] = Variable<bool>(mandatory);
+    map['min_selection'] = Variable<int>(minSelection);
+    map['max_selection'] = Variable<int>(maxSelection);
+    map['allow_duplicate_selection'] = Variable<bool>(allowDuplicateSelection);
+    if (!nullToAbsent || image != null) {
+      map['image'] = Variable<String>(image);
+    }
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<String>(color);
+    }
+    map['active'] = Variable<bool>(active);
     if (!nullToAbsent || createdById != null) {
       map['created_by_id'] = Variable<String>(createdById);
     }
@@ -1485,11 +2051,18 @@ class OptionsDriftData extends DataClass
     return OptionsDriftCompanion(
       id: Value(id),
       name: Value(name),
-      isMandatory: Value(isMandatory),
-      minToSelect: Value(minToSelect),
-      maxToSelect: Value(maxToSelect),
-      multipleSelect: Value(multipleSelect),
-      isActive: Value(isActive),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      mandatory: Value(mandatory),
+      minSelection: Value(minSelection),
+      maxSelection: Value(maxSelection),
+      allowDuplicateSelection: Value(allowDuplicateSelection),
+      image:
+          image == null && nullToAbsent ? const Value.absent() : Value(image),
+      color:
+          color == null && nullToAbsent ? const Value.absent() : Value(color),
+      active: Value(active),
       createdById: createdById == null && nullToAbsent
           ? const Value.absent()
           : Value(createdById),
@@ -1507,11 +2080,15 @@ class OptionsDriftData extends DataClass
     return OptionsDriftData(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      isMandatory: serializer.fromJson<bool>(json['isMandatory']),
-      minToSelect: serializer.fromJson<int>(json['minToSelect']),
-      maxToSelect: serializer.fromJson<int>(json['maxToSelect']),
-      multipleSelect: serializer.fromJson<bool>(json['multipleSelect']),
-      isActive: serializer.fromJson<bool>(json['isActive']),
+      description: serializer.fromJson<String?>(json['description']),
+      mandatory: serializer.fromJson<bool>(json['mandatory']),
+      minSelection: serializer.fromJson<int>(json['minSelection']),
+      maxSelection: serializer.fromJson<int>(json['maxSelection']),
+      allowDuplicateSelection:
+          serializer.fromJson<bool>(json['allowDuplicateSelection']),
+      image: serializer.fromJson<String?>(json['image']),
+      color: serializer.fromJson<String?>(json['color']),
+      active: serializer.fromJson<bool>(json['active']),
       createdById: serializer.fromJson<String?>(json['createdById']),
       deletedAt: serializer.fromJson<DateTime?>(json['deletedAt']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -1524,11 +2101,15 @@ class OptionsDriftData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
-      'isMandatory': serializer.toJson<bool>(isMandatory),
-      'minToSelect': serializer.toJson<int>(minToSelect),
-      'maxToSelect': serializer.toJson<int>(maxToSelect),
-      'multipleSelect': serializer.toJson<bool>(multipleSelect),
-      'isActive': serializer.toJson<bool>(isActive),
+      'description': serializer.toJson<String?>(description),
+      'mandatory': serializer.toJson<bool>(mandatory),
+      'minSelection': serializer.toJson<int>(minSelection),
+      'maxSelection': serializer.toJson<int>(maxSelection),
+      'allowDuplicateSelection':
+          serializer.toJson<bool>(allowDuplicateSelection),
+      'image': serializer.toJson<String?>(image),
+      'color': serializer.toJson<String?>(color),
+      'active': serializer.toJson<bool>(active),
       'createdById': serializer.toJson<String?>(createdById),
       'deletedAt': serializer.toJson<DateTime?>(deletedAt),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -1539,11 +2120,14 @@ class OptionsDriftData extends DataClass
   OptionsDriftData copyWith(
           {String? id,
           String? name,
-          bool? isMandatory,
-          int? minToSelect,
-          int? maxToSelect,
-          bool? multipleSelect,
-          bool? isActive,
+          Value<String?> description = const Value.absent(),
+          bool? mandatory,
+          int? minSelection,
+          int? maxSelection,
+          bool? allowDuplicateSelection,
+          Value<String?> image = const Value.absent(),
+          Value<String?> color = const Value.absent(),
+          bool? active,
           Value<String?> createdById = const Value.absent(),
           Value<DateTime?> deletedAt = const Value.absent(),
           DateTime? createdAt,
@@ -1551,11 +2135,15 @@ class OptionsDriftData extends DataClass
       OptionsDriftData(
         id: id ?? this.id,
         name: name ?? this.name,
-        isMandatory: isMandatory ?? this.isMandatory,
-        minToSelect: minToSelect ?? this.minToSelect,
-        maxToSelect: maxToSelect ?? this.maxToSelect,
-        multipleSelect: multipleSelect ?? this.multipleSelect,
-        isActive: isActive ?? this.isActive,
+        description: description.present ? description.value : this.description,
+        mandatory: mandatory ?? this.mandatory,
+        minSelection: minSelection ?? this.minSelection,
+        maxSelection: maxSelection ?? this.maxSelection,
+        allowDuplicateSelection:
+            allowDuplicateSelection ?? this.allowDuplicateSelection,
+        image: image.present ? image.value : this.image,
+        color: color.present ? color.value : this.color,
+        active: active ?? this.active,
         createdById: createdById.present ? createdById.value : this.createdById,
         deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
         createdAt: createdAt ?? this.createdAt,
@@ -1565,16 +2153,21 @@ class OptionsDriftData extends DataClass
     return OptionsDriftData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
-      isMandatory:
-          data.isMandatory.present ? data.isMandatory.value : this.isMandatory,
-      minToSelect:
-          data.minToSelect.present ? data.minToSelect.value : this.minToSelect,
-      maxToSelect:
-          data.maxToSelect.present ? data.maxToSelect.value : this.maxToSelect,
-      multipleSelect: data.multipleSelect.present
-          ? data.multipleSelect.value
-          : this.multipleSelect,
-      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      description:
+          data.description.present ? data.description.value : this.description,
+      mandatory: data.mandatory.present ? data.mandatory.value : this.mandatory,
+      minSelection: data.minSelection.present
+          ? data.minSelection.value
+          : this.minSelection,
+      maxSelection: data.maxSelection.present
+          ? data.maxSelection.value
+          : this.maxSelection,
+      allowDuplicateSelection: data.allowDuplicateSelection.present
+          ? data.allowDuplicateSelection.value
+          : this.allowDuplicateSelection,
+      image: data.image.present ? data.image.value : this.image,
+      color: data.color.present ? data.color.value : this.color,
+      active: data.active.present ? data.active.value : this.active,
       createdById:
           data.createdById.present ? data.createdById.value : this.createdById,
       deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
@@ -1588,11 +2181,14 @@ class OptionsDriftData extends DataClass
     return (StringBuffer('OptionsDriftData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('isMandatory: $isMandatory, ')
-          ..write('minToSelect: $minToSelect, ')
-          ..write('maxToSelect: $maxToSelect, ')
-          ..write('multipleSelect: $multipleSelect, ')
-          ..write('isActive: $isActive, ')
+          ..write('description: $description, ')
+          ..write('mandatory: $mandatory, ')
+          ..write('minSelection: $minSelection, ')
+          ..write('maxSelection: $maxSelection, ')
+          ..write('allowDuplicateSelection: $allowDuplicateSelection, ')
+          ..write('image: $image, ')
+          ..write('color: $color, ')
+          ..write('active: $active, ')
           ..write('createdById: $createdById, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('createdAt: $createdAt, ')
@@ -1605,11 +2201,14 @@ class OptionsDriftData extends DataClass
   int get hashCode => Object.hash(
       id,
       name,
-      isMandatory,
-      minToSelect,
-      maxToSelect,
-      multipleSelect,
-      isActive,
+      description,
+      mandatory,
+      minSelection,
+      maxSelection,
+      allowDuplicateSelection,
+      image,
+      color,
+      active,
       createdById,
       deletedAt,
       createdAt,
@@ -1620,11 +2219,14 @@ class OptionsDriftData extends DataClass
       (other is OptionsDriftData &&
           other.id == this.id &&
           other.name == this.name &&
-          other.isMandatory == this.isMandatory &&
-          other.minToSelect == this.minToSelect &&
-          other.maxToSelect == this.maxToSelect &&
-          other.multipleSelect == this.multipleSelect &&
-          other.isActive == this.isActive &&
+          other.description == this.description &&
+          other.mandatory == this.mandatory &&
+          other.minSelection == this.minSelection &&
+          other.maxSelection == this.maxSelection &&
+          other.allowDuplicateSelection == this.allowDuplicateSelection &&
+          other.image == this.image &&
+          other.color == this.color &&
+          other.active == this.active &&
           other.createdById == this.createdById &&
           other.deletedAt == this.deletedAt &&
           other.createdAt == this.createdAt &&
@@ -1634,11 +2236,14 @@ class OptionsDriftData extends DataClass
 class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
   final Value<String> id;
   final Value<String> name;
-  final Value<bool> isMandatory;
-  final Value<int> minToSelect;
-  final Value<int> maxToSelect;
-  final Value<bool> multipleSelect;
-  final Value<bool> isActive;
+  final Value<String?> description;
+  final Value<bool> mandatory;
+  final Value<int> minSelection;
+  final Value<int> maxSelection;
+  final Value<bool> allowDuplicateSelection;
+  final Value<String?> image;
+  final Value<String?> color;
+  final Value<bool> active;
   final Value<String?> createdById;
   final Value<DateTime?> deletedAt;
   final Value<DateTime> createdAt;
@@ -1647,11 +2252,14 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
   const OptionsDriftCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.isMandatory = const Value.absent(),
-    this.minToSelect = const Value.absent(),
-    this.maxToSelect = const Value.absent(),
-    this.multipleSelect = const Value.absent(),
-    this.isActive = const Value.absent(),
+    this.description = const Value.absent(),
+    this.mandatory = const Value.absent(),
+    this.minSelection = const Value.absent(),
+    this.maxSelection = const Value.absent(),
+    this.allowDuplicateSelection = const Value.absent(),
+    this.image = const Value.absent(),
+    this.color = const Value.absent(),
+    this.active = const Value.absent(),
     this.createdById = const Value.absent(),
     this.deletedAt = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -1661,11 +2269,14 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
   OptionsDriftCompanion.insert({
     required String id,
     required String name,
-    required bool isMandatory,
-    required int minToSelect,
-    required int maxToSelect,
-    required bool multipleSelect,
-    required bool isActive,
+    this.description = const Value.absent(),
+    this.mandatory = const Value.absent(),
+    this.minSelection = const Value.absent(),
+    this.maxSelection = const Value.absent(),
+    this.allowDuplicateSelection = const Value.absent(),
+    this.image = const Value.absent(),
+    this.color = const Value.absent(),
+    this.active = const Value.absent(),
     this.createdById = const Value.absent(),
     this.deletedAt = const Value.absent(),
     required DateTime createdAt,
@@ -1673,21 +2284,19 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
     this.rowid = const Value.absent(),
   })  : id = Value(id),
         name = Value(name),
-        isMandatory = Value(isMandatory),
-        minToSelect = Value(minToSelect),
-        maxToSelect = Value(maxToSelect),
-        multipleSelect = Value(multipleSelect),
-        isActive = Value(isActive),
         createdAt = Value(createdAt),
         updatedAt = Value(updatedAt);
   static Insertable<OptionsDriftData> custom({
     Expression<String>? id,
     Expression<String>? name,
-    Expression<bool>? isMandatory,
-    Expression<int>? minToSelect,
-    Expression<int>? maxToSelect,
-    Expression<bool>? multipleSelect,
-    Expression<bool>? isActive,
+    Expression<String>? description,
+    Expression<bool>? mandatory,
+    Expression<int>? minSelection,
+    Expression<int>? maxSelection,
+    Expression<bool>? allowDuplicateSelection,
+    Expression<String>? image,
+    Expression<String>? color,
+    Expression<bool>? active,
     Expression<String>? createdById,
     Expression<DateTime>? deletedAt,
     Expression<DateTime>? createdAt,
@@ -1697,11 +2306,15 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (isMandatory != null) 'is_mandatory': isMandatory,
-      if (minToSelect != null) 'min_to_select': minToSelect,
-      if (maxToSelect != null) 'max_to_select': maxToSelect,
-      if (multipleSelect != null) 'multiple_select': multipleSelect,
-      if (isActive != null) 'is_active': isActive,
+      if (description != null) 'description': description,
+      if (mandatory != null) 'mandatory': mandatory,
+      if (minSelection != null) 'min_selection': minSelection,
+      if (maxSelection != null) 'max_selection': maxSelection,
+      if (allowDuplicateSelection != null)
+        'allow_duplicate_selection': allowDuplicateSelection,
+      if (image != null) 'image': image,
+      if (color != null) 'color': color,
+      if (active != null) 'active': active,
       if (createdById != null) 'created_by_id': createdById,
       if (deletedAt != null) 'deleted_at': deletedAt,
       if (createdAt != null) 'created_at': createdAt,
@@ -1713,11 +2326,14 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
   OptionsDriftCompanion copyWith(
       {Value<String>? id,
       Value<String>? name,
-      Value<bool>? isMandatory,
-      Value<int>? minToSelect,
-      Value<int>? maxToSelect,
-      Value<bool>? multipleSelect,
-      Value<bool>? isActive,
+      Value<String?>? description,
+      Value<bool>? mandatory,
+      Value<int>? minSelection,
+      Value<int>? maxSelection,
+      Value<bool>? allowDuplicateSelection,
+      Value<String?>? image,
+      Value<String?>? color,
+      Value<bool>? active,
       Value<String?>? createdById,
       Value<DateTime?>? deletedAt,
       Value<DateTime>? createdAt,
@@ -1726,11 +2342,15 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
     return OptionsDriftCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      isMandatory: isMandatory ?? this.isMandatory,
-      minToSelect: minToSelect ?? this.minToSelect,
-      maxToSelect: maxToSelect ?? this.maxToSelect,
-      multipleSelect: multipleSelect ?? this.multipleSelect,
-      isActive: isActive ?? this.isActive,
+      description: description ?? this.description,
+      mandatory: mandatory ?? this.mandatory,
+      minSelection: minSelection ?? this.minSelection,
+      maxSelection: maxSelection ?? this.maxSelection,
+      allowDuplicateSelection:
+          allowDuplicateSelection ?? this.allowDuplicateSelection,
+      image: image ?? this.image,
+      color: color ?? this.color,
+      active: active ?? this.active,
       createdById: createdById ?? this.createdById,
       deletedAt: deletedAt ?? this.deletedAt,
       createdAt: createdAt ?? this.createdAt,
@@ -1748,20 +2368,30 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (isMandatory.present) {
-      map['is_mandatory'] = Variable<bool>(isMandatory.value);
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
     }
-    if (minToSelect.present) {
-      map['min_to_select'] = Variable<int>(minToSelect.value);
+    if (mandatory.present) {
+      map['mandatory'] = Variable<bool>(mandatory.value);
     }
-    if (maxToSelect.present) {
-      map['max_to_select'] = Variable<int>(maxToSelect.value);
+    if (minSelection.present) {
+      map['min_selection'] = Variable<int>(minSelection.value);
     }
-    if (multipleSelect.present) {
-      map['multiple_select'] = Variable<bool>(multipleSelect.value);
+    if (maxSelection.present) {
+      map['max_selection'] = Variable<int>(maxSelection.value);
     }
-    if (isActive.present) {
-      map['is_active'] = Variable<bool>(isActive.value);
+    if (allowDuplicateSelection.present) {
+      map['allow_duplicate_selection'] =
+          Variable<bool>(allowDuplicateSelection.value);
+    }
+    if (image.present) {
+      map['image'] = Variable<String>(image.value);
+    }
+    if (color.present) {
+      map['color'] = Variable<String>(color.value);
+    }
+    if (active.present) {
+      map['active'] = Variable<bool>(active.value);
     }
     if (createdById.present) {
       map['created_by_id'] = Variable<String>(createdById.value);
@@ -1786,11 +2416,14 @@ class OptionsDriftCompanion extends UpdateCompanion<OptionsDriftData> {
     return (StringBuffer('OptionsDriftCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('isMandatory: $isMandatory, ')
-          ..write('minToSelect: $minToSelect, ')
-          ..write('maxToSelect: $maxToSelect, ')
-          ..write('multipleSelect: $multipleSelect, ')
-          ..write('isActive: $isActive, ')
+          ..write('description: $description, ')
+          ..write('mandatory: $mandatory, ')
+          ..write('minSelection: $minSelection, ')
+          ..write('maxSelection: $maxSelection, ')
+          ..write('allowDuplicateSelection: $allowDuplicateSelection, ')
+          ..write('image: $image, ')
+          ..write('color: $color, ')
+          ..write('active: $active, ')
           ..write('createdById: $createdById, ')
           ..write('deletedAt: $deletedAt, ')
           ..write('createdAt: $createdAt, ')
@@ -1811,38 +2444,81 @@ class $ItemsDriftTable extends ItemsDrift
   @override
   late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'id', aliasedName, false,
-      type: DriftSqlType.string,
-      requiredDuringInsert: true,
-      defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nameMeta = const VerificationMeta('name');
   @override
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
-  static const VerificationMeta _priceMeta = const VerificationMeta('price');
+  static const VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
   @override
-  late final GeneratedColumn<double> price = GeneratedColumn<double>(
-      'price', aliasedName, false,
+  late final GeneratedColumn<String> description = GeneratedColumn<String>(
+      'description', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _skuMeta = const VerificationMeta('sku');
+  @override
+  late final GeneratedColumn<String> sku = GeneratedColumn<String>(
+      'sku', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _additionalPriceMeta =
+      const VerificationMeta('additionalPrice');
+  @override
+  late final GeneratedColumn<double> additionalPrice = GeneratedColumn<double>(
+      'additional_price', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
-  static const VerificationMeta _vatMeta = const VerificationMeta('vat');
+  static const VerificationMeta _taxRateMeta =
+      const VerificationMeta('taxRate');
   @override
-  late final GeneratedColumn<double> vat = GeneratedColumn<double>(
-      'vat', aliasedName, true,
+  late final GeneratedColumn<double> taxRate = GeneratedColumn<double>(
+      'tax_rate', aliasedName, false,
       type: DriftSqlType.double,
       requiredDuringInsert: false,
-      defaultValue: const Constant(0));
-  static const VerificationMeta _isActiveMeta =
-      const VerificationMeta('isActive');
+      defaultValue: const Constant(20));
+  static const VerificationMeta _imageMeta = const VerificationMeta('image');
   @override
-  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
-      'is_active', aliasedName, false,
+  late final GeneratedColumn<String> image = GeneratedColumn<String>(
+      'image', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _colorMeta = const VerificationMeta('color');
+  @override
+  late final GeneratedColumn<String> color = GeneratedColumn<String>(
+      'color', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _activeMeta = const VerificationMeta('active');
+  @override
+  late final GeneratedColumn<bool> active = GeneratedColumn<bool>(
+      'active', aliasedName, false,
       type: DriftSqlType.bool,
       requiredDuringInsert: false,
       defaultConstraints:
-          GeneratedColumn.constraintIsAlways('CHECK ("is_active" IN (0, 1))'),
+          GeneratedColumn.constraintIsAlways('CHECK ("active" IN (0, 1))'),
       defaultValue: const Constant(true));
+  static const VerificationMeta _inStockMeta =
+      const VerificationMeta('inStock');
+  @override
+  late final GeneratedColumn<bool> inStock = GeneratedColumn<bool>(
+      'in_stock', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: false,
+      defaultConstraints:
+          GeneratedColumn.constraintIsAlways('CHECK ("in_stock" IN (0, 1))'),
+      defaultValue: const Constant(true));
+  static const VerificationMeta _displayOrderMeta =
+      const VerificationMeta('displayOrder');
+  @override
+  late final GeneratedColumn<int> displayOrder = GeneratedColumn<int>(
+      'display_order', aliasedName, false,
+      type: DriftSqlType.int,
+      requiredDuringInsert: false,
+      defaultValue: const Constant(1));
+  static const VerificationMeta _iconMeta = const VerificationMeta('icon');
+  @override
+  late final GeneratedColumn<int> icon = GeneratedColumn<int>(
+      'icon', aliasedName, true,
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _optionIdMeta =
       const VerificationMeta('optionId');
   @override
@@ -1880,9 +2556,16 @@ class $ItemsDriftTable extends ItemsDrift
   List<GeneratedColumn> get $columns => [
         id,
         name,
-        price,
-        vat,
-        isActive,
+        description,
+        sku,
+        additionalPrice,
+        taxRate,
+        image,
+        color,
+        active,
+        inStock,
+        displayOrder,
+        icon,
         optionId,
         createdById,
         createdAt,
@@ -1910,17 +2593,51 @@ class $ItemsDriftTable extends ItemsDrift
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('price')) {
+    if (data.containsKey('description')) {
       context.handle(
-          _priceMeta, price.isAcceptableOrUnknown(data['price']!, _priceMeta));
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description']!, _descriptionMeta));
     }
-    if (data.containsKey('vat')) {
+    if (data.containsKey('sku')) {
       context.handle(
-          _vatMeta, vat.isAcceptableOrUnknown(data['vat']!, _vatMeta));
+          _skuMeta, sku.isAcceptableOrUnknown(data['sku']!, _skuMeta));
     }
-    if (data.containsKey('is_active')) {
-      context.handle(_isActiveMeta,
-          isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta));
+    if (data.containsKey('additional_price')) {
+      context.handle(
+          _additionalPriceMeta,
+          additionalPrice.isAcceptableOrUnknown(
+              data['additional_price']!, _additionalPriceMeta));
+    }
+    if (data.containsKey('tax_rate')) {
+      context.handle(_taxRateMeta,
+          taxRate.isAcceptableOrUnknown(data['tax_rate']!, _taxRateMeta));
+    }
+    if (data.containsKey('image')) {
+      context.handle(
+          _imageMeta, image.isAcceptableOrUnknown(data['image']!, _imageMeta));
+    }
+    if (data.containsKey('color')) {
+      context.handle(
+          _colorMeta, color.isAcceptableOrUnknown(data['color']!, _colorMeta));
+    }
+    if (data.containsKey('active')) {
+      context.handle(_activeMeta,
+          active.isAcceptableOrUnknown(data['active']!, _activeMeta));
+    }
+    if (data.containsKey('in_stock')) {
+      context.handle(_inStockMeta,
+          inStock.isAcceptableOrUnknown(data['in_stock']!, _inStockMeta));
+    }
+    if (data.containsKey('display_order')) {
+      context.handle(
+          _displayOrderMeta,
+          displayOrder.isAcceptableOrUnknown(
+              data['display_order']!, _displayOrderMeta));
+    }
+    if (data.containsKey('icon')) {
+      context.handle(
+          _iconMeta, icon.isAcceptableOrUnknown(data['icon']!, _iconMeta));
     }
     if (data.containsKey('option_id')) {
       context.handle(_optionIdMeta,
@@ -1963,12 +2680,26 @@ class $ItemsDriftTable extends ItemsDrift
           .read(DriftSqlType.string, data['${effectivePrefix}id'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
-      price: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
-      vat: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}vat']),
-      isActive: attachedDatabase.typeMapping
-          .read(DriftSqlType.bool, data['${effectivePrefix}is_active'])!,
+      description: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}description']),
+      sku: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}sku']),
+      additionalPrice: attachedDatabase.typeMapping.read(
+          DriftSqlType.double, data['${effectivePrefix}additional_price'])!,
+      taxRate: attachedDatabase.typeMapping
+          .read(DriftSqlType.double, data['${effectivePrefix}tax_rate'])!,
+      image: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}image']),
+      color: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}color']),
+      active: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}active'])!,
+      inStock: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}in_stock'])!,
+      displayOrder: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}display_order'])!,
+      icon: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}icon']),
       optionId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}option_id'])!,
       createdById: attachedDatabase.typeMapping
@@ -1991,9 +2722,16 @@ class $ItemsDriftTable extends ItemsDrift
 class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
   final String id;
   final String name;
-  final double price;
-  final double? vat;
-  final bool isActive;
+  final String? description;
+  final String? sku;
+  final double additionalPrice;
+  final double taxRate;
+  final String? image;
+  final String? color;
+  final bool active;
+  final bool inStock;
+  final int displayOrder;
+  final int? icon;
   final String optionId;
   final String? createdById;
   final DateTime createdAt;
@@ -2002,9 +2740,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
   const ItemsDriftData(
       {required this.id,
       required this.name,
-      required this.price,
-      this.vat,
-      required this.isActive,
+      this.description,
+      this.sku,
+      required this.additionalPrice,
+      required this.taxRate,
+      this.image,
+      this.color,
+      required this.active,
+      required this.inStock,
+      required this.displayOrder,
+      this.icon,
       required this.optionId,
       this.createdById,
       required this.createdAt,
@@ -2015,11 +2760,26 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
-    map['price'] = Variable<double>(price);
-    if (!nullToAbsent || vat != null) {
-      map['vat'] = Variable<double>(vat);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
     }
-    map['is_active'] = Variable<bool>(isActive);
+    if (!nullToAbsent || sku != null) {
+      map['sku'] = Variable<String>(sku);
+    }
+    map['additional_price'] = Variable<double>(additionalPrice);
+    map['tax_rate'] = Variable<double>(taxRate);
+    if (!nullToAbsent || image != null) {
+      map['image'] = Variable<String>(image);
+    }
+    if (!nullToAbsent || color != null) {
+      map['color'] = Variable<String>(color);
+    }
+    map['active'] = Variable<bool>(active);
+    map['in_stock'] = Variable<bool>(inStock);
+    map['display_order'] = Variable<int>(displayOrder);
+    if (!nullToAbsent || icon != null) {
+      map['icon'] = Variable<int>(icon);
+    }
     map['option_id'] = Variable<String>(optionId);
     if (!nullToAbsent || createdById != null) {
       map['created_by_id'] = Variable<String>(createdById);
@@ -2036,9 +2796,20 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
     return ItemsDriftCompanion(
       id: Value(id),
       name: Value(name),
-      price: Value(price),
-      vat: vat == null && nullToAbsent ? const Value.absent() : Value(vat),
-      isActive: Value(isActive),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      sku: sku == null && nullToAbsent ? const Value.absent() : Value(sku),
+      additionalPrice: Value(additionalPrice),
+      taxRate: Value(taxRate),
+      image:
+          image == null && nullToAbsent ? const Value.absent() : Value(image),
+      color:
+          color == null && nullToAbsent ? const Value.absent() : Value(color),
+      active: Value(active),
+      inStock: Value(inStock),
+      displayOrder: Value(displayOrder),
+      icon: icon == null && nullToAbsent ? const Value.absent() : Value(icon),
       optionId: Value(optionId),
       createdById: createdById == null && nullToAbsent
           ? const Value.absent()
@@ -2057,9 +2828,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
     return ItemsDriftData(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      price: serializer.fromJson<double>(json['price']),
-      vat: serializer.fromJson<double?>(json['vat']),
-      isActive: serializer.fromJson<bool>(json['isActive']),
+      description: serializer.fromJson<String?>(json['description']),
+      sku: serializer.fromJson<String?>(json['sku']),
+      additionalPrice: serializer.fromJson<double>(json['additionalPrice']),
+      taxRate: serializer.fromJson<double>(json['taxRate']),
+      image: serializer.fromJson<String?>(json['image']),
+      color: serializer.fromJson<String?>(json['color']),
+      active: serializer.fromJson<bool>(json['active']),
+      inStock: serializer.fromJson<bool>(json['inStock']),
+      displayOrder: serializer.fromJson<int>(json['displayOrder']),
+      icon: serializer.fromJson<int?>(json['icon']),
       optionId: serializer.fromJson<String>(json['optionId']),
       createdById: serializer.fromJson<String?>(json['createdById']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
@@ -2073,9 +2851,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
-      'price': serializer.toJson<double>(price),
-      'vat': serializer.toJson<double?>(vat),
-      'isActive': serializer.toJson<bool>(isActive),
+      'description': serializer.toJson<String?>(description),
+      'sku': serializer.toJson<String?>(sku),
+      'additionalPrice': serializer.toJson<double>(additionalPrice),
+      'taxRate': serializer.toJson<double>(taxRate),
+      'image': serializer.toJson<String?>(image),
+      'color': serializer.toJson<String?>(color),
+      'active': serializer.toJson<bool>(active),
+      'inStock': serializer.toJson<bool>(inStock),
+      'displayOrder': serializer.toJson<int>(displayOrder),
+      'icon': serializer.toJson<int?>(icon),
       'optionId': serializer.toJson<String>(optionId),
       'createdById': serializer.toJson<String?>(createdById),
       'createdAt': serializer.toJson<DateTime>(createdAt),
@@ -2087,9 +2872,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
   ItemsDriftData copyWith(
           {String? id,
           String? name,
-          double? price,
-          Value<double?> vat = const Value.absent(),
-          bool? isActive,
+          Value<String?> description = const Value.absent(),
+          Value<String?> sku = const Value.absent(),
+          double? additionalPrice,
+          double? taxRate,
+          Value<String?> image = const Value.absent(),
+          Value<String?> color = const Value.absent(),
+          bool? active,
+          bool? inStock,
+          int? displayOrder,
+          Value<int?> icon = const Value.absent(),
           String? optionId,
           Value<String?> createdById = const Value.absent(),
           DateTime? createdAt,
@@ -2098,9 +2890,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
       ItemsDriftData(
         id: id ?? this.id,
         name: name ?? this.name,
-        price: price ?? this.price,
-        vat: vat.present ? vat.value : this.vat,
-        isActive: isActive ?? this.isActive,
+        description: description.present ? description.value : this.description,
+        sku: sku.present ? sku.value : this.sku,
+        additionalPrice: additionalPrice ?? this.additionalPrice,
+        taxRate: taxRate ?? this.taxRate,
+        image: image.present ? image.value : this.image,
+        color: color.present ? color.value : this.color,
+        active: active ?? this.active,
+        inStock: inStock ?? this.inStock,
+        displayOrder: displayOrder ?? this.displayOrder,
+        icon: icon.present ? icon.value : this.icon,
         optionId: optionId ?? this.optionId,
         createdById: createdById.present ? createdById.value : this.createdById,
         createdAt: createdAt ?? this.createdAt,
@@ -2111,9 +2910,21 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
     return ItemsDriftData(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
-      price: data.price.present ? data.price.value : this.price,
-      vat: data.vat.present ? data.vat.value : this.vat,
-      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      description:
+          data.description.present ? data.description.value : this.description,
+      sku: data.sku.present ? data.sku.value : this.sku,
+      additionalPrice: data.additionalPrice.present
+          ? data.additionalPrice.value
+          : this.additionalPrice,
+      taxRate: data.taxRate.present ? data.taxRate.value : this.taxRate,
+      image: data.image.present ? data.image.value : this.image,
+      color: data.color.present ? data.color.value : this.color,
+      active: data.active.present ? data.active.value : this.active,
+      inStock: data.inStock.present ? data.inStock.value : this.inStock,
+      displayOrder: data.displayOrder.present
+          ? data.displayOrder.value
+          : this.displayOrder,
+      icon: data.icon.present ? data.icon.value : this.icon,
       optionId: data.optionId.present ? data.optionId.value : this.optionId,
       createdById:
           data.createdById.present ? data.createdById.value : this.createdById,
@@ -2128,9 +2939,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
     return (StringBuffer('ItemsDriftData(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('price: $price, ')
-          ..write('vat: $vat, ')
-          ..write('isActive: $isActive, ')
+          ..write('description: $description, ')
+          ..write('sku: $sku, ')
+          ..write('additionalPrice: $additionalPrice, ')
+          ..write('taxRate: $taxRate, ')
+          ..write('image: $image, ')
+          ..write('color: $color, ')
+          ..write('active: $active, ')
+          ..write('inStock: $inStock, ')
+          ..write('displayOrder: $displayOrder, ')
+          ..write('icon: $icon, ')
           ..write('optionId: $optionId, ')
           ..write('createdById: $createdById, ')
           ..write('createdAt: $createdAt, ')
@@ -2141,17 +2959,40 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
   }
 
   @override
-  int get hashCode => Object.hash(id, name, price, vat, isActive, optionId,
-      createdById, createdAt, updatedAt, deletedAt);
+  int get hashCode => Object.hash(
+      id,
+      name,
+      description,
+      sku,
+      additionalPrice,
+      taxRate,
+      image,
+      color,
+      active,
+      inStock,
+      displayOrder,
+      icon,
+      optionId,
+      createdById,
+      createdAt,
+      updatedAt,
+      deletedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is ItemsDriftData &&
           other.id == this.id &&
           other.name == this.name &&
-          other.price == this.price &&
-          other.vat == this.vat &&
-          other.isActive == this.isActive &&
+          other.description == this.description &&
+          other.sku == this.sku &&
+          other.additionalPrice == this.additionalPrice &&
+          other.taxRate == this.taxRate &&
+          other.image == this.image &&
+          other.color == this.color &&
+          other.active == this.active &&
+          other.inStock == this.inStock &&
+          other.displayOrder == this.displayOrder &&
+          other.icon == this.icon &&
           other.optionId == this.optionId &&
           other.createdById == this.createdById &&
           other.createdAt == this.createdAt &&
@@ -2162,9 +3003,16 @@ class ItemsDriftData extends DataClass implements Insertable<ItemsDriftData> {
 class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
   final Value<String> id;
   final Value<String> name;
-  final Value<double> price;
-  final Value<double?> vat;
-  final Value<bool> isActive;
+  final Value<String?> description;
+  final Value<String?> sku;
+  final Value<double> additionalPrice;
+  final Value<double> taxRate;
+  final Value<String?> image;
+  final Value<String?> color;
+  final Value<bool> active;
+  final Value<bool> inStock;
+  final Value<int> displayOrder;
+  final Value<int?> icon;
   final Value<String> optionId;
   final Value<String?> createdById;
   final Value<DateTime> createdAt;
@@ -2174,9 +3022,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
   const ItemsDriftCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.price = const Value.absent(),
-    this.vat = const Value.absent(),
-    this.isActive = const Value.absent(),
+    this.description = const Value.absent(),
+    this.sku = const Value.absent(),
+    this.additionalPrice = const Value.absent(),
+    this.taxRate = const Value.absent(),
+    this.image = const Value.absent(),
+    this.color = const Value.absent(),
+    this.active = const Value.absent(),
+    this.inStock = const Value.absent(),
+    this.displayOrder = const Value.absent(),
+    this.icon = const Value.absent(),
     this.optionId = const Value.absent(),
     this.createdById = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -2187,9 +3042,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
   ItemsDriftCompanion.insert({
     required String id,
     required String name,
-    this.price = const Value.absent(),
-    this.vat = const Value.absent(),
-    this.isActive = const Value.absent(),
+    this.description = const Value.absent(),
+    this.sku = const Value.absent(),
+    this.additionalPrice = const Value.absent(),
+    this.taxRate = const Value.absent(),
+    this.image = const Value.absent(),
+    this.color = const Value.absent(),
+    this.active = const Value.absent(),
+    this.inStock = const Value.absent(),
+    this.displayOrder = const Value.absent(),
+    this.icon = const Value.absent(),
     required String optionId,
     this.createdById = const Value.absent(),
     required DateTime createdAt,
@@ -2204,9 +3066,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
   static Insertable<ItemsDriftData> custom({
     Expression<String>? id,
     Expression<String>? name,
-    Expression<double>? price,
-    Expression<double>? vat,
-    Expression<bool>? isActive,
+    Expression<String>? description,
+    Expression<String>? sku,
+    Expression<double>? additionalPrice,
+    Expression<double>? taxRate,
+    Expression<String>? image,
+    Expression<String>? color,
+    Expression<bool>? active,
+    Expression<bool>? inStock,
+    Expression<int>? displayOrder,
+    Expression<int>? icon,
     Expression<String>? optionId,
     Expression<String>? createdById,
     Expression<DateTime>? createdAt,
@@ -2217,9 +3086,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (price != null) 'price': price,
-      if (vat != null) 'vat': vat,
-      if (isActive != null) 'is_active': isActive,
+      if (description != null) 'description': description,
+      if (sku != null) 'sku': sku,
+      if (additionalPrice != null) 'additional_price': additionalPrice,
+      if (taxRate != null) 'tax_rate': taxRate,
+      if (image != null) 'image': image,
+      if (color != null) 'color': color,
+      if (active != null) 'active': active,
+      if (inStock != null) 'in_stock': inStock,
+      if (displayOrder != null) 'display_order': displayOrder,
+      if (icon != null) 'icon': icon,
       if (optionId != null) 'option_id': optionId,
       if (createdById != null) 'created_by_id': createdById,
       if (createdAt != null) 'created_at': createdAt,
@@ -2232,9 +3108,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
   ItemsDriftCompanion copyWith(
       {Value<String>? id,
       Value<String>? name,
-      Value<double>? price,
-      Value<double?>? vat,
-      Value<bool>? isActive,
+      Value<String?>? description,
+      Value<String?>? sku,
+      Value<double>? additionalPrice,
+      Value<double>? taxRate,
+      Value<String?>? image,
+      Value<String?>? color,
+      Value<bool>? active,
+      Value<bool>? inStock,
+      Value<int>? displayOrder,
+      Value<int?>? icon,
       Value<String>? optionId,
       Value<String?>? createdById,
       Value<DateTime>? createdAt,
@@ -2244,9 +3127,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
     return ItemsDriftCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      price: price ?? this.price,
-      vat: vat ?? this.vat,
-      isActive: isActive ?? this.isActive,
+      description: description ?? this.description,
+      sku: sku ?? this.sku,
+      additionalPrice: additionalPrice ?? this.additionalPrice,
+      taxRate: taxRate ?? this.taxRate,
+      image: image ?? this.image,
+      color: color ?? this.color,
+      active: active ?? this.active,
+      inStock: inStock ?? this.inStock,
+      displayOrder: displayOrder ?? this.displayOrder,
+      icon: icon ?? this.icon,
       optionId: optionId ?? this.optionId,
       createdById: createdById ?? this.createdById,
       createdAt: createdAt ?? this.createdAt,
@@ -2265,14 +3155,35 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (price.present) {
-      map['price'] = Variable<double>(price.value);
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
     }
-    if (vat.present) {
-      map['vat'] = Variable<double>(vat.value);
+    if (sku.present) {
+      map['sku'] = Variable<String>(sku.value);
     }
-    if (isActive.present) {
-      map['is_active'] = Variable<bool>(isActive.value);
+    if (additionalPrice.present) {
+      map['additional_price'] = Variable<double>(additionalPrice.value);
+    }
+    if (taxRate.present) {
+      map['tax_rate'] = Variable<double>(taxRate.value);
+    }
+    if (image.present) {
+      map['image'] = Variable<String>(image.value);
+    }
+    if (color.present) {
+      map['color'] = Variable<String>(color.value);
+    }
+    if (active.present) {
+      map['active'] = Variable<bool>(active.value);
+    }
+    if (inStock.present) {
+      map['in_stock'] = Variable<bool>(inStock.value);
+    }
+    if (displayOrder.present) {
+      map['display_order'] = Variable<int>(displayOrder.value);
+    }
+    if (icon.present) {
+      map['icon'] = Variable<int>(icon.value);
     }
     if (optionId.present) {
       map['option_id'] = Variable<String>(optionId.value);
@@ -2300,9 +3211,16 @@ class ItemsDriftCompanion extends UpdateCompanion<ItemsDriftData> {
     return (StringBuffer('ItemsDriftCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('price: $price, ')
-          ..write('vat: $vat, ')
-          ..write('isActive: $isActive, ')
+          ..write('description: $description, ')
+          ..write('sku: $sku, ')
+          ..write('additionalPrice: $additionalPrice, ')
+          ..write('taxRate: $taxRate, ')
+          ..write('image: $image, ')
+          ..write('color: $color, ')
+          ..write('active: $active, ')
+          ..write('inStock: $inStock, ')
+          ..write('displayOrder: $displayOrder, ')
+          ..write('icon: $icon, ')
           ..write('optionId: $optionId, ')
           ..write('createdById: $createdById, ')
           ..write('createdAt: $createdAt, ')
@@ -7648,6 +8566,8 @@ typedef $$CategoriesDriftTableCreateCompanionBuilder = CategoriesDriftCompanion
     Function({
   required String id,
   required String name,
+  Value<String?> image,
+  Value<int?> color,
   Value<bool> isActive,
   Value<String?> parentId,
   Value<String?> createdById,
@@ -7660,6 +8580,8 @@ typedef $$CategoriesDriftTableUpdateCompanionBuilder = CategoriesDriftCompanion
     Function({
   Value<String> id,
   Value<String> name,
+  Value<String?> image,
+  Value<int?> color,
   Value<bool> isActive,
   Value<String?> parentId,
   Value<String?> createdById,
@@ -7719,6 +8641,12 @@ class $$CategoriesDriftTableFilterComposer
 
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<bool> get isActive => $composableBuilder(
       column: $table.isActive, builder: (column) => ColumnFilters(column));
@@ -7792,6 +8720,12 @@ class $$CategoriesDriftTableOrderingComposer
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
+  ColumnOrderings<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnOrderings(column));
+
   ColumnOrderings<bool> get isActive => $composableBuilder(
       column: $table.isActive, builder: (column) => ColumnOrderings(column));
 
@@ -7842,6 +8776,12 @@ class $$CategoriesDriftTableAnnotationComposer
 
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
+
+  GeneratedColumn<String> get image =>
+      $composableBuilder(column: $table.image, builder: (column) => column);
+
+  GeneratedColumn<int> get color =>
+      $composableBuilder(column: $table.color, builder: (column) => column);
 
   GeneratedColumn<bool> get isActive =>
       $composableBuilder(column: $table.isActive, builder: (column) => column);
@@ -7926,6 +8866,8 @@ class $$CategoriesDriftTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
+            Value<String?> image = const Value.absent(),
+            Value<int?> color = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
             Value<String?> parentId = const Value.absent(),
             Value<String?> createdById = const Value.absent(),
@@ -7937,6 +8879,8 @@ class $$CategoriesDriftTableTableManager extends RootTableManager<
               CategoriesDriftCompanion(
             id: id,
             name: name,
+            image: image,
+            color: color,
             isActive: isActive,
             parentId: parentId,
             createdById: createdById,
@@ -7948,6 +8892,8 @@ class $$CategoriesDriftTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             required String id,
             required String name,
+            Value<String?> image = const Value.absent(),
+            Value<int?> color = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
             Value<String?> parentId = const Value.absent(),
             Value<String?> createdById = const Value.absent(),
@@ -7959,6 +8905,8 @@ class $$CategoriesDriftTableTableManager extends RootTableManager<
               CategoriesDriftCompanion.insert(
             id: id,
             name: name,
+            image: image,
+            color: color,
             isActive: isActive,
             parentId: parentId,
             createdById: createdById,
@@ -8046,10 +8994,21 @@ typedef $$ProductsDriftTableCreateCompanionBuilder = ProductsDriftCompanion
   required String name,
   Value<String?> description,
   Value<String?> sku,
-  Value<String?> codeBarres,
-  required double price,
-  Value<double?> vat,
-  Value<double?> stockQuantity,
+  Value<String?> barcode,
+  Value<double?> salePrice,
+  Value<double> purchasePrice,
+  Value<double> costPrice,
+  Value<double?> taxRate,
+  Value<bool> stockEnabled,
+  Value<bool> weighted,
+  Value<bool> service,
+  Value<bool> favorite,
+  Value<bool> allowNegativeStock,
+  Value<double> stockQuantity,
+  Value<double> stockMin,
+  Value<double> stockMax,
+  Value<double> reorderPoint,
+  Value<String> unit,
   Value<String?> image,
   Value<int?> color,
   Value<bool> isActive,
@@ -8066,10 +9025,21 @@ typedef $$ProductsDriftTableUpdateCompanionBuilder = ProductsDriftCompanion
   Value<String> name,
   Value<String?> description,
   Value<String?> sku,
-  Value<String?> codeBarres,
-  Value<double> price,
-  Value<double?> vat,
-  Value<double?> stockQuantity,
+  Value<String?> barcode,
+  Value<double?> salePrice,
+  Value<double> purchasePrice,
+  Value<double> costPrice,
+  Value<double?> taxRate,
+  Value<bool> stockEnabled,
+  Value<bool> weighted,
+  Value<bool> service,
+  Value<bool> favorite,
+  Value<bool> allowNegativeStock,
+  Value<double> stockQuantity,
+  Value<double> stockMin,
+  Value<double> stockMax,
+  Value<double> reorderPoint,
+  Value<String> unit,
   Value<String?> image,
   Value<int?> color,
   Value<bool> isActive,
@@ -8142,17 +9112,51 @@ class $$ProductsDriftTableFilterComposer
   ColumnFilters<String> get sku => $composableBuilder(
       column: $table.sku, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<String> get codeBarres => $composableBuilder(
-      column: $table.codeBarres, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get barcode => $composableBuilder(
+      column: $table.barcode, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get price => $composableBuilder(
-      column: $table.price, builder: (column) => ColumnFilters(column));
+  ColumnFilters<double> get salePrice => $composableBuilder(
+      column: $table.salePrice, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get vat => $composableBuilder(
-      column: $table.vat, builder: (column) => ColumnFilters(column));
+  ColumnFilters<double> get purchasePrice => $composableBuilder(
+      column: $table.purchasePrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get costPrice => $composableBuilder(
+      column: $table.costPrice, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get taxRate => $composableBuilder(
+      column: $table.taxRate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get stockEnabled => $composableBuilder(
+      column: $table.stockEnabled, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get weighted => $composableBuilder(
+      column: $table.weighted, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get service => $composableBuilder(
+      column: $table.service, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get favorite => $composableBuilder(
+      column: $table.favorite, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get allowNegativeStock => $composableBuilder(
+      column: $table.allowNegativeStock,
+      builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get stockQuantity => $composableBuilder(
       column: $table.stockQuantity, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get stockMin => $composableBuilder(
+      column: $table.stockMin, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get stockMax => $composableBuilder(
+      column: $table.stockMax, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get reorderPoint => $composableBuilder(
+      column: $table.reorderPoint, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get unit => $composableBuilder(
+      column: $table.unit, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get image => $composableBuilder(
       column: $table.image, builder: (column) => ColumnFilters(column));
@@ -8239,18 +9243,55 @@ class $$ProductsDriftTableOrderingComposer
   ColumnOrderings<String> get sku => $composableBuilder(
       column: $table.sku, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<String> get codeBarres => $composableBuilder(
-      column: $table.codeBarres, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get barcode => $composableBuilder(
+      column: $table.barcode, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get price => $composableBuilder(
-      column: $table.price, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<double> get salePrice => $composableBuilder(
+      column: $table.salePrice, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get vat => $composableBuilder(
-      column: $table.vat, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<double> get purchasePrice => $composableBuilder(
+      column: $table.purchasePrice,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get costPrice => $composableBuilder(
+      column: $table.costPrice, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get taxRate => $composableBuilder(
+      column: $table.taxRate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get stockEnabled => $composableBuilder(
+      column: $table.stockEnabled,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get weighted => $composableBuilder(
+      column: $table.weighted, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get service => $composableBuilder(
+      column: $table.service, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get favorite => $composableBuilder(
+      column: $table.favorite, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get allowNegativeStock => $composableBuilder(
+      column: $table.allowNegativeStock,
+      builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get stockQuantity => $composableBuilder(
       column: $table.stockQuantity,
       builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get stockMin => $composableBuilder(
+      column: $table.stockMin, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get stockMax => $composableBuilder(
+      column: $table.stockMax, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get reorderPoint => $composableBuilder(
+      column: $table.reorderPoint,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get unit => $composableBuilder(
+      column: $table.unit, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get image => $composableBuilder(
       column: $table.image, builder: (column) => ColumnOrderings(column));
@@ -8315,17 +9356,50 @@ class $$ProductsDriftTableAnnotationComposer
   GeneratedColumn<String> get sku =>
       $composableBuilder(column: $table.sku, builder: (column) => column);
 
-  GeneratedColumn<String> get codeBarres => $composableBuilder(
-      column: $table.codeBarres, builder: (column) => column);
+  GeneratedColumn<String> get barcode =>
+      $composableBuilder(column: $table.barcode, builder: (column) => column);
 
-  GeneratedColumn<double> get price =>
-      $composableBuilder(column: $table.price, builder: (column) => column);
+  GeneratedColumn<double> get salePrice =>
+      $composableBuilder(column: $table.salePrice, builder: (column) => column);
 
-  GeneratedColumn<double> get vat =>
-      $composableBuilder(column: $table.vat, builder: (column) => column);
+  GeneratedColumn<double> get purchasePrice => $composableBuilder(
+      column: $table.purchasePrice, builder: (column) => column);
+
+  GeneratedColumn<double> get costPrice =>
+      $composableBuilder(column: $table.costPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get taxRate =>
+      $composableBuilder(column: $table.taxRate, builder: (column) => column);
+
+  GeneratedColumn<bool> get stockEnabled => $composableBuilder(
+      column: $table.stockEnabled, builder: (column) => column);
+
+  GeneratedColumn<bool> get weighted =>
+      $composableBuilder(column: $table.weighted, builder: (column) => column);
+
+  GeneratedColumn<bool> get service =>
+      $composableBuilder(column: $table.service, builder: (column) => column);
+
+  GeneratedColumn<bool> get favorite =>
+      $composableBuilder(column: $table.favorite, builder: (column) => column);
+
+  GeneratedColumn<bool> get allowNegativeStock => $composableBuilder(
+      column: $table.allowNegativeStock, builder: (column) => column);
 
   GeneratedColumn<double> get stockQuantity => $composableBuilder(
       column: $table.stockQuantity, builder: (column) => column);
+
+  GeneratedColumn<double> get stockMin =>
+      $composableBuilder(column: $table.stockMin, builder: (column) => column);
+
+  GeneratedColumn<double> get stockMax =>
+      $composableBuilder(column: $table.stockMax, builder: (column) => column);
+
+  GeneratedColumn<double> get reorderPoint => $composableBuilder(
+      column: $table.reorderPoint, builder: (column) => column);
+
+  GeneratedColumn<String> get unit =>
+      $composableBuilder(column: $table.unit, builder: (column) => column);
 
   GeneratedColumn<String> get image =>
       $composableBuilder(column: $table.image, builder: (column) => column);
@@ -8419,10 +9493,21 @@ class $$ProductsDriftTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String?> description = const Value.absent(),
             Value<String?> sku = const Value.absent(),
-            Value<String?> codeBarres = const Value.absent(),
-            Value<double> price = const Value.absent(),
-            Value<double?> vat = const Value.absent(),
-            Value<double?> stockQuantity = const Value.absent(),
+            Value<String?> barcode = const Value.absent(),
+            Value<double?> salePrice = const Value.absent(),
+            Value<double> purchasePrice = const Value.absent(),
+            Value<double> costPrice = const Value.absent(),
+            Value<double?> taxRate = const Value.absent(),
+            Value<bool> stockEnabled = const Value.absent(),
+            Value<bool> weighted = const Value.absent(),
+            Value<bool> service = const Value.absent(),
+            Value<bool> favorite = const Value.absent(),
+            Value<bool> allowNegativeStock = const Value.absent(),
+            Value<double> stockQuantity = const Value.absent(),
+            Value<double> stockMin = const Value.absent(),
+            Value<double> stockMax = const Value.absent(),
+            Value<double> reorderPoint = const Value.absent(),
+            Value<String> unit = const Value.absent(),
             Value<String?> image = const Value.absent(),
             Value<int?> color = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
@@ -8438,10 +9523,21 @@ class $$ProductsDriftTableTableManager extends RootTableManager<
             name: name,
             description: description,
             sku: sku,
-            codeBarres: codeBarres,
-            price: price,
-            vat: vat,
+            barcode: barcode,
+            salePrice: salePrice,
+            purchasePrice: purchasePrice,
+            costPrice: costPrice,
+            taxRate: taxRate,
+            stockEnabled: stockEnabled,
+            weighted: weighted,
+            service: service,
+            favorite: favorite,
+            allowNegativeStock: allowNegativeStock,
             stockQuantity: stockQuantity,
+            stockMin: stockMin,
+            stockMax: stockMax,
+            reorderPoint: reorderPoint,
+            unit: unit,
             image: image,
             color: color,
             isActive: isActive,
@@ -8457,10 +9553,21 @@ class $$ProductsDriftTableTableManager extends RootTableManager<
             required String name,
             Value<String?> description = const Value.absent(),
             Value<String?> sku = const Value.absent(),
-            Value<String?> codeBarres = const Value.absent(),
-            required double price,
-            Value<double?> vat = const Value.absent(),
-            Value<double?> stockQuantity = const Value.absent(),
+            Value<String?> barcode = const Value.absent(),
+            Value<double?> salePrice = const Value.absent(),
+            Value<double> purchasePrice = const Value.absent(),
+            Value<double> costPrice = const Value.absent(),
+            Value<double?> taxRate = const Value.absent(),
+            Value<bool> stockEnabled = const Value.absent(),
+            Value<bool> weighted = const Value.absent(),
+            Value<bool> service = const Value.absent(),
+            Value<bool> favorite = const Value.absent(),
+            Value<bool> allowNegativeStock = const Value.absent(),
+            Value<double> stockQuantity = const Value.absent(),
+            Value<double> stockMin = const Value.absent(),
+            Value<double> stockMax = const Value.absent(),
+            Value<double> reorderPoint = const Value.absent(),
+            Value<String> unit = const Value.absent(),
             Value<String?> image = const Value.absent(),
             Value<int?> color = const Value.absent(),
             Value<bool> isActive = const Value.absent(),
@@ -8476,10 +9583,21 @@ class $$ProductsDriftTableTableManager extends RootTableManager<
             name: name,
             description: description,
             sku: sku,
-            codeBarres: codeBarres,
-            price: price,
-            vat: vat,
+            barcode: barcode,
+            salePrice: salePrice,
+            purchasePrice: purchasePrice,
+            costPrice: costPrice,
+            taxRate: taxRate,
+            stockEnabled: stockEnabled,
+            weighted: weighted,
+            service: service,
+            favorite: favorite,
+            allowNegativeStock: allowNegativeStock,
             stockQuantity: stockQuantity,
+            stockMin: stockMin,
+            stockMax: stockMax,
+            reorderPoint: reorderPoint,
+            unit: unit,
             image: image,
             color: color,
             isActive: isActive,
@@ -8567,11 +9685,14 @@ typedef $$OptionsDriftTableCreateCompanionBuilder = OptionsDriftCompanion
     Function({
   required String id,
   required String name,
-  required bool isMandatory,
-  required int minToSelect,
-  required int maxToSelect,
-  required bool multipleSelect,
-  required bool isActive,
+  Value<String?> description,
+  Value<bool> mandatory,
+  Value<int> minSelection,
+  Value<int> maxSelection,
+  Value<bool> allowDuplicateSelection,
+  Value<String?> image,
+  Value<String?> color,
+  Value<bool> active,
   Value<String?> createdById,
   Value<DateTime?> deletedAt,
   required DateTime createdAt,
@@ -8582,11 +9703,14 @@ typedef $$OptionsDriftTableUpdateCompanionBuilder = OptionsDriftCompanion
     Function({
   Value<String> id,
   Value<String> name,
-  Value<bool> isMandatory,
-  Value<int> minToSelect,
-  Value<int> maxToSelect,
-  Value<bool> multipleSelect,
-  Value<bool> isActive,
+  Value<String?> description,
+  Value<bool> mandatory,
+  Value<int> minSelection,
+  Value<int> maxSelection,
+  Value<bool> allowDuplicateSelection,
+  Value<String?> image,
+  Value<String?> color,
+  Value<bool> active,
   Value<String?> createdById,
   Value<DateTime?> deletedAt,
   Value<DateTime> createdAt,
@@ -8646,21 +9770,30 @@ class $$OptionsDriftTableFilterComposer
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get isMandatory => $composableBuilder(
-      column: $table.isMandatory, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get minToSelect => $composableBuilder(
-      column: $table.minToSelect, builder: (column) => ColumnFilters(column));
+  ColumnFilters<bool> get mandatory => $composableBuilder(
+      column: $table.mandatory, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<int> get maxToSelect => $composableBuilder(
-      column: $table.maxToSelect, builder: (column) => ColumnFilters(column));
+  ColumnFilters<int> get minSelection => $composableBuilder(
+      column: $table.minSelection, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get multipleSelect => $composableBuilder(
-      column: $table.multipleSelect,
+  ColumnFilters<int> get maxSelection => $composableBuilder(
+      column: $table.maxSelection, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get allowDuplicateSelection => $composableBuilder(
+      column: $table.allowDuplicateSelection,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get isActive => $composableBuilder(
-      column: $table.isActive, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get active => $composableBuilder(
+      column: $table.active, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get createdById => $composableBuilder(
       column: $table.createdById, builder: (column) => ColumnFilters(column));
@@ -8733,21 +9866,32 @@ class $$OptionsDriftTableOrderingComposer
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get isMandatory => $composableBuilder(
-      column: $table.isMandatory, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get minToSelect => $composableBuilder(
-      column: $table.minToSelect, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<bool> get mandatory => $composableBuilder(
+      column: $table.mandatory, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<int> get maxToSelect => $composableBuilder(
-      column: $table.maxToSelect, builder: (column) => ColumnOrderings(column));
-
-  ColumnOrderings<bool> get multipleSelect => $composableBuilder(
-      column: $table.multipleSelect,
+  ColumnOrderings<int> get minSelection => $composableBuilder(
+      column: $table.minSelection,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get isActive => $composableBuilder(
-      column: $table.isActive, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<int> get maxSelection => $composableBuilder(
+      column: $table.maxSelection,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get allowDuplicateSelection => $composableBuilder(
+      column: $table.allowDuplicateSelection,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get active => $composableBuilder(
+      column: $table.active, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get createdById => $composableBuilder(
       column: $table.createdById, builder: (column) => ColumnOrderings(column));
@@ -8777,20 +9921,29 @@ class $$OptionsDriftTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<bool> get isMandatory => $composableBuilder(
-      column: $table.isMandatory, builder: (column) => column);
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
 
-  GeneratedColumn<int> get minToSelect => $composableBuilder(
-      column: $table.minToSelect, builder: (column) => column);
+  GeneratedColumn<bool> get mandatory =>
+      $composableBuilder(column: $table.mandatory, builder: (column) => column);
 
-  GeneratedColumn<int> get maxToSelect => $composableBuilder(
-      column: $table.maxToSelect, builder: (column) => column);
+  GeneratedColumn<int> get minSelection => $composableBuilder(
+      column: $table.minSelection, builder: (column) => column);
 
-  GeneratedColumn<bool> get multipleSelect => $composableBuilder(
-      column: $table.multipleSelect, builder: (column) => column);
+  GeneratedColumn<int> get maxSelection => $composableBuilder(
+      column: $table.maxSelection, builder: (column) => column);
 
-  GeneratedColumn<bool> get isActive =>
-      $composableBuilder(column: $table.isActive, builder: (column) => column);
+  GeneratedColumn<bool> get allowDuplicateSelection => $composableBuilder(
+      column: $table.allowDuplicateSelection, builder: (column) => column);
+
+  GeneratedColumn<String> get image =>
+      $composableBuilder(column: $table.image, builder: (column) => column);
+
+  GeneratedColumn<String> get color =>
+      $composableBuilder(column: $table.color, builder: (column) => column);
+
+  GeneratedColumn<bool> get active =>
+      $composableBuilder(column: $table.active, builder: (column) => column);
 
   GeneratedColumn<String> get createdById => $composableBuilder(
       column: $table.createdById, builder: (column) => column);
@@ -8875,11 +10028,14 @@ class $$OptionsDriftTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
-            Value<bool> isMandatory = const Value.absent(),
-            Value<int> minToSelect = const Value.absent(),
-            Value<int> maxToSelect = const Value.absent(),
-            Value<bool> multipleSelect = const Value.absent(),
-            Value<bool> isActive = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<bool> mandatory = const Value.absent(),
+            Value<int> minSelection = const Value.absent(),
+            Value<int> maxSelection = const Value.absent(),
+            Value<bool> allowDuplicateSelection = const Value.absent(),
+            Value<String?> image = const Value.absent(),
+            Value<String?> color = const Value.absent(),
+            Value<bool> active = const Value.absent(),
             Value<String?> createdById = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -8889,11 +10045,14 @@ class $$OptionsDriftTableTableManager extends RootTableManager<
               OptionsDriftCompanion(
             id: id,
             name: name,
-            isMandatory: isMandatory,
-            minToSelect: minToSelect,
-            maxToSelect: maxToSelect,
-            multipleSelect: multipleSelect,
-            isActive: isActive,
+            description: description,
+            mandatory: mandatory,
+            minSelection: minSelection,
+            maxSelection: maxSelection,
+            allowDuplicateSelection: allowDuplicateSelection,
+            image: image,
+            color: color,
+            active: active,
             createdById: createdById,
             deletedAt: deletedAt,
             createdAt: createdAt,
@@ -8903,11 +10062,14 @@ class $$OptionsDriftTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             required String id,
             required String name,
-            required bool isMandatory,
-            required int minToSelect,
-            required int maxToSelect,
-            required bool multipleSelect,
-            required bool isActive,
+            Value<String?> description = const Value.absent(),
+            Value<bool> mandatory = const Value.absent(),
+            Value<int> minSelection = const Value.absent(),
+            Value<int> maxSelection = const Value.absent(),
+            Value<bool> allowDuplicateSelection = const Value.absent(),
+            Value<String?> image = const Value.absent(),
+            Value<String?> color = const Value.absent(),
+            Value<bool> active = const Value.absent(),
             Value<String?> createdById = const Value.absent(),
             Value<DateTime?> deletedAt = const Value.absent(),
             required DateTime createdAt,
@@ -8917,11 +10079,14 @@ class $$OptionsDriftTableTableManager extends RootTableManager<
               OptionsDriftCompanion.insert(
             id: id,
             name: name,
-            isMandatory: isMandatory,
-            minToSelect: minToSelect,
-            maxToSelect: maxToSelect,
-            multipleSelect: multipleSelect,
-            isActive: isActive,
+            description: description,
+            mandatory: mandatory,
+            minSelection: minSelection,
+            maxSelection: maxSelection,
+            allowDuplicateSelection: allowDuplicateSelection,
+            image: image,
+            color: color,
+            active: active,
             createdById: createdById,
             deletedAt: deletedAt,
             createdAt: createdAt,
@@ -8994,9 +10159,16 @@ typedef $$OptionsDriftTableProcessedTableManager = ProcessedTableManager<
 typedef $$ItemsDriftTableCreateCompanionBuilder = ItemsDriftCompanion Function({
   required String id,
   required String name,
-  Value<double> price,
-  Value<double?> vat,
-  Value<bool> isActive,
+  Value<String?> description,
+  Value<String?> sku,
+  Value<double> additionalPrice,
+  Value<double> taxRate,
+  Value<String?> image,
+  Value<String?> color,
+  Value<bool> active,
+  Value<bool> inStock,
+  Value<int> displayOrder,
+  Value<int?> icon,
   required String optionId,
   Value<String?> createdById,
   required DateTime createdAt,
@@ -9007,9 +10179,16 @@ typedef $$ItemsDriftTableCreateCompanionBuilder = ItemsDriftCompanion Function({
 typedef $$ItemsDriftTableUpdateCompanionBuilder = ItemsDriftCompanion Function({
   Value<String> id,
   Value<String> name,
-  Value<double> price,
-  Value<double?> vat,
-  Value<bool> isActive,
+  Value<String?> description,
+  Value<String?> sku,
+  Value<double> additionalPrice,
+  Value<double> taxRate,
+  Value<String?> image,
+  Value<String?> color,
+  Value<bool> active,
+  Value<bool> inStock,
+  Value<int> displayOrder,
+  Value<int?> icon,
   Value<String> optionId,
   Value<String?> createdById,
   Value<DateTime> createdAt,
@@ -9052,14 +10231,36 @@ class $$ItemsDriftTableFilterComposer
   ColumnFilters<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get price => $composableBuilder(
-      column: $table.price, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get vat => $composableBuilder(
-      column: $table.vat, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get sku => $composableBuilder(
+      column: $table.sku, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<bool> get isActive => $composableBuilder(
-      column: $table.isActive, builder: (column) => ColumnFilters(column));
+  ColumnFilters<double> get additionalPrice => $composableBuilder(
+      column: $table.additionalPrice,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<double> get taxRate => $composableBuilder(
+      column: $table.taxRate, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get active => $composableBuilder(
+      column: $table.active, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get inStock => $composableBuilder(
+      column: $table.inStock, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get displayOrder => $composableBuilder(
+      column: $table.displayOrder, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get createdById => $composableBuilder(
       column: $table.createdById, builder: (column) => ColumnFilters(column));
@@ -9109,14 +10310,37 @@ class $$ItemsDriftTableOrderingComposer
   ColumnOrderings<String> get name => $composableBuilder(
       column: $table.name, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get price => $composableBuilder(
-      column: $table.price, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get vat => $composableBuilder(
-      column: $table.vat, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<String> get sku => $composableBuilder(
+      column: $table.sku, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<bool> get isActive => $composableBuilder(
-      column: $table.isActive, builder: (column) => ColumnOrderings(column));
+  ColumnOrderings<double> get additionalPrice => $composableBuilder(
+      column: $table.additionalPrice,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<double> get taxRate => $composableBuilder(
+      column: $table.taxRate, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get image => $composableBuilder(
+      column: $table.image, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get color => $composableBuilder(
+      column: $table.color, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get active => $composableBuilder(
+      column: $table.active, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get inStock => $composableBuilder(
+      column: $table.inStock, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get displayOrder => $composableBuilder(
+      column: $table.displayOrder,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get icon => $composableBuilder(
+      column: $table.icon, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get createdById => $composableBuilder(
       column: $table.createdById, builder: (column) => ColumnOrderings(column));
@@ -9166,14 +10390,35 @@ class $$ItemsDriftTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumn<double> get price =>
-      $composableBuilder(column: $table.price, builder: (column) => column);
+  GeneratedColumn<String> get description => $composableBuilder(
+      column: $table.description, builder: (column) => column);
 
-  GeneratedColumn<double> get vat =>
-      $composableBuilder(column: $table.vat, builder: (column) => column);
+  GeneratedColumn<String> get sku =>
+      $composableBuilder(column: $table.sku, builder: (column) => column);
 
-  GeneratedColumn<bool> get isActive =>
-      $composableBuilder(column: $table.isActive, builder: (column) => column);
+  GeneratedColumn<double> get additionalPrice => $composableBuilder(
+      column: $table.additionalPrice, builder: (column) => column);
+
+  GeneratedColumn<double> get taxRate =>
+      $composableBuilder(column: $table.taxRate, builder: (column) => column);
+
+  GeneratedColumn<String> get image =>
+      $composableBuilder(column: $table.image, builder: (column) => column);
+
+  GeneratedColumn<String> get color =>
+      $composableBuilder(column: $table.color, builder: (column) => column);
+
+  GeneratedColumn<bool> get active =>
+      $composableBuilder(column: $table.active, builder: (column) => column);
+
+  GeneratedColumn<bool> get inStock =>
+      $composableBuilder(column: $table.inStock, builder: (column) => column);
+
+  GeneratedColumn<int> get displayOrder => $composableBuilder(
+      column: $table.displayOrder, builder: (column) => column);
+
+  GeneratedColumn<int> get icon =>
+      $composableBuilder(column: $table.icon, builder: (column) => column);
 
   GeneratedColumn<String> get createdById => $composableBuilder(
       column: $table.createdById, builder: (column) => column);
@@ -9233,9 +10478,16 @@ class $$ItemsDriftTableTableManager extends RootTableManager<
           updateCompanionCallback: ({
             Value<String> id = const Value.absent(),
             Value<String> name = const Value.absent(),
-            Value<double> price = const Value.absent(),
-            Value<double?> vat = const Value.absent(),
-            Value<bool> isActive = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<String?> sku = const Value.absent(),
+            Value<double> additionalPrice = const Value.absent(),
+            Value<double> taxRate = const Value.absent(),
+            Value<String?> image = const Value.absent(),
+            Value<String?> color = const Value.absent(),
+            Value<bool> active = const Value.absent(),
+            Value<bool> inStock = const Value.absent(),
+            Value<int> displayOrder = const Value.absent(),
+            Value<int?> icon = const Value.absent(),
             Value<String> optionId = const Value.absent(),
             Value<String?> createdById = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
@@ -9246,9 +10498,16 @@ class $$ItemsDriftTableTableManager extends RootTableManager<
               ItemsDriftCompanion(
             id: id,
             name: name,
-            price: price,
-            vat: vat,
-            isActive: isActive,
+            description: description,
+            sku: sku,
+            additionalPrice: additionalPrice,
+            taxRate: taxRate,
+            image: image,
+            color: color,
+            active: active,
+            inStock: inStock,
+            displayOrder: displayOrder,
+            icon: icon,
             optionId: optionId,
             createdById: createdById,
             createdAt: createdAt,
@@ -9259,9 +10518,16 @@ class $$ItemsDriftTableTableManager extends RootTableManager<
           createCompanionCallback: ({
             required String id,
             required String name,
-            Value<double> price = const Value.absent(),
-            Value<double?> vat = const Value.absent(),
-            Value<bool> isActive = const Value.absent(),
+            Value<String?> description = const Value.absent(),
+            Value<String?> sku = const Value.absent(),
+            Value<double> additionalPrice = const Value.absent(),
+            Value<double> taxRate = const Value.absent(),
+            Value<String?> image = const Value.absent(),
+            Value<String?> color = const Value.absent(),
+            Value<bool> active = const Value.absent(),
+            Value<bool> inStock = const Value.absent(),
+            Value<int> displayOrder = const Value.absent(),
+            Value<int?> icon = const Value.absent(),
             required String optionId,
             Value<String?> createdById = const Value.absent(),
             required DateTime createdAt,
@@ -9272,9 +10538,16 @@ class $$ItemsDriftTableTableManager extends RootTableManager<
               ItemsDriftCompanion.insert(
             id: id,
             name: name,
-            price: price,
-            vat: vat,
-            isActive: isActive,
+            description: description,
+            sku: sku,
+            additionalPrice: additionalPrice,
+            taxRate: taxRate,
+            image: image,
+            color: color,
+            active: active,
+            inStock: inStock,
+            displayOrder: displayOrder,
+            icon: icon,
             optionId: optionId,
             createdById: createdById,
             createdAt: createdAt,

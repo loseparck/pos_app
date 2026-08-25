@@ -23,7 +23,6 @@ class PaymentPanel extends StatelessWidget {
 
   @override
 Widget build(BuildContext context) {
-  final hasOrder = order != null;
 
   return Row(
     children: [

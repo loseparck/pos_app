@@ -5,8 +5,10 @@ class CategoriesDrift extends Table {
   //IntColumn get parentCategoryId =>
     //  integer().references(CategoriesDrift, #id)();
 
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
   TextColumn get name => text()();
+  TextColumn get image => text().nullable()();
+  IntColumn  get color => integer().nullable()();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   TextColumn get parentId => text().nullable().references(CategoriesDrift, #id)();
   TextColumn get createdById => text().nullable()();

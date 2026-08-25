@@ -27,11 +27,11 @@ class OptionConstraints extends StatelessWidget {
     }
 
     constraints.add(
-      "Minimum ${option.minToSelect}",
+      "Minimum ${option.minSelection}",
     );
 
     constraints.add(
-      "Maximum ${option.maxToSelect}",
+      "Maximum ${option.maxSelection}",
     );
 
     return Padding(

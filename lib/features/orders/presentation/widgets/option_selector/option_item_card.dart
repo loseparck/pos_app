@@ -39,7 +39,7 @@ class OptionItemCard extends ConsumerWidget {
                     .notifier,
               );
           if (option.allowDuplicateSelection) {
-            notifier.increaseQuantity(option.id,item.id, maxToSelect: option.maxToSelect);
+            notifier.increaseQuantity(option.id,item.id, maxToSelect: option.maxSelection);
           } else {
             notifier.toggleItem(
               option.id,
@@ -103,9 +103,9 @@ class OptionItemCard extends ConsumerWidget {
                 ),
               ),
               Text(
-                  item.price == 0
+                  item.additionalPrice == 0
                       ? "Gratuit"
-                      : "+${item.price.toStringAsFixed(2)} €",
+                      : "+${item.additionalPrice.toStringAsFixed(2)} €",
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         fontWeight: FontWeight.w500,
                       ),
@@ -119,7 +119,7 @@ class OptionItemCard extends ConsumerWidget {
                   quantity: quantity,
                   onIncrease: () {
                     ref
-                        .read(optionSelectionProvider.notifier).increaseQuantity(option.id, item.id, maxToSelect: option.maxToSelect);
+                        .read(optionSelectionProvider.notifier).increaseQuantity(option.id, item.id, maxToSelect: option.maxSelection);
                   },
                   onDecrease: () {
                     ref

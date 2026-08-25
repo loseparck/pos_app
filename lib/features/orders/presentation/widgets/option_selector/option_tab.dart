@@ -160,7 +160,7 @@ class OptionTab extends ConsumerWidget {
     int count,
   ) {
     //if(option.maxToSelect != null) {
-      return "$count / ${option.maxToSelect}";
+      return "$count / ${option.maxSelection}";
     /*}
 
     if(count == 0) {

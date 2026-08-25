@@ -1,6 +1,8 @@
 class UpdateCategoryDto {
   final String name;
   final String? parentId;
+  final String? image;
+  final String? color;
   final bool isActive;
   final DateTime updatedAt;
 
@@ -9,6 +11,8 @@ class UpdateCategoryDto {
     required this.name,
     this.isActive = true,
     this.parentId,
+    this.image,
+    this.color
   });
 
   factory UpdateCategoryDto.fromJson(Map<String, dynamic> json) {
@@ -17,6 +21,8 @@ class UpdateCategoryDto {
       isActive: bool.tryParse(json['isActive'].toString()) ?? true,
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'].toString()) : DateTime.now(),
       parentId: json['parentId']?.toString(),
+      image: json['image'] as String?,
+      color: json['color'] as String?,
     );
   }
 
@@ -25,7 +31,9 @@ class UpdateCategoryDto {
       'name': name,
       'isActive': isActive, 
       'updatedAt': updatedAt.toIso8601String(),
-      'parentId': parentId
+      'parentId': parentId,
+      'image': image,
+      'color': color,
     };
   }
 }

@@ -106,7 +106,7 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                                 _amountInput += char;
                               }
                             }),
-                            onQuickAmountPress: (val) => setState(() => _amountInput = val.toStringAsFixed(2)),
+                            onQuickAmountPress: (val) => setState(() => _amountInput = val < 0 ? "" : val.toStringAsFixed(2)),
                           ),
                         ),
                       ),

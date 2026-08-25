@@ -144,7 +144,7 @@ class _OptionSelectorState
 
       if (qty <= 0) continue;
 
-      total += item.price * qty;
+      total += item.additionalPrice * qty;
     }
   }
 
@@ -158,8 +158,8 @@ class _OptionSelectorState
     final validation = notifier.validate(
       optionId: _currentOption.id,
       isRequired: _currentOption.isMandatory,
-      minToSelect: _currentOption.minToSelect,
-      maxToSelect: _currentOption.maxToSelect,
+      minToSelect: _currentOption.minSelection,
+      maxToSelect: _currentOption.maxSelection,
     );
 
     if (!validation.isValid) {

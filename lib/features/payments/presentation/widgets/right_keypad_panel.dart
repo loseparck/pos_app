@@ -21,7 +21,7 @@ class RightKeypadPanel extends StatelessWidget {
             crossAxisCount: 3,
             mainAxisSpacing: 8,
             crossAxisSpacing: 8,
-            childAspectRatio: 1.45,
+            childAspectRatio: 1.7,
             physics: const NeverScrollableScrollPhysics(),
             children: [
               ...'123456789.0⌫'.split('').map((char) => _buildKeypadButton(char)),
@@ -31,15 +31,33 @@ class RightKeypadPanel extends StatelessWidget {
         const SizedBox(height: 8),
         Row(
           children: [
-            _buildQuickCashButton(5),
+            _buildQuickCashButton(20),
             const SizedBox(width: 8),
-            _buildQuickCashButton(10),
+            _buildQuickCashButton(50),
           ],
         ),
         const SizedBox(height: 6),
         Row(
           children: [
-            _buildQuickCashButton(20),
+            _buildQuickCashButton(100),
+             const SizedBox(width: 8),
+            _buildQuickCashButton(200),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: () => onQuickAmountPress(-1),
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(color: const Color(0xFFEDF7ED), borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.green[300]!)),
+                  child: Center(child: Text("Clean", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[900], fontSize: 13))),
+                ),
+              ),
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: InkWell(
@@ -48,7 +66,7 @@ class RightKeypadPanel extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   decoration: BoxDecoration(color: const Color(0xFFEDF7ED), borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.green[300]!)),
-                  child: Center(child: Text("Exact (${amountToPay.toStringAsFixed(2)}€)", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[900], fontSize: 13))),
+                  child: Center(child: Text("Exact (${amountToPay.toStringAsFixed(2)} DH)", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[900], fontSize: 13))),
                 ),
               ),
             ),
@@ -81,7 +99,7 @@ class RightKeypadPanel extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.grey[300]!)),
-          child: Center(child: Text("$val €", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700], fontSize: 13))),
+          child: Center(child: Text("${val.toStringAsFixed(0)} DH", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[700], fontSize: 13))),
         ),
       ),
     );

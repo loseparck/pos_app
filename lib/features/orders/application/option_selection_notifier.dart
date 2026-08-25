@@ -156,8 +156,8 @@ class OptionSelectionNotifier extends StateNotifier<OptionSelectionState> {
               itemId: item.id,
               itemName: item.name,
               quantity: quantity,
-              unitPrice: item.price,
-              vat: item.vat),
+              unitPrice: item.additionalPrice,
+              vat: item.taxRate),
         );
       }
     }
@@ -173,8 +173,8 @@ class OptionSelectionNotifier extends StateNotifier<OptionSelectionState> {
     return validate(
       optionId: option.id,
       isRequired: option.isMandatory,
-      minToSelect: option.minToSelect,
-      maxToSelect: option.maxToSelect,
+      minToSelect: option.minSelection,
+      maxToSelect: option.maxSelection,
     );
   }
 

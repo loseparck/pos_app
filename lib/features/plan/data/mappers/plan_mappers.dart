@@ -119,8 +119,8 @@ extension RestaurantTableMapper on RestaurantTable {
     return RestaurantTableDriftCompanion(
       id: Value(id),
       name: Value(name),
-      x: Value(y),
-      y: Value(x),
+      x: Value(x),
+      y: Value(y),
       seats: Value(seats),
       status: Value(status.label),
       color: Value(int.tryParse(color ?? '0') ?? 0),

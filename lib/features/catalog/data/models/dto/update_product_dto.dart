@@ -1,45 +1,92 @@
 class UpdateProductDto {
+
   final String name;
-  final String? description;
   final String? sku;
-  final double price;
-  final double? vat;
-  final double? stockQuantity;
-  final int? color;
+  final String? description;
+  final String? barcode;
+
   final String? categoryId;
-  final String? codeBarres;
+
+  final double salePrice;
+  final double purchasePrice;
+  final double costPrice;
+  final double taxRate;
+
   final bool isActive;
+  final bool stockEnabled;
+  final bool weighted;
+  final bool service;
+  final bool favorite;
+  final bool allowNegativeStock;
+
+  final double stockQuantity;
+  final double stockMin;
+  final double stockMax;
+  final double reorderPoint;
+
+  final String unit;
+
+  final String? image;
+  final int? color;
+
   final List<String>? options;
+
   final DateTime? updatedAt;
 
   const UpdateProductDto({
     required this.name,
-    required this.price,
-    this.description,
-    this.categoryId,
-    this.isActive = true,
-    required this.options,
-    this.codeBarres,
     this.sku,
-    this.vat = 0,
+    this.description,
+    this.barcode,
+    this.categoryId,
+    this.salePrice = 0,
+    this.purchasePrice = 0,
+    this.costPrice = 0,
+    this.taxRate = 20,
+    this.isActive = true,
+    this.stockEnabled = true,
+    this.weighted = false,
+    this.service = false,
+    this.favorite = false,
+    this.allowNegativeStock = true,
     this.stockQuantity = 0,
+    this.stockMin = 0,
+    this.stockMax = 0,
+    this.reorderPoint = 0,
+    this.unit = 'Pièce',
+    this.image,
     this.color,
-    this.updatedAt
+    this.options = const [],
+    this.updatedAt,
   });
 
   factory UpdateProductDto.fromJson(Map<String, dynamic> json) {
     return UpdateProductDto(
-      name: json['name']?.toString() ?? '',
-      description: json['description']?.toString(),
-      sku: json['sku']?.toString(),
-      vat: double.tryParse(json['vat'].toString()) ?? 0,
-      price: double.tryParse(json['price'].toString()) ?? 0,
-      stockQuantity: double.tryParse(json['stockQuantity'].toString()) ?? 0,
-      color: int.tryParse(json['color'].toString()) ?? 0,
+      name: json['name'] ?? '',
+      sku: json['sku'],
+      description: json['description'],
+      barcode: json['barcode'],
       categoryId: json['categoryId']?.toString(),
-      codeBarres: json['codeBarres']?.toString(),
-      isActive: json['isActive'] == true,
-      options: (json['options'] as List?)?.map((e) => e as String).toList(),
+      salePrice: (json['salePrice'] as num?)?.toDouble() ?? 0,
+      purchasePrice: (json['purchasePrice'] as num?)?.toDouble() ?? 0,
+      costPrice: (json['costPrice'] as num?)?.toDouble() ?? 0,
+      taxRate: (json['taxRate'] as num?)?.toDouble() ?? 20,
+      isActive: json['isActive'] ?? true,
+      stockEnabled: json['stockEnabled'] ?? false,
+      weighted: json['weighted'] ?? false,
+      service: json['service'] ?? false,
+      favorite: json['favorite'] ?? false,
+      allowNegativeStock: json['allowNegativeStock'] ?? true,
+      stockQuantity: (json['stockQuantity'] as num?)?.toDouble() ?? 0,
+      stockMin: (json['stockMin'] as num?)?.toDouble() ?? 0,
+      stockMax: (json['stockMax'] as num?)?.toDouble() ?? 0,
+      reorderPoint: (json['reorderPoint'] as num?)?.toDouble() ?? 0,
+      unit: json['unit'] ?? 'Pièce',
+      image: json['image'],
+      color: json['color'] as int?,
+      options: json['options'] != null
+          ? (json['options'] as List).map((x) => x as String).toList()
+          : [],
       updatedAt: DateTime.tryParse(json['updatedAt'].toString()),
     );
   }
@@ -47,16 +94,28 @@ class UpdateProductDto {
   Map<String, dynamic> toJson() {
     return {
       'name': name,
-      'price': price,
-      'description': description,
-      'categoryId': categoryId,
-      'isActive': isActive,
-      'options': options,
-      'codeBarres': codeBarres,
       'sku': sku,
-      'vat': vat,
+      'description': description,
+      'barcode': barcode,
+      'categoryId': categoryId,
+      'salePrice': salePrice,
+      'purchasePrice': purchasePrice,
+      'costPrice': costPrice,
+      'taxRate': taxRate,
+      'isActive': isActive,
+      'stockEnabled': stockEnabled,
+      'weighted': weighted,
+      'service': service,
+      'favorite': favorite,
+      'allowNegativeStock': allowNegativeStock,
       'stockQuantity': stockQuantity,
+      'stockMin': stockMin,
+      'stockMax': stockMax,
+      'reorderPoint': reorderPoint,
+      'unit': unit,
+      'image': image,
       'color': color,
+      'options': options,
       'updatedAt': updatedAt?.toIso8601String(),
     };
   }

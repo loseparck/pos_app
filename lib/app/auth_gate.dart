@@ -53,6 +53,8 @@ class AuthGate extends ConsumerWidget{
 final appInitializationProvider = FutureProvider<void>((ref) async {
   await ref.read(planProvider.notifier).load();
   await ref.read(ordersProvider.notifier).load();
+  print("ivii Start");
   await ref.read(productsProvider.notifier).load();
   // autres chargements
+  print("ivii END");
 });

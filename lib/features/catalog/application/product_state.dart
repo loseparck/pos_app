@@ -48,6 +48,14 @@ class ProductState{
     }
   } 
 
+  Category? getCategoryById(String categoryId) {
+    try{
+      return categories.firstWhere((category) => category.id == categoryId);
+    } catch(_){
+      return null;
+    }
+  } 
+
   Item? get selectedOption {
     if(selectedOptionId == null) return null;
     try{

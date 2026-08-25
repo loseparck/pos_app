@@ -23,7 +23,7 @@ class CategoryChip extends StatelessWidget {
       label: category.name,
       icon: Icons.drafts,//category.icon,
       selected: selected,
-      selectedColor: category.color,
+      selectedColor:  category.color != null ? Color(int.parse(category.color ?? '')) : null,
       onTap: onTap,
     );
   }

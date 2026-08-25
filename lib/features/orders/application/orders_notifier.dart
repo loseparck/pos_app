@@ -95,10 +95,10 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
       productId: p.id,
       productName: p.name,
       quantity: 1,
-      unitPrice: p.price,
+      unitPrice: p.salePrice,
       orderId: orderId,
       comment: comment,
-      vat: p.vat,
+      vat: p.taxRate,
       status: OrderStatus.draft,
       options: options.map((option) => option.copyWith(orderItemId: orderItemId, id: Uuid().v4())).toList()
     );

@@ -74,14 +74,14 @@ class OptionSummary extends ConsumerWidget {
           _SummaryItem(
             name: item.name,
             quantity: quantity,
-            price: item.price,
+            price: item.additionalPrice,
           ),
         );
 
 
 
         total +=
-            item.price * quantity;
+            item.additionalPrice * quantity;
 
       }
 

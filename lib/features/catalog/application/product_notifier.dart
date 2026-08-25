@@ -30,6 +30,10 @@ class ProductNotifier extends StateNotifier<ProductState> {
     final categories = await _repository.getCategories();
     final products = await _repository.getProducts();
     final discounts = await _repository.getDiscounts();
+    for(Category cat in categories){
+      print("categories load: $cat");
+    }
+    
     state = state.copyWith(
       categories: categories,
       products: products,
@@ -67,9 +71,10 @@ class ProductNotifier extends StateNotifier<ProductState> {
     try {
       final saveOptionUseCase = ref.read(saveOptionUseCaseProvider);
       final newOption = await saveOptionUseCase(optionGroup);
+      print("newOption $newOption");
       state = state.copyWith(
         options: [...state.options, newOption],
-        items: [...state.items, ...newOption.items.map((o) => o.copyWith(option: newOption))],
+        //items: [...state.items, ...newOption.items.map((o) => o.copyWith(option: newOption))],
       );
       return true;
     } catch (e) {
@@ -122,10 +127,10 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
-  Future<bool> addCategory(Category category, String? picturePath) async {
+  Future<bool> addCategory(Category category) async {
     try {
       final saveCategoryUseCase = ref.read(saveCategoryUseCaseProvider);
-      final newCategory = await saveCategoryUseCase(category, picturePath);
+      final newCategory = await saveCategoryUseCase(category);
       state = state.copyWith(
         categories: [...state.categories, newCategory],
       );
@@ -154,7 +159,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
     }
   }
 
-  Future<String?> addProduct(Product product, String? picturePath) async {
+  Future<String?> addProduct(Product product, {String? picturePath}) async {
     try {
       final saveProductUseCase = ref.read(saveProductUseCaseProvider);
       final newProduct = await saveProductUseCase(product, picturePath);
@@ -216,7 +221,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
 
       state = state.copyWith(
         categories: state.categories.where((item) => item.id != id).map((item) => item.parent?.id != toRemove.id ? item : item.copyWith(parent: toRemove.parent, resetParent: toRemove.parent == null)).toList(),
-        products: state.products.map((product) => product.category?.id != toRemove.id ? product : product.copyCategory(category: toRemove.parent)).toList(),
+        products: state.products.map((product) => product.category?.id != toRemove.id ? product : product.copyWith(category: toRemove.parent, resetCategory: toRemove.parent == null)).toList(),
       );
 
   }

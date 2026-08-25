@@ -6,7 +6,6 @@ import 'package:pos_app/features/orders/presentation/widgets/common/pos_card.dar
 import 'order_header.dart';
 import 'order_items_list.dart';
 import 'order_summary.dart';
-import 'payment_panel.dart';
 
 class OrderPanel extends StatelessWidget {
   final Order? order;

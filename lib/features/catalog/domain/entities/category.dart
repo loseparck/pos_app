@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class Category {
 
   final String id;
@@ -12,7 +10,7 @@ class Category {
   final DateTime? deletedAt;
   final String? createdById;
   final String? image;
-  final Color? color;
+  final String? color;
 
   const Category({
     required this.name,
@@ -38,8 +36,11 @@ class Category {
     DateTime? deletedAt,
     String? createdById,
     bool? resetParent,
+    bool? resetImage,
+    bool? resetColor,
     String? image,
-    Color? color,
+    String? color,
+
   }) {
     return Category(
       id: id ?? this.id,
@@ -51,26 +52,10 @@ class Category {
       updatedAt: updatedAt ?? this.updatedAt,
       deletedAt: deletedAt ?? this.deletedAt,
       createdById: createdById ?? this.createdById,
-      image: image ?? this.image,
-      color: color ?? this.color
+      image: resetImage == true ? null : image ?? this.image,
+      color: resetColor == true ? null : color ?? this.color
     );
   }
-
- /* Category copyParent({
-    Category? parent
-  }) {
-    return Category(
-      id: id,
-      name: name,
-      parent: parent ,
-      parentId: parent?.id,
-      isActive: isActive,
-      createdAt: createdAt ,
-      updatedAt: updatedAt,
-      deletedAt: deletedAt ,
-      createdById: createdById
-    );
-  }*/
 
   @override
   String toString() {
@@ -89,6 +74,7 @@ class Category {
       createdById: json['createdById'] as String?,
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       image: json['image'] as String?,
+      color: json['color'] as String?,
     );
   }
 

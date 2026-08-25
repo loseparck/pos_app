@@ -55,4 +55,5 @@ const _$OrderStatusEnumMap = {
   OrderStatus.waitingForPayment: 'waitingForPayment',
   OrderStatus.paid: 'paid',
   OrderStatus.cancelled: 'cancelled',
+  OrderStatus.ended: 'ended',
 };

@@ -65,7 +65,7 @@ class ProductCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   ProductPrice(
-                    price: product.price,
+                    price: product.salePrice,
                   ),
                 ],
               ),

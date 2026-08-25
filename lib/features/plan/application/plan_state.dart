@@ -35,6 +35,14 @@ class PlanGroupState{
     }
   }
 
+  RestaurantTable? getTableById(String tableId) {
+    try{
+      return tables.firstWhere((table) => table.id == tableId);
+    } catch(_){
+      return null;
+    }
+  }
+
   List<RestaurantTable> get selectedPlanTables {
     if(selectedPlanId == null) return [];
     try{

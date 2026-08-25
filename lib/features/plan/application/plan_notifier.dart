@@ -35,6 +35,9 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   Future<void> load() async {
     final plans = await _repository.getPlans();
     final tables = await _repository.getTables();
+    for(RestaurantTable table in tables){
+      print("load Table(${table.id}) x,y(${table.x},${table.y})");
+    }
     state = state.copyWith(
       plans: plans,
       tables: tables
@@ -124,7 +127,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
         tablesToCreate.add(state.selectedTableId!);
       }
     }
-
+    print("addedd Table x,y(${state.selectedTable?.x},${state.selectedTable?.y})");
     stopTableChange();
   }
 
@@ -141,6 +144,8 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     state = state.copyWith(
         tables: state.tables.map((t) => t.id == tableId ? t.copyWith(x: x, y: y) : t).toList(),
     );
+    final table = state.getTableById(tableId);
+    print("update Table x,y(${table?.x},${table?.y})");
   }
 
   void cancelEditTable(){
@@ -434,6 +439,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
 
     List<RestaurantTable> tablesToCreateObject = [];
     List<RestaurantTable> tablesToUpdateObject = [];
+    
     for (var table in state.tables) {
       if(tablesToCreate.contains(table.id)){
         tablesToCreateObject.add(table);
@@ -470,6 +476,13 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
         final removeTablesUseCase = ref.read(removeTablesUseCaseProvider);
         await removeTablesUseCase(tablesToRemove);
       }
+    }
+
+    for(RestaurantTable table in tablesToCreateObject){
+      print("tablesToCreateObject(${table.id}) x,y(${table.x},${table.y})");
+    }
+    for(RestaurantTable table in tablesToUpdateObject){
+      print("tablesToUpdateObject(${table.id}) x,y(${table.x},${table.y})");
     }
     clearQueue();
   }

@@ -159,7 +159,6 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
   }
 
   Future<PaymentSession?> addItemPayment(double givenAmount, double total, Order order, PaymentMethod paymentMethod, PaymentMode paymentMode, {Map<String, int>? itemQte}) async {
-    print("payment: ${itemQte}");
     if(state.discount != null && state.discount!.id == ''){
       state = state.copyWith(
         discount: await ref.read(productsProvider.notifier).addDiscount(state.discount!)
@@ -180,10 +179,6 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
           history: [...state.payment!.history, transaction]
         ),
       );
-    }
-
-    for(PaymentTransaction hist in state.payment?.history ?? []){
-        print("payment: ${hist}");
     }
     
     clearItem();

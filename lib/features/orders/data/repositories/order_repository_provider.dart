@@ -107,7 +107,7 @@ final filteredProductsProvider =
         || product.name
             .toLowerCase()
             .contains(ui.search.toLowerCase())
-        || (product.codeBarres != null && product.codeBarres!
+        || (product.barcode != null && product.barcode!
             .toLowerCase()
             .contains(ui.search.toLowerCase()))
         || (product.sku != null && product.sku!

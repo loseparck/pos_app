@@ -107,7 +107,6 @@ class PosPage extends ConsumerWidget {
               //onTicket: ,
               onPay: order == null || order.status == OrderStatus.paid || order.status == OrderStatus.delivred || order.status == OrderStatus.cancelled || order.status == OrderStatus.draft
                     ? null : () {
-                      //ref.read(paymentProvider.notifier).changeSelectedOrder('order.id');
                       showDialog( 
                         context: context,
                         builder: (_) => PaymentModal(
