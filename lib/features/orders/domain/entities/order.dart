@@ -1,3 +1,4 @@
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -31,9 +32,9 @@ class Order {
     this.createdById,
   });
 
-  double get total => items.fold(0, (sum , item) => sum + item.total);
+  int get total => items.fold(0, (sum , item) => sum + item.total);
 
-  double get totalVAT => items.fold(0, (sum , item) => sum + item.vat);
+  int get totalVAT => items.fold(0, (sum , item) => sum + fromDoubletoCents(item.vat)); //FIXME
 
   double get totalItems => items.fold(0, (sum , item) => sum + item.quantity);
 

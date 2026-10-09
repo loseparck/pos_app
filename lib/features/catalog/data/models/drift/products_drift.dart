@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:pos_app/features/catalog/data/models/drift/categories_drift.dart';
+import 'package:pos_app/features/supplier/data/models/drift/suppliers_drift.dart';
 
 class ProductsDrift extends Table{
   TextColumn get id => text()();
@@ -8,9 +9,9 @@ class ProductsDrift extends Table{
   TextColumn get sku => text().nullable().unique()();
   TextColumn get barcode => text().nullable().unique()();
 
-  RealColumn get salePrice => real().nullable().withDefault(const Constant(0))();
-  RealColumn get purchasePrice => real().withDefault(const Constant(0))();
-  RealColumn get costPrice => real().withDefault(const Constant(0))();
+  IntColumn get salePrice => integer().nullable().withDefault(const Constant(0))();
+  IntColumn get purchasePrice => integer().withDefault(const Constant(0))();
+  IntColumn get costPrice => integer().withDefault(const Constant(0))();
   RealColumn get taxRate => real().nullable().withDefault(const Constant(0))();
 
   BoolColumn get stockEnabled => boolean().withDefault(const Constant(false))();
@@ -31,6 +32,7 @@ class ProductsDrift extends Table{
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
 
   TextColumn get categoryId => text().nullable().references(CategoriesDrift, #id)();
+  TextColumn get supplierId => text().nullable().references(SuppliersDrift, #id)();
   TextColumn get createdById => text().nullable()();
 
   DateTimeColumn get createdAt => dateTime()();

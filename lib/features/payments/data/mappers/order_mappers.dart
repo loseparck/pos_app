@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pos_app/data/local/db/app_database.dart';
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/payments/data/models/dto/create_payment_session_dto.dart';
 import 'package:pos_app/features/payments/data/models/dto/create_payment_transaction_dto.dart';
@@ -119,7 +118,7 @@ extension PaymentTransactionDtoMapper on CreatePaymentTransactionDto {
       amountDue: amountDue,
       paymentMethod: paymentMethod,
       validatedAt: validatedAt ?? DateTime.now(),
-      discount: discountId != null ? Discount(id: discountId!, name: '') : null,
+     // discount: discountId != null ? Discount(id: discountId!, name: '') : null,//TODO
       createdAt: createdAt,
       createdById: createdById,
       session: PaymentSession(id: sessionId, order: Order(id: '', items: []), mode: PaymentMode.total),
@@ -154,7 +153,7 @@ extension PaymentTransactionDriftMapper on PaymentTransactionDriftData {
       amountDue: amountDue,
       paymentMethod: $enumDecodeNullable(paymentMethodEnumMap, paymentMethod) ?? PaymentMethod.cash,
       validatedAt: validatedAt ?? DateTime.now(),
-      discount: discountId != null ? Discount(id: discountId!, name: '') : null,
+      //discount: discountId != null ? Discount(id: discountId!, name: '') : null,//TODO
       createdAt: createdAt,
       createdById: createdById,
       session: PaymentSession(id: sessionId, order: Order(id: '', items: []), mode: PaymentMode.total),

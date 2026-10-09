@@ -2,13 +2,13 @@ import 'package:drift/drift.dart';
 
 class OrderItemOptionsDrift extends Table{
 
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
 
   TextColumn get orderItemId => text()();
   TextColumn get optionId => text().nullable()();
 
   IntColumn get quantity => integer()();
-  RealColumn get unitPrice => real().withDefault(const Constant(0))();
+  IntColumn get unitPrice => integer().withDefault(const Constant(0))();
   RealColumn get vat => real().withDefault(const Constant(0))();
   TextColumn get optionName => text()();
 

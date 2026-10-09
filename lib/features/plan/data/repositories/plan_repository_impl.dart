@@ -195,10 +195,6 @@ class PlanRepositoryImpl implements PlanRepository {
 
   @override
   Future<Plan> savePlan(Plan plan) async {
-    plan = plan.copyWith(
-      id: _uuid.v4(),
-    );
-
     if(!kIsWeb) {
       await _localDataSource.savePlan(plan);
     }
@@ -214,8 +210,6 @@ class PlanRepositoryImpl implements PlanRepository {
 
   @override
   Future<List<Plan>> savePlans(List<Plan> plans) async {
-    plans = plans.map((plan) => plan.copyWith(id: _uuid.v4())).toList();
-
     if(!kIsWeb) {
       await _localDataSource.savePlans(plans);
     }

@@ -1,4 +1,4 @@
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
+import 'package:pos_app/features/discount/domain/entities/discount.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
@@ -10,8 +10,8 @@ class PaymentTransaction {
   final String id;
   final DateTime validatedAt;
   final PaymentMethod paymentMethod; 
-  final double amountDue;        // Montant net demandé pour ce groupe
-  final double amountReceived;   // Ce que le client a donné
+  final int amountDue;        // Montant net demandé pour ce groupe
+  final int amountReceived;   // Ce que le client a donné
   
   // Ce qui a été encaissé durant CETTE transaction précise
   final int paidPartCount; 
@@ -40,7 +40,7 @@ class PaymentTransaction {
     this.createdById,
   });
 
-  double get netReturned => amountReceived - amountDue;
+  int get netReturned => amountReceived - amountDue;
 
   
   @override

@@ -35,7 +35,7 @@ class PlanLocalDataSourceImpl implements PlanLocalDataSource {
     final plans = await ( _db!.select( _db!.planDrift)
           ..where((tbl) => tbl.deletedAt.isNull()))
         .get();
-
+  
     return plans.map((e) => e.toEntity()).toList();
   }
 

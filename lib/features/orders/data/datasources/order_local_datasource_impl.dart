@@ -467,7 +467,7 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
   }
 
   @override
-  Future<void> validateOrder(String orderId) async {
+  Future<void> validateOrder(String orderId, OrderStatus status) async {
     if( _db == null){
       return;
     }
@@ -477,19 +477,20 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
         return;
       }
       if(order.status == OrderStatus.draft){
+       
         await ( _db!.update( _db!.orderDrift)
           ..where((tbl) => tbl.id.equals(orderId)))
         .write(
           OrderDriftCompanion(
-            status: Value(OrderStatus.waitingForPreparation.name),
+            status: Value(status.name),
             validatedAt: Value(DateTime.now())
           )
         );
-
+         
         await ( _db!.update( _db!.orderItemDrift)
         ..where((tbl) => tbl.orderId.equals(orderId) & tbl.status.equals(OrderStatus.draft.name)))
         .write(OrderItemDriftCompanion(
-          status: Value(OrderStatus.waitingForPreparation.name),
+          status: Value(status.name),
           validatedAt: Value(DateTime.now())
         ));
       }
@@ -518,7 +519,4 @@ class OrderLocalDatasourceImpl implements OrderLocalDatasource {
         );
     });
   }
-
-  
-  
 }

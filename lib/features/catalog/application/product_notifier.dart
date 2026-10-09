@@ -1,13 +1,12 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/application/product_state.dart';
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
-import 'usecase_provider.dart';
+import 'providers/usecase_provider.dart';
 
 class ProductNotifier extends StateNotifier<ProductState> {
   final Ref ref;
@@ -19,8 +18,7 @@ class ProductNotifier extends StateNotifier<ProductState> {
         products: [], 
         categories: [], 
         options: [], 
-        items: [],
-        discounts: []
+        items: []
       )
     );
 
@@ -29,17 +27,12 @@ class ProductNotifier extends StateNotifier<ProductState> {
     final options = await _repository.getOptions();
     final categories = await _repository.getCategories();
     final products = await _repository.getProducts();
-    final discounts = await _repository.getDiscounts();
-    for(Category cat in categories){
-      print("categories load: $cat");
-    }
     
     state = state.copyWith(
       categories: categories,
       products: products,
       items: items,
-      options: options,
-      discounts: discounts
+      options: options
     );
   } 
 
@@ -71,7 +64,6 @@ class ProductNotifier extends StateNotifier<ProductState> {
     try {
       final saveOptionUseCase = ref.read(saveOptionUseCaseProvider);
       final newOption = await saveOptionUseCase(optionGroup);
-      print("newOption $newOption");
       state = state.copyWith(
         options: [...state.options, newOption],
         //items: [...state.items, ...newOption.items.map((o) => o.copyWith(option: newOption))],
@@ -143,22 +135,6 @@ class ProductNotifier extends StateNotifier<ProductState> {
     }
   }
 
-  Future<Discount?> addDiscount(Discount discount) async {
-    try {
-      final saveDiscountUseCase = ref.read(saveDiscountUseCaseProvider);
-      final newDiscount = await saveDiscountUseCase(discount);
-      state = state.copyWith(
-        discounts: [...state.discounts, newDiscount],
-      );
-      return newDiscount;
-    } catch (e) {
-      if (kDebugMode) {
-        print("Error ${e.toString()}");
-      }
-      return null;
-    }
-  }
-
   Future<String?> addProduct(Product product, {String? picturePath}) async {
     try {
       final saveProductUseCase = ref.read(saveProductUseCaseProvider);
@@ -205,15 +181,6 @@ class ProductNotifier extends StateNotifier<ProductState> {
       );
   }
 
-  Future<void> updateDiscount(String discountId, bool newState) async {
-      final changeDiscountStateUseCase = ref.read(changeDiscountStateUseCaseProvider);
-      changeDiscountStateUseCase(discountId, newState);
-       
-      state = state.copyWith(
-        discounts: state.discounts.map((elem) => elem.id != discountId ? elem: elem.copyWith(isActive: newState)).toList(),
-      );
-  }
-
   Future<void> removeCategory(String id) async {
       final removeCategoryUseCase = ref.read(removeCategoryUseCaseProvider);
       removeCategoryUseCase(id);
@@ -248,14 +215,6 @@ class ProductNotifier extends StateNotifier<ProductState> {
       removeProductsUseCase(ids);
       state = state.copyWith(
         products: state.products.where((item) => !ids.contains(item.id)).toList(),
-      );
-  }
-
-  Future<void> removeDiscount(String id) async {
-      final removeDiscountUseCase = ref.read(removeDiscountUseCaseProvider);
-      removeDiscountUseCase(id);
-      state = state.copyWith(
-        discounts: state.discounts.where((item) => item.id != id).toList(),
       );
   }
 

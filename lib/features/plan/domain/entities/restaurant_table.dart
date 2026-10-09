@@ -46,8 +46,8 @@ class RestaurantTable{
   final TableStatus status;
   final double rotation;
   final TableShape shape;
-  final double width;
-  final double height;
+  final int width;
+  final int height;
   final String? color;
   final Plan plan;
   final String? createdById;
@@ -67,12 +67,25 @@ class RestaurantTable{
     this.shape = TableShape.square,
     this.height = 100,
     this.width = 100,
-    this.color = "0xFF81C784",
+    this.color,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
     this.createdById,
-  });
+  }){
+    if(height < 50){
+      throw ArgumentError("la hauteur doit etre supérieur à 50");
+    }
+    if(width < 50){
+      throw ArgumentError("la largeur doit etre supérieur à 50");
+    }
+    if(seats < 1){
+      throw ArgumentError("le nombre de places doit etre au moins 1");
+    }
+    if(name.trim() == ''){
+      throw ArgumentError("le nom de la table ne peut pas etre vide");
+    }
+  }
 
   RestaurantTable copyWith({
     String? id,
@@ -84,14 +97,15 @@ class RestaurantTable{
     double? rotation,
     TableShape? shape,
     bool? isSelected,
-    double? height,
-    double? width,
+    int? height,
+    int? width,
     Plan? plan,
     String? color,
     String? createdById,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
+    bool? resetColor,
   }){
     return RestaurantTable(
        id: id ?? this.id,
@@ -105,7 +119,7 @@ class RestaurantTable{
       height: height ?? this.height,
       width: width ?? this.width,
       plan: plan ?? this.plan,
-      color: color ?? this.color,
+      color: resetColor == true ? null : color ?? this.color,
       createdById: createdById ?? this.createdById, 
       createdAt: createdAt ?? this.createdAt, 
       updatedAt: updatedAt ?? this.updatedAt, 
@@ -170,8 +184,8 @@ class RestaurantTable{
       rotation: double.tryParse(json['rotation'].toString()) ?? 0,
       shape: $enumDecodeNullable(tableShapeEnumMap, json['shape']) ??
           TableShape.circle,
-      width: double.tryParse(json['width'].toString()) ?? 0,
-      height: double.tryParse(json['height'].toString()) ?? 0,
+      width: int.tryParse(json['width'].toString()) ?? 0,
+      height: int.tryParse(json['height'].toString()) ?? 0,
       color: json['color'] as String,
       plan: json['plan'] != null ? Plan.fromJson(json['plan'] as Map<String, dynamic>) : Plan(id: json['planId'] as String, name: ''),
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,

@@ -11,12 +11,12 @@ OrderItem _$OrderItemFromJson(Map<String, dynamic> json) => OrderItem(
       productId: json['productId'] as String,
       productName: json['productName'] as String,
       quantity: (json['quantity'] as num).toInt(),
-      unitPrice: (json['unitPrice'] as num).toDouble(),
+      unitPrice: (json['unitPrice'] as num).toInt(),
       orderId: json['orderId'] as String,
       options: (json['options'] as List<dynamic>)
           .map((e) => OrderItemOption.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: $enumDecodeNullable(_$OrderStatusEnumMap, json['status']) ??
+      status: $enumDecodeNullable(orderStatusEnumMap, json['status']) ??
           OrderStatus.draft,
       validatedAt: json['validatedAt'] == null
           ? null
@@ -45,25 +45,10 @@ Map<String, dynamic> _$OrderItemToJson(OrderItem instance) => <String, dynamic>{
       'unitPrice': instance.unitPrice,
       'vat': instance.vat,
       'options': instance.options,
-      'status': _$OrderStatusEnumMap[instance.status]!,
+      'status': orderStatusEnumMap[instance.status]!,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'createdById': instance.createdById,
       'validatedAt': instance.validatedAt?.toIso8601String(),
     };
-
-const _$OrderStatusEnumMap = {
-  OrderStatus.draft: 'draft',
-  OrderStatus.waitingValidation: 'waitingValidation',
-  OrderStatus.waitingForPreparation: 'waitingForPreparation',
-  OrderStatus.preparationInProgress: 'preparationInProgress',
-  OrderStatus.toServe: 'toServe',
-  OrderStatus.served: 'served',
-  OrderStatus.toBeDelivered: 'toBeDelivered',
-  OrderStatus.delivred: 'delivred',
-  OrderStatus.waitingForPayment: 'waitingForPayment',
-  OrderStatus.paid: 'paid',
-  OrderStatus.cancelled: 'cancelled',
-  OrderStatus.ended: 'ended',
-};

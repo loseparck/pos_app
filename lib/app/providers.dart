@@ -5,7 +5,6 @@ import 'package:pos_app/core/network/connectivity_service.dart';
 import 'package:pos_app/data/local/db/app_database.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_notifier.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
-import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/core/network/dio_provider.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,25 +18,8 @@ final connectivityProvider = Provider<ConnectivityService>((ref) {
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState> ((ref) => AuthNotifier(ref));
 
 
+final productSearchQueryProvider =StateProvider<String>((ref) => "");
 
-final productSearchProvider =
-FutureProvider.family<List<Product>, String>(
-  (ref, query) async {
-
-   // final repo = ref.read(productRepositoryProviderO);
-
-    return [];
-  },
-);
-
-final productSearchQueryProvider =
-StateProvider<String>((ref) => "");
-
-/*final isarInstanceProvider = Provider<Isar>((ref) {
-  throw UnimplementedError(
-    'Isar doit être initialisé dans main.dart avec overrideWithValue',
-  );
-});*/
 
 final appDatabaseProvider = Provider<AppDatabase?>((ref) {
   if (kIsWeb) {

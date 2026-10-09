@@ -2,7 +2,7 @@ import 'package:drift/drift.dart';
 
 class AuditLogsDrift extends Table{
 
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
   TextColumn get actorUserId => text().nullable()();
   TextColumn get action => text()();
   TextColumn get auditedEntityName => text()();

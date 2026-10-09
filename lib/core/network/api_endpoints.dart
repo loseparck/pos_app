@@ -13,4 +13,6 @@ class ApiEndpoints {
   static const String plans = "/plans";
   static const String tables = "/tables";
   static const String payments = "/payments";
+  static const String customers = "/customers";
+  static const String suppliers = "/suppliers";
 }

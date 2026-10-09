@@ -9,6 +9,12 @@ class CustomTextField extends StatelessWidget {
     final IconData? icon;
     final int maxLines;
 
+    final bool? secontValidation;
+    final String? secontValidationMessage;
+
+    final ValueChanged<String>? onChanged;
+
+
   const CustomTextField({
     super.key, 
     required this.controller,
@@ -17,11 +23,15 @@ class CustomTextField extends StatelessWidget {
     this.required = false,
     this.icon,
     this.maxLines = 1,
+    this.secontValidation = false,
+    this.secontValidationMessage,
+    this.onChanged
   });
 
   @override
   Widget build(BuildContext context) {
    return TextFormField(
+    onChanged: onChanged,
       controller: controller,
       maxLines: maxLines,
       decoration: CustomInputDecoration.dropDownDecoration(
@@ -37,7 +47,7 @@ class CustomTextField extends StatelessWidget {
 
               return null;
             }
-          : null,
+          : secontValidation! ? (value) {return secontValidationMessage;} : null,
     );
   }
 }

@@ -7,7 +7,7 @@ class ItemsDrift extends Table{
   TextColumn get name => text()();
   TextColumn get description => text().nullable()();//
   TextColumn get sku => text().nullable()();//
-  RealColumn get additionalPrice => real().withDefault(const Constant(0))();//price
+  IntColumn get additionalPrice => integer().withDefault(const Constant(0))();//price
   RealColumn get taxRate => real().withDefault(const Constant(20))();//vat
   TextColumn get image => text().nullable()();//
   TextColumn get color => text().nullable()();//

@@ -12,7 +12,7 @@ CreateOrderItemOptionDto _$CreateOrderItemOptionDtoFromJson(
       id: json['id'] as String,
       orderItemId: json['orderItemId'] as String,
       quantity: (json['quantity'] as num).toInt(),
-      unitPrice: (json['unitPrice'] as num).toDouble(),
+      unitPrice: (json['unitPrice'] as num).toInt(),
       vat: (json['vat'] as num).toDouble(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       optionId: json['optionId'] as String?,

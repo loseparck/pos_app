@@ -200,11 +200,11 @@ class OrderRepositoryImpl implements OrderRepository{
 
   @override
   Future<List<Order>> getActiveOrders() async {
-    final  List<Order> options = [];
+    final  List<Order> orders = [];
     if(!kIsWeb) {
-      options.addAll(await _localDataSource.getActiveOrders());
-      if(options.isNotEmpty){
-        return options;
+      orders.addAll(await _localDataSource.getActiveOrders());
+      if(orders.isNotEmpty){
+        return orders;
       }
     } 
     
@@ -212,7 +212,7 @@ class OrderRepositoryImpl implements OrderRepository{
       return await _remoteDataSource.getActiveOrders();
     }
 
-    return options;
+    return orders;
   }
 
   @override
@@ -313,9 +313,9 @@ class OrderRepositoryImpl implements OrderRepository{
   }
 
   @override
-  Future<void> validateOrder(String orderId) async {
+  Future<void> validateOrder(String orderId, OrderStatus status) async {
     if(!kIsWeb) {
-      await _localDataSource.validateOrder(orderId);
+      await _localDataSource.validateOrder(orderId, status);
     }
      
     if(await _connectivity.isOnline()) {

@@ -22,6 +22,10 @@ class OrdersState{
     }
   }
 
+  List<Order> getOrderByGroup(String groupId) {
+      return orders.where((o) => o.groupId == groupId).toList();
+  }
+
   Order? getOrderByTable(String tableId) {
       return orders.where((o) => o.tableId == tableId).firstOrNull;
   }

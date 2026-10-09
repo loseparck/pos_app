@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
+import 'package:pos_app/features/discount/data/repositories/discount_repository_provider.dart';
 import 'package:pos_app/features/payments/data/repositories/payment_repository_provider.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 
@@ -42,10 +41,11 @@ class _DiscountSelectorWidgetState extends ConsumerState<DiscountSelectorWidget>
 
   void _triggerUpdate() {
     if (_selectedOption == 'Custom') {
-      double val = double.tryParse(_customValueController.text) ?? 0.0;
-      ref.read(paymentsProvider.notifier).setDiscount(Discount(name: 'Custom', value: val, discountType: _customType == '%' ? DiscountType.percentage : DiscountType.fixed));
+      //double val = double.tryParse(_customValueController.text) ?? 0.0;
+      //TODO
+      //ref.read(paymentsProvider.notifier).setDiscount(Discount(name: 'Custom', value: val, discountType: _customType == '%' ? DiscountType.percentage : DiscountType.fixed));
     } else if(_selectedOption != 'Aucune') {
-      ref.read(paymentsProvider.notifier).setDiscount(ref.read(productsProvider).discounts.firstWhere((d) => d.name == _selectedOption));
+      ref.read(paymentsProvider.notifier).setDiscount(ref.read(discountsProvider).discounts.firstWhere((d) => d.name == _selectedOption));
     } else {
       ref.read(paymentsProvider.notifier).setDiscount(null);
     }
@@ -86,7 +86,7 @@ class _DiscountSelectorWidgetState extends ConsumerState<DiscountSelectorWidget>
                       value: 'Aucune',
                       child: Text('Aucune'),
                     ),
-                    ...ref.read(productsProvider).discounts.map((discount) {
+                    ...ref.read(discountsProvider).discounts.map((discount) {
                       return DropdownMenuItem<String>(
                         value: discount.name,
                         child: Text(discount.name),

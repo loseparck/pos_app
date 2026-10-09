@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/image_row_widget.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/options/item_row.dart';
@@ -90,7 +91,7 @@ class ProductRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              '${product.salePrice.toStringAsFixed(2)} €',
+              '${fromCentstoString(product.salePrice)} €',
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,

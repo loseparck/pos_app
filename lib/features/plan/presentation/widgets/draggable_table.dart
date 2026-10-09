@@ -77,8 +77,8 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
   Widget roundShape(PlanGroupState state, TableStatus tableStatus){
     final table = widget.table;
     return Container(
-      width: table.width,
-      height: table.height,
+      width: table.width.toDouble(),
+      height: table.height.toDouble(),
       decoration: BoxDecoration(
         color: tableStatus == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : tableStatus.color,
         borderRadius: BorderRadius.circular(360),
@@ -97,8 +97,8 @@ class _DraggableTableState extends ConsumerState<DraggableTable>{
   Widget squareShape(PlanGroupState state, TableStatus tableStatus){
     final table = widget.table;
     return Container(
-      width: table.width,
-      height: table.height,
+      width: table.width.toDouble(),
+      height: table.height.toDouble(),
       decoration: BoxDecoration(
         color:  tableStatus == TableStatus.empty &&  widget.table.color != null ? Color(int.tryParse(widget.table.color ?? '0xFF81C784') ?? 0xFF81C784) : tableStatus.color,
         borderRadius: BorderRadius.circular(12),

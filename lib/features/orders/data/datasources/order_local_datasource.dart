@@ -6,7 +6,7 @@ import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 
 abstract class OrderLocalDatasource {
   Future<Order?> createOrder(Order order);
-  Future<void> validateOrder(String orderId);
+  Future<void> validateOrder(String orderId, OrderStatus status);
   Future<void> cancelOrder(String orderId);
   Future<void> deliverOrder(String orderId);
   Future<void> payOrder(String orderId, PaymentSession payment);

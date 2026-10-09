@@ -3,7 +3,7 @@ import 'package:pos_app/features/plan/data/models/drift/plan_drift.dart';
 
 class RestaurantTableDrift extends Table{
   
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
   TextColumn get name => text()();
   TextColumn get status => text().withDefault(const Constant('empty'))();
   TextColumn get shape => text().withDefault(const Constant('square'))();
@@ -11,8 +11,8 @@ class RestaurantTableDrift extends Table{
   RealColumn get x => real()();
   RealColumn get y => real()();
   RealColumn get rotation => real().withDefault(const Constant(0))();
-  RealColumn get width => real().withDefault(const Constant(100))();
-  RealColumn get height => real().withDefault(const Constant(100))();
+  IntColumn get width => integer().withDefault(const Constant(100))();
+  IntColumn get height => integer().withDefault(const Constant(100))();
  
   IntColumn  get color => integer().nullable()();
   IntColumn  get seats => integer().withDefault(const Constant(2))();

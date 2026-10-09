@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/payments/data/repositories/payment_repository_provider.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_session.dart';
 import 'package:pos_app/features/payments/presentation/widgets/discount_selector_widget.dart';
@@ -15,7 +16,7 @@ class ModeSplitView extends ConsumerStatefulWidget {
     required this.showDiscount,
   });
 
-  final double remainderToPay;
+  final int remainderToPay;
   final Function() changeAmountToPay;
   final Function() showDiscount;
 
@@ -39,7 +40,7 @@ class _ModeSplitViewState extends ConsumerState<ModeSplitView> {
     final notifier = ref.read(paymentsProvider.notifier);
     final state = ref.watch(paymentsProvider);
     final totalParts = state.totalPartsCount;
-    double pricePerPart = widget.remainderToPay / totalParts;
+    double pricePerPart = fromCentsAsIntToDouble(widget.remainderToPay) / totalParts;
     final int paidPartsCount = notifier.countPaidParts();
     
     return Column(
@@ -72,7 +73,7 @@ class _ModeSplitViewState extends ConsumerState<ModeSplitView> {
                 ),
                 buildStepperButton(Icons.add, () {notifier.changePartsCount(1);widget.changeAmountToPay.call();}),
                 const SizedBox(width: 12),
-                Text("= ${pricePerPart.toStringAsFixed(2)} € / part", style: TextStyle(color: Colors.grey[600], fontSize: 13, fontStyle: FontStyle.italic)),
+                Text("= ${pricePerPart.toStringAsFixed(2)} DH / part", style: TextStyle(color: Colors.grey[600], fontSize: 13, fontStyle: FontStyle.italic)),
               ],
             ),
           ),

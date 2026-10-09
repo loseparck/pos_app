@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item.dart';
@@ -82,7 +83,7 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(art.productName, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, decoration: isEncaisse ? TextDecoration.lineThrough : null, color: isEncaisse ? Colors.grey : Colors.black)),
-                            Text("Prix unitaire : ${art.unitPrice.toStringAsFixed(2)} €", style: TextStyle(color: Colors.grey[500], fontSize: 11)),
+                            Text("Prix unitaire : ${fromCentstoString(art.unitPrice)} DH", style: TextStyle(color: Colors.grey[500], fontSize: 11)),
                           ],
                         ),
                       ),
@@ -121,7 +122,7 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text("${getItemTotal(art, isEncaisse ? art.quantity : notifier.getQuantity(art.id))} €", style: const TextStyle(fontWeight: FontWeight.bold)),
+                          Text("${getItemTotal(art, isEncaisse ? art.quantity : notifier.getQuantity(art.id))} DH", style: const TextStyle(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 2),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -153,10 +154,10 @@ class _ModeArticlesViewState extends ConsumerState<ModeArticlesView> {
   }
 
   String getItemTotal(OrderItem item, int qte){
-    double total = item.unitPrice;
+    int total = item.unitPrice;
     for(OrderItemOption option in item.options){
       total+= option.quantity * option.unitPrice;
     }
-    return (total * qte).toStringAsFixed(2);
+    return fromCentstoString(total * qte);
   }
 }

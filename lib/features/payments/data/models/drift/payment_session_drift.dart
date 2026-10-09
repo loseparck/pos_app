@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 
 class PaymentSessionDrift extends Table{
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
 
   TextColumn get orderId => text()();
   IntColumn get partCounts => integer()();

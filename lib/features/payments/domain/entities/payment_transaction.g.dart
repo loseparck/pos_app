@@ -11,8 +11,8 @@ PaymentTransaction _$PaymentTransactionFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       validatedAt: DateTime.parse(json['validatedAt'] as String),
       paymentMethod: $enumDecode(_$PaymentMethodEnumMap, json['paymentMethod']),
-      amountDue: (json['amountDue'] as num).toDouble(),
-      amountReceived: (json['amountReceived'] as num).toDouble(),
+      amountDue: (json['amountDue'] as num).toInt(),
+      amountReceived: (json['amountReceived'] as num).toInt(),
       session: PaymentSession.fromJson(json['session'] as Map<String, dynamic>),
       paidPartCount: (json['paidPartCount'] as num?)?.toInt() ?? 0,
       paidArticlesQty: (json['paidArticlesQty'] as Map<String, dynamic>?)?.map(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
+import 'package:pos_app/core/widgets/counter_field.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/color_widget.dart';
@@ -79,7 +81,7 @@ class _OptionGroupDialogState
     );
 
     _additionalPriceController = TextEditingController(
-      text: _formatNumber(data?.additionalPrice),
+      text: fromCentstoString(data?.additionalPrice),
     );
 
     _active = data?.isActive ?? true;
@@ -99,23 +101,6 @@ class _OptionGroupDialogState
     super.dispose();
   }
 
-  double _toDouble(String value) {
-    return double.tryParse(
-          value.trim().replaceAll(',', '.'),
-        ) ??
-        0;
-  }
-
-  String _formatNumber(double? value) {
-    if (value == null) return '0';
-
-    if (value == value.roundToDouble()) {
-      return value.toInt().toString();
-    }
-
-    return value.toString();
-  }
-
   void _submit() {
     final name = _nameController.text.trim();
 
@@ -128,9 +113,7 @@ class _OptionGroupDialogState
       id: widget.initialData?.id ?? '',
       name: name,
       description: _descriptionController.text.trim(),
-      additionalPrice: _toDouble(
-          _additionalPriceController.text,
-        ),
+      additionalPrice: fromControllerToCents(_additionalPriceController),
       sku: _skuController.text.trim(),
       image: _imagePath,
       color: _selectedColor != null ? '${_selectedColor!.toARGB32()}': null,

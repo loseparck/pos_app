@@ -10,7 +10,7 @@ class CreateOrderItemOptionDto {
   final String? optionId;
   final String optionName;
   final int quantity;
-  final double unitPrice;
+  final int unitPrice;
   final double vat;
   final DateTime createdAt;
   final String? createdById;

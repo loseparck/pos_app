@@ -12,7 +12,7 @@ class OrderItem {
   final String productName;
   final String? comment;
   final int quantity;
-  final double unitPrice;
+  final int unitPrice;
   final double vat;
   final List<OrderItemOption> options;
   final OrderStatus status;
@@ -41,13 +41,13 @@ class OrderItem {
     this.createdById,
   });
 
-  double get supplementsTotal =>
+  int get supplementsTotal =>
       options.fold(0, (sum, s) => sum + (s.unitPrice * s.quantity));
 
   double get supplementsVAT =>
       options.fold(0, (sum, s) => sum + s.vat);
 
-  double get total => (unitPrice + supplementsTotal) * quantity;
+  int get total => (unitPrice + supplementsTotal) * quantity;
 
   double get totalVAT => (vat + supplementsVAT) * quantity;
 
@@ -63,7 +63,7 @@ class OrderItem {
     DateTime? updatedAt,
     DateTime? deletedAt,
     String? comment,
-    double? unitPrice,
+    int? unitPrice,
     double? vat,
     List<OrderItemOption>? options,
   }) {

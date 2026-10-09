@@ -100,7 +100,7 @@ class OrderItemTile  extends ConsumerWidget {
                 const SizedBox(width: 6),
 
                 PriceText(
-                        value: item.total.money,
+                        value: fromCentstoString(item.total),
                     ),
               ],
             ),

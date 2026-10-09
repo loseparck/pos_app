@@ -12,6 +12,8 @@ enum GestionSection {
   reductions,
   utilisateurs,
   parametres,
+  customers,
+  suppliers,
 }
 
 final gestionSectionProvider =

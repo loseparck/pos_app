@@ -3,8 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/app/providers.dart';
 import 'package:pos_app/features/authentication/presentation/state/auth_provider.dart';
 import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
+import 'package:pos_app/features/customer/data/repositories/customer_repository_provider.dart';
+import 'package:pos_app/features/discount/data/repositories/discount_repository_provider.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
+import 'package:pos_app/features/supplier/data/repositories/supplier_repository_provider.dart';
 
 class AuthGate extends ConsumerWidget{
   final Widget child;
@@ -53,8 +56,8 @@ class AuthGate extends ConsumerWidget{
 final appInitializationProvider = FutureProvider<void>((ref) async {
   await ref.read(planProvider.notifier).load();
   await ref.read(ordersProvider.notifier).load();
-  print("ivii Start");
   await ref.read(productsProvider.notifier).load();
-  // autres chargements
-  print("ivii END");
+  await ref.read(discountsProvider.notifier).load();
+  await ref.read(customersProvider.notifier).load();
+  await ref.read(suppliersProvider.notifier).load();
 });

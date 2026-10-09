@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:pos_app/data/local/db/app_database.dart';
+import 'package:pos_app/features/discount/data/models/dto/optional.dart';
 import 'package:pos_app/features/plan/data/models/dto/create_plan_dto.dart';
 import 'package:pos_app/features/plan/data/models/dto/create_restaurant_table_dto.dart';
 import 'package:pos_app/features/plan/data/models/dto/update_plan_dto.dart';
@@ -14,6 +15,9 @@ extension PlanMapper on Plan {
     return CreatePlanDto(
       id: id,
       name: name,
+      color: color,
+      active: active,
+      delivery: delivery,
       createdAt: createdAt,
       createdById: createdById
     );
@@ -22,7 +26,10 @@ extension PlanMapper on Plan {
   UpdatePlanDto toUpdateDto() {
     return UpdatePlanDto(
       id: id,
-      name: name,
+      name: Optional.value(name),
+      color: Optional.value(color),
+      active: Optional.value(active),
+      delivery: Optional.value(delivery),
       updatedAt:  DateTime.now(),
     );
   }
@@ -31,6 +38,9 @@ extension PlanMapper on Plan {
     return PlanDriftCompanion(
       id: Value(id),
       name: Value(name),
+      color: Value(color),
+      active: Value(active),
+      delivery: Value(delivery),
       updatedAt: Value(DateTime.now()),
       createdById: Value(createdById),
       createdAt: Value(createdAt ?? DateTime.now()),
@@ -44,22 +54,13 @@ extension PlanDtoMapper on CreatePlanDto {
     return Plan(
       id: id,
       name: name,
+      color: color,
+      active: active,
+      delivery: delivery,
       createdAt: createdAt,
       createdById: createdById
     );
   }
-
-  /*CategoriesDriftCompanion toDrift() {
-    return CategoriesDriftCompanion(
-      id: Value(id),
-      name: Value(name),
-      parentId: Value(parentId),
-      isActive: Value(isActive),
-      updatedAt: Value(DateTime.now()),
-      createdById: Value(createdById),
-      createdAt: Value(createdAt ?? DateTime.now()),
-    );
-  }*/
 }
 
 extension PlanIsarMapper on PlanDriftData {
@@ -67,6 +68,9 @@ extension PlanIsarMapper on PlanDriftData {
     return Plan(
       id: id,
       name: name,
+      color: color,
+      active: active,
+      delivery: delivery,
       createdAt: createdAt,
       updatedAt: updatedAt,
       deletedAt: deletedAt,
@@ -190,9 +194,9 @@ extension RestaurantTableIsarMapper on RestaurantTableDriftData {
       color: '$color',
       rotation: rotation,
       shape:  $enumDecodeNullable(tableShapeEnumMap, shape) ?? TableShape.circle,
-      width: width,
-      height: height,
-      plan: Plan(id: planId ?? '', name: ''),
+      width: width.toInt(),
+      height: height.toInt(),
+      plan: Plan(id: planId ?? '', name: '.'),
       createdAt: createdAt,
       createdById: createdById,
       updatedAt: updatedAt,

@@ -30,6 +30,7 @@ class PosPage extends ConsumerWidget {
     final orderNotifier = ref.read(ordersProvider.notifier);
     final planNotifier = ref.read(planProvider.notifier);
     final order = ordersState.selectedOrder;
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xffF6F7FB),
@@ -42,7 +43,7 @@ class PosPage extends ConsumerWidget {
               onSave: !orderNotifier.isDraftAvailable()
                     ? null : () {
                       orderNotifier.saveOrder();
-                      planNotifier.changeTableState(TableStatus.waitingForService);
+                      //planNotifier.changeTableState(TableStatus.waitingForService);
                     },
               onCancel: order == null || order.status == OrderStatus.paid || order.status == OrderStatus.delivred || order.status == OrderStatus.cancelled || order.items.isEmpty
                     ? null : () {
@@ -113,7 +114,7 @@ class PosPage extends ConsumerWidget {
                           orderId: order.id, 
                           payOrder: (payment) {
                             orderNotifier.payOrder(payment); 
-                            planNotifier.changeTableState(TableStatus.paid);
+                            //planNotifier.changeTableState(TableStatus.paid);
                           },
                         )
                       );

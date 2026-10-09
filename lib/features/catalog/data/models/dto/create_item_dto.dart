@@ -3,7 +3,7 @@ class CreateItemDto {
   final String name;
   final String? description;
   final String? sku;
-  final double additionalPrice;
+  final int additionalPrice;
   final double taxRate;
   final String? image;
   final String? color;
@@ -21,7 +21,7 @@ class CreateItemDto {
     required this.optionId,
     this.description,
     this.sku,
-    this.additionalPrice = 0.0,
+    this.additionalPrice = 0,
     this.taxRate = 20.0,
     this.image,
     this.color = "0xFF7352D6",
@@ -41,7 +41,7 @@ class CreateItemDto {
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       sku: json['sku'] ?? '',
-      additionalPrice: (json['additionalPrice'] as num?)?.toDouble() ?? 0.0,
+      additionalPrice: (json['additionalPrice'] as num?)?.toInt() ?? 0,
       taxRate: (json['taxRate'] as num?)?.toDouble() ?? 20.0,
       image: json['image'],
       color: json['color'] ?? "0xFF7352D6",

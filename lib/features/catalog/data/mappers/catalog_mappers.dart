@@ -1,14 +1,11 @@
 import 'package:pos_app/data/local/db/app_database.dart';
 import 'package:drift/drift.dart';
 import 'package:pos_app/features/catalog/data/models/dto/create_category_dto.dart';
-import 'package:pos_app/features/catalog/data/models/dto/create_discount_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/update_category_dto.dart';
-import 'package:pos_app/features/catalog/data/models/dto/update_discount_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/update_item_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/update_option_dto.dart';
 import 'package:pos_app/features/catalog/data/models/dto/update_product_dto.dart';
-import 'package:json_annotation/json_annotation.dart';
-import '../../domain/entities/discount.dart';
+import 'package:pos_app/features/supplier/domain/entities/supplier.dart';
 import '../../domain/entities/item.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/entities/category.dart';
@@ -265,7 +262,7 @@ extension OptionDriftMapper on OptionsDriftData {
       description: description,
       mandatory: mandatory,
       minSelection: minSelection,
-      maxSelection: maxSelection,
+      maxSelection: maxSelection < 1 ? 1 : maxSelection,
       allowDuplicateSelection: allowDuplicateSelection,
       image: image,
       color: color,
@@ -379,6 +376,7 @@ extension ProductMapper on Product {
       sku: sku,
       barcode: barcode,
       categoryId: category?.id,
+      supplierId: supplier?.id,
       salePrice: salePrice,
       purchasePrice: purchasePrice,
       costPrice: costPrice,
@@ -409,6 +407,7 @@ extension ProductMapper on Product {
       sku: sku,
       barcode: barcode,
       categoryId: category?.id,
+      supplierId: supplier?.id,
       salePrice: salePrice,
       purchasePrice: purchasePrice,
       costPrice: costPrice,
@@ -439,6 +438,7 @@ extension ProductMapper on Product {
       sku: Value(sku),
       barcode: Value(barcode),
       categoryId: Value(category?.id),
+      supplierId: Value(supplier?.id),
       salePrice: Value(salePrice),
       purchasePrice: Value(purchasePrice),
       costPrice: Value(costPrice),
@@ -465,7 +465,7 @@ extension ProductMapper on Product {
 }
 
 extension ProductDtoMapper on CreateProductDto {
-  Product toEntity(Category? category) {
+  Product toEntity({Category? category, Supplier? supplier}) {
     return Product(
       id: id,
       name: name,
@@ -473,6 +473,7 @@ extension ProductDtoMapper on CreateProductDto {
       sku: sku,
       barcode: barcode,
       category: category,
+      supplier: supplier,
       salePrice: salePrice,
       purchasePrice: purchasePrice,
       costPrice: costPrice,
@@ -504,6 +505,7 @@ extension ProductDtoMapper on CreateProductDto {
       sku: Value(sku),
       barcode: Value(barcode),
       categoryId: Value(categoryId),
+      supplierId: Value(supplierId),
       salePrice: Value(salePrice),
       purchasePrice: Value(purchasePrice),
       costPrice: Value(costPrice),
@@ -529,7 +531,7 @@ extension ProductDtoMapper on CreateProductDto {
 }
 
 extension ProductIsarMapper on ProductsDriftData {
-  Product toEntity(Category? category) {
+  Product toEntity({Category? category, Supplier? supplier}) {
     return Product(
       id: id,
       name: name,
@@ -537,6 +539,7 @@ extension ProductIsarMapper on ProductsDriftData {
       sku: sku,
       barcode: barcode,
       category: category,
+      supplier: supplier,
       salePrice: salePrice ?? 0,
       purchasePrice: purchasePrice,
       costPrice: costPrice,
@@ -561,7 +564,7 @@ extension ProductIsarMapper on ProductsDriftData {
     );
   }
 
-  Product toEntityWithOption(Category? category, List<Option> options) {
+  Product toEntityWithOption(List<Option> options, {Category? category, Supplier? supplier}) {
     return Product(
       id: id,
       name: name,
@@ -569,6 +572,7 @@ extension ProductIsarMapper on ProductsDriftData {
       sku: sku,
       barcode: barcode,
       category: category,
+      supplier: supplier,
       salePrice: salePrice ?? 0,
       purchasePrice: purchasePrice,
       costPrice: costPrice,
@@ -591,86 +595,6 @@ extension ProductIsarMapper on ProductsDriftData {
       updatedAt: updatedAt,
       deletedAt: deletedAt,
       options: options
-    );
-  }
-}
-
-//Mappers pour les Reductions
-extension DiscountMapper on Discount {
-  CreateDiscountDto toCreateDto() {
-    return CreateDiscountDto(
-      id: id,
-      name: name,
-      value: value,
-      discountType: discountType,
-      isActive: isActive,
-      createdAt: createdAt,
-      createdById: createdById
-    );
-  }
-
-  UpdateDiscountDto toUpdateDto() {
-    return UpdateDiscountDto(
-      name: name,
-      isActive: isActive,
-      updatedAt:  DateTime.now(),
-    );
-  }
-
-  DiscountsDriftCompanion toCompanion() {
-    return DiscountsDriftCompanion(
-      id: Value(id),
-      name: Value(name),
-      value: Value(value),
-      discountType: Value(discountTypeEnumMap[discountType] ?? 'amount'),
-      isActive: Value(isActive),
-      updatedAt: Value(DateTime.now()),
-      createdById: Value(createdById),
-      createdAt: Value(DateTime.now()),
-      deletedAt: Value(deletedAt),
-    );
-  }
-}
-
-extension DiscountDtoMapper on CreateDiscountDto {
-  Discount toEntity(Category category) {
-    return Discount(
-      id: id,
-      name: name,
-      value: value,
-      discountType: discountType,
-      isActive: isActive,
-      createdAt: createdAt,
-      createdById: createdById
-    );
-  }
-
-  DiscountsDriftCompanion toDrift() {
-    return DiscountsDriftCompanion(
-      id: Value(id),
-      name: Value(name),
-      value: Value(value),
-      discountType: Value(discountTypeEnumMap[discountType] ?? 'amount'),
-      isActive: Value(isActive),
-      updatedAt: Value(DateTime.now()),
-      createdById: Value(createdById),
-      createdAt: Value(createdAt ?? DateTime.now()),
-    );
-  }
-}
-
-extension DiscountIsarMapper on DiscountsDriftData {
-  Discount toEntity() {
-    return Discount(
-      id: id,
-      name: name,
-      value: value,
-      discountType: $enumDecodeNullable(discountTypeEnumMap, discountType) ?? DiscountType.fixed,
-      isActive: isActive,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-      deletedAt: deletedAt,
-      createdById: createdById,
     );
   }
 }

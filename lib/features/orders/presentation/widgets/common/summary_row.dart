@@ -31,7 +31,7 @@ class SummaryRow extends StatelessWidget {
           ),
         ),
         Text(
-          value,
+          "$value DH",
           style: style,
         ),
       ],

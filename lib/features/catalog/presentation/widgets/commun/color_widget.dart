@@ -5,12 +5,14 @@ class ColorWidget extends StatefulWidget {
   final Color? selectedColor;
   final String title;
   final Function(Color?) onpressed;
+  final int colorCount;
 
   const ColorWidget({
     super.key,
     required this.title,
     this.selectedColor,
-    required this.onpressed
+    required this.onpressed,
+    this.colorCount = 100
   });
 
   @override
@@ -44,7 +46,7 @@ class _ColorWidgetState
             Color(0xFFEC4899),
             Color(0xFF64748B),
             Color(0xFF334155),
-          ].map(_colorItem),
+          ].take(widget.colorCount).map(_colorItem),
         ],
       ),
     );

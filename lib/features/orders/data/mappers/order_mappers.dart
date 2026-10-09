@@ -71,7 +71,7 @@ extension OrderDriftMapper on OrderDriftData {
       groupId: groupId,
       items: items ?? [],
       payment: payment,
-      status:  OrderStatus.fromLabel(status) ?? OrderStatus.draft,
+      status:  OrderStatus.fromName(status) ?? OrderStatus.draft,
       createdAt: createdAt,
       createdById: createdById,
       updatedAt: updatedAt,
@@ -167,7 +167,7 @@ extension OrderItemDriftMapper on OrderItemDriftData {
       unitPrice: unitPrice,
       vat: vat,
       options: options ?? [],
-      status: OrderStatus.fromLabel(status) ?? OrderStatus.draft,
+      status: OrderStatus.fromName(status) ?? OrderStatus.draft,
       validatedAt: validatedAt,
       createdAt: createdAt,
       createdById: createdById

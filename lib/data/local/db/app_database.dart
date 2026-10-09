@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
+import 'package:pos_app/features/customer/domain/entities/customer.dart';
 import 'package:pos_app/features/payments/data/mappers/payment_converter.dart';
+import 'package:pos_app/features/supplier/domain/entities/supplier.dart';
 import '../../../features/catalog/data/models/drift/products_drift.dart';
 import '../../../features/catalog/data/models/drift/categories_drift.dart';
 import '../../../features/catalog/data/models/drift/options_drift.dart';
 import '../../../features/catalog/data/models/drift/items_drift.dart';
-import '../../../features/catalog/data/models/drift/discounts_drift.dart';
+import '../../../features/discount/data/models/drift/discounts_drift.dart';
 import '../../../features/catalog/data/models/drift/products_options_drift.dart';
 import '../../../features/catalog/data/models/drift/audit_logs_drift.dart';
 import '../../../features/plan/data/models/drift/plan_drift.dart';
@@ -15,6 +17,8 @@ import '../../../features/orders/data/models/drift/order_item_drift.dart';
 import '../../../features/orders/data/models/drift/order_item_options_drift.dart';
 import '../../../features/payments/data/models/drift/payment_session_drift.dart';
 import '../../../features/payments/data/models/drift/payment_transaction_drift.dart';
+import '../../../features/customer/data/models/drift/customers_drift.dart';
+import '../../../features/supplier/data/models/drift/suppliers_drift.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
@@ -33,6 +37,8 @@ part 'app_database.g.dart';
     OrderItemOptionsDrift,
     PaymentSessionDrift,
     PaymentTransactionDrift,
+    SuppliersDrift,
+    CustomersDrift,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -48,6 +54,13 @@ class AppDatabase extends _$AppDatabase {
     },
     
     onUpgrade: (m, from, to) async {
+      /*if (from < 4) {
+        await m.createTable(customersDrift);
+        await m.createTable(suppliersDrift);
+      }
+      if (from < 5) {
+        await m.addColumn(productsDrift, productsDrift.supplierId);
+      }*/
       /*print("ssdlfk lsdm jnflksdfjklsdhnf lkjsdhljkmf------------------------------------------------------$from");
       if (from < 24) {
         // Items
@@ -203,5 +216,5 @@ class AppDatabase extends _$AppDatabase {
 }
 
 QueryExecutor _openConnection() {
-  return driftDatabase(name: 'pos_app_db4');
+  return driftDatabase(name: 'pos_app_db7');
 }

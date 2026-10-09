@@ -33,21 +33,21 @@ Widget build(BuildContext context, WidgetRef ref) {
 
         SummaryRow(
           title: "Sous-total",
-          value: subtotal.money,
+          value: fromCentstoString(subtotal),
         ),
 
         const SizedBox(height: 8),
 
         SummaryRow(
           title: "TVA",
-          value: vat.money,
+          value: vat.toStringAsFixed(2),
         ),
 
         const Divider(height: 24),
 
         SummaryRow(
           title: "TOTAL",
-          value: total.money,
+          value: fromCentstoString(total),
           isTotal: true,
         ),
       ],

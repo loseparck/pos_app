@@ -238,7 +238,7 @@ class _SummaryItem {
 
   final int quantity;
 
-  final double price;
+  final int price;
 
 
 

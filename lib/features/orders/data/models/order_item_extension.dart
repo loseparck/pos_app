@@ -5,18 +5,18 @@ import 'package:pos_app/features/orders/domain/enums/order_status.dart';
 
 extension OrderItemExtension on OrderItem {
   /// Prix des options (HT)
-  double get optionsSubtotal =>
-      options.fold<double>(
+  int get optionsSubtotal =>
+      options.fold<int>(
         0,
         (sum, option) => sum + option.subtotal,
       );
 
   /// Prix du produit (HT)
-  double get productSubtotal =>
+  int get productSubtotal =>
       unitPrice * quantity;
 
   /// Sous-total HT (produit + options)
-  double get subtotal =>
+  int get subtotal =>
       productSubtotal + optionsSubtotal;
 
   /// TVA du produit

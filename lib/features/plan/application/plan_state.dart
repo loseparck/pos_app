@@ -6,7 +6,7 @@ class PlanGroupState{
   final List<RestaurantTable> tables;
   final String? selectedPlanId;
   final String? selectedTableId;
-  final bool tableChange;
+  bool tableChange;
 
   PlanGroupState({
     List<Plan>? plans,

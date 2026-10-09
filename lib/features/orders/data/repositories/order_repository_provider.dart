@@ -126,7 +126,7 @@ final orderSummaryProvider = Provider<OrderSummaryData?>((ref) {
 
   int quantity = 0;
 
-  double subtotal = 0;
+  int subtotal = 0;
 
   double vat = 0;
 
@@ -214,7 +214,7 @@ final optionSelectionProvider =
   },
 );
 
-final orderTotalProvider = Provider<double>((ref) {
+final orderTotalProvider = Provider<int>((ref) {
   return ref.watch(selectedOrderProvider)?.total ?? 0;
 });
 
@@ -222,8 +222,8 @@ final orderVatProvider = Provider<double>((ref) {
   return ref.watch(selectedOrderProvider)?.vat ?? 0;
 });
 
-final orderSubtotalProvider = Provider<double>((ref) {
-  return ref.watch(orderTotalProvider) - ref.watch(orderVatProvider);
+final orderSubtotalProvider = Provider<int>((ref) {
+  return ref.watch(orderTotalProvider);// - ref.watch(orderVatProvider);
 });
 
 final orderQuantityProvider = Provider<int>((ref) {

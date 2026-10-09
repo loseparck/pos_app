@@ -86,12 +86,13 @@ class _StatusChip extends StatelessWidget {
       avatar: Icon(
         status.icon,
         color: Colors.white,
-        size: 18,
+        size: 14,
       ),
       backgroundColor: status.color,
       label: Text(
         status.label,
         style: const TextStyle(
+          fontSize: 10,
           color: Colors.white,
           fontWeight: FontWeight.w600,
         ),

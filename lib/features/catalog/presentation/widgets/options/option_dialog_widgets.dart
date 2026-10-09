@@ -86,6 +86,7 @@ class SettingsCard extends StatelessWidget {
   final IconData icon;
   final Color accentColor;
   final Widget trailing;
+  final bool isError;
 
   const SettingsCard({
     super.key,
@@ -94,6 +95,7 @@ class SettingsCard extends StatelessWidget {
     required this.icon,
     required this.accentColor,
     required this.trailing,
+    this.isError = false,
   });
 
   @override
@@ -113,7 +115,7 @@ class SettingsCard extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: accentColor.withOpacity(.09),
+              color: accentColor.withValues(alpha: .09),
               borderRadius: BorderRadius.circular(9),
             ),
             child: Icon(
@@ -129,17 +131,18 @@ class SettingsCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
+                    color: isError ? Colors.red : null,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10.5,
-                    color: optionSecondaryText,
+                    color: isError  ? Colors.red : optionSecondaryText,
                   ),
                 ),
               ],
@@ -152,89 +155,13 @@ class SettingsCard extends StatelessWidget {
   }
 }
 
-class CounterField extends StatelessWidget {
-  final int value;
-  final int min;
-  final int max;
-  final ValueChanged<int> onChanged;
-
-  const CounterField({
-    super.key,
-    required this.value,
-    required this.onChanged,
-    this.min = 0,
-    this.max = 99,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 38,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(9),
-        border: Border.all(
-          color: optionBorder,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _button(
-            Icons.remove,
-            value > min
-                ? () => onChanged(value - 1)
-                : null,
-          ),
-          SizedBox(
-            width: 35,
-            child: Center(
-              child: Text(
-                '$value',
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          _button(
-            Icons.add,
-            value < max
-                ? () => onChanged(value + 1)
-                : null,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _button(
-    IconData icon,
-    VoidCallback? onPressed,
-  ) {
-    return InkWell(
-      onTap: onPressed,
-      child: SizedBox(
-        width: 34,
-        height: 38,
-        child: Icon(
-          icon,
-          size: 17,
-          color: onPressed == null
-              ? Colors.grey.shade300
-              : optionText,
-        ),
-      ),
-    );
-  }
-}
-
 class DialogFooter extends StatelessWidget {
   final VoidCallback onCancel;
   final VoidCallback onSubmit;
   final String submitText;
   final Color submitColor;
   final IconData submitIcon;
+  final String? errorText;
 
   const DialogFooter({
     super.key,
@@ -243,13 +170,38 @@ class DialogFooter extends StatelessWidget {
     required this.submitText,
     required this.submitColor,
     this.submitIcon = Icons.check_rounded,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
+        if(errorText != null) ...[
+          Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.errorContainer.withValues(alpha: 0.4),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  //size: 48,
+                  color: theme.colorScheme.error,
+                ),
+              ),
+              const SizedBox(height: 16),
+          Text(
+                errorText!,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+          const Spacer(),
+        ],
         OutlinedButton(
           onPressed: onCancel,
           style: OutlinedButton.styleFrom(

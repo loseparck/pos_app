@@ -14,7 +14,7 @@ OrderItemOption _$OrderItemOptionFromJson(Map<String, dynamic> json) =>
       optionId: json['optionId'] as String?,
       optionName: json['optionName'] as String?,
       quantity: (json['quantity'] as num).toInt(),
-      unitPrice: (json['unitPrice'] as num).toDouble(),
+      unitPrice: (json['unitPrice'] as num).toInt(),
       orderItemId: json['orderItemId'] as String,
       vat: (json['vat'] as num?)?.toDouble() ?? 0,
       createdAt: json['createdAt'] == null

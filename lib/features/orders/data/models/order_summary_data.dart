@@ -1,7 +1,7 @@
 class OrderSummaryData {
   final int quantity;
 
-  final double subtotal;
+  final int subtotal;
 
   final double vat;
 

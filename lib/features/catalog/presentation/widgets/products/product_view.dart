@@ -12,6 +12,7 @@ import 'package:pos_app/features/catalog/presentation/widgets/products/category_
 import 'package:pos_app/features/catalog/presentation/widgets/products/confirmation_dialog.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/products/product_dialog.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/products/product_row.dart';
+import 'package:pos_app/features/supplier/data/repositories/supplier_repository_provider.dart';
 
 class ProductView extends ConsumerStatefulWidget{
 
@@ -703,6 +704,7 @@ class _ProductViewState
       product: null,
       categories: ref.read(productsProvider).categories,
       options:  ref.read(productsProvider).options,
+      suppliers:  ref.read(suppliersProvider).suppliers,
       parentCategory: _selectedCategoryId != null ? ref.read(productsProvider).getCategoryById(_selectedCategoryId!): null
     );
 
@@ -717,6 +719,7 @@ class _ProductViewState
       product: product,
       categories: ref.read(productsProvider).categories,
       options:  ref.read(productsProvider).options,
+      suppliers:  ref.read(suppliersProvider).suppliers,
       parentCategory: _selectedCategoryId != null ? ref.read(productsProvider).getCategoryById(_selectedCategoryId!): null
     );
     if(result != null){

@@ -2,7 +2,7 @@ class UpdateItemDto {
   final String? name;
   final String? description;
   final String? sku;
-  final double? additionalPrice;
+  final int? additionalPrice;
   final double? taxRate;
   final String? image;
   final String? color;
@@ -35,7 +35,7 @@ class UpdateItemDto {
       name: json['name'],
       description: json['description'],
       sku: json['sku'],
-      additionalPrice: (json['additionalPrice'] as num?)?.toDouble(),
+      additionalPrice: (json['additionalPrice'] as num?)?.toInt(),
       taxRate: (json['taxRate'] as num?)?.toDouble(),
       image: json['image'],
       color: json['color'],

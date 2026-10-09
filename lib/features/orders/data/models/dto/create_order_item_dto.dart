@@ -13,7 +13,7 @@ class CreateOrderItemDto {
   final String productName;
   final String? comment;
   final int quantity;
-  final double unitPrice;
+  final int unitPrice;
   final double vat;
   final List<CreateOrderItemOptionDto> options;
   final OrderStatus status;

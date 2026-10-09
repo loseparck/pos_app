@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pos_app/core/theme/app_colors.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/catalog/domain/entities/selection_item.dart';
 import 'dart:io';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/color_widget.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/custom_input_decoration.dart';
@@ -11,6 +14,8 @@ import 'package:pos_app/features/catalog/presentation/widgets/commun/drop_down_w
 import 'package:pos_app/features/catalog/presentation/widgets/commun/image_widget.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/section_widget.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/toggle_widget.dart';
+import 'package:pos_app/features/discount/presentation/widgets/discounts/widgets/target_selection_dialog.dart';
+import 'package:pos_app/features/supplier/domain/entities/supplier.dart';
 
 class ProductEditorDialog extends StatefulWidget {
   final Product? product;
@@ -19,6 +24,8 @@ class ProductEditorDialog extends StatefulWidget {
 
   final List<Option> options;
 
+  final List<Supplier> suppliers;
+
   final Category? parentCategory;
 
   const ProductEditorDialog({
@@ -26,6 +33,7 @@ class ProductEditorDialog extends StatefulWidget {
     this.product,
     required this.categories,
     required this.options,
+    required this.suppliers,
     this.parentCategory
   });
 
@@ -34,6 +42,7 @@ class ProductEditorDialog extends StatefulWidget {
     Product? product,
     required List<Category> categories,
     required List<Option> options,
+    required List<Supplier> suppliers,
     Category? parentCategory
   }) {
     return showDialog<Product>(
@@ -44,6 +53,7 @@ class ProductEditorDialog extends StatefulWidget {
           product: product,
           categories: categories,
           options: options,
+          suppliers: suppliers,
           parentCategory: parentCategory
         );
       },
@@ -71,9 +81,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
   late final TextEditingController _stockMaxController;
   late final TextEditingController _reorderPointController;
 
-  late final TextEditingController _supplierNameController;
-  late final TextEditingController _supplierReferenceController;
-  late final TextEditingController _supplierContactController;
+  String? _supplierId;
 
   int _step = 0;
 
@@ -129,15 +137,16 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
     );
 
     _salePriceController = TextEditingController(
-      text: _formatNumber(product?.salePrice),
+      text: fromCentstoString(product?.salePrice),
     );
 
     _purchasePriceController = TextEditingController(
-      text: _formatNumber(product?.purchasePrice),
+      text: fromCentstoString(product?.purchasePrice),
     );
 
-    _costPriceController = TextEditingController(
-      text: _formatNumber(product?.costPrice),
+    _costPriceController = 
+     TextEditingController(
+      text: fromCentstoString(product?.costPrice),
     );
 
     _stockQuantityController = TextEditingController(
@@ -156,17 +165,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
       text: _formatNumber(product?.reorderPoint),
     );
 
-    _supplierNameController = TextEditingController(
-      text: '', //text: product?.supplierName ?? '',
-    );
-
-    _supplierReferenceController = TextEditingController(
-      text: '', //text: product?.supplierReference ?? '',
-    );
-
-    _supplierContactController = TextEditingController(
-      text: '', //text: product?.supplierContact ?? '',
-    );
+    _supplierId = product?.supplier?.id;
     
     salePriceFocusNode.addListener(() {
       if (!salePriceFocusNode.hasFocus) {
@@ -263,10 +262,6 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
     _stockMaxController.dispose();
     _reorderPointController.dispose();
 
-    _supplierNameController.dispose();
-    _supplierReferenceController.dispose();
-    _supplierContactController.dispose();
-
     salePriceFocusNode.dispose();
     purchasePriceFocusNode.dispose();
     costPriceFocusNode.dispose();
@@ -354,6 +349,12 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
     }
 
     final existing = widget.product;
+    final Supplier? supplier;
+    if(_supplierId != null){
+      supplier = widget.suppliers.where((supplier) => supplier.id == _supplierId).first;
+    } else {
+      supplier = null;
+    }
 
     final Product result;
     
@@ -372,19 +373,10 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
         service: _isService,
         image: _imagePath,
         color: _selectedColor?.toARGB32(),
-        /* supplierName:
-          _nullable(_supplierNameController.text),
-      supplierReference:
-          _nullable(
-            _supplierReferenceController.text,
-          ),
-      supplierContact:
-          _nullable(
-            _supplierContactController.text,
-          ),*/
-        salePrice: _salePrice,
-        purchasePrice: _purchasePrice,
-        costPrice: _costPrice,
+        supplier: supplier,
+        salePrice: fromControllerToCents(_salePriceController),
+        purchasePrice: fromControllerToCents(_purchasePriceController),
+        costPrice:fromControllerToCents(_costPriceController),
         taxRate: _taxRate,
         stockEnabled: _stockEnabled,
         allowNegativeStock:  _allowNegativeStock,
@@ -417,19 +409,10 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
         weighted: _isWeighable,
         image: _imagePath,
         color: _selectedColor?.toARGB32(),
-        /*supplierName:
-          _nullable(_supplierNameController.text),
-      supplierReference:
-          _nullable(
-            _supplierReferenceController.text,
-          ),
-      supplierContact:
-          _nullable(
-            _supplierContactController.text,
-          ),*/
-        salePrice: _salePrice,
-        purchasePrice: _purchasePrice,
-        costPrice: _costPrice,
+        supplier: supplier,
+        salePrice: fromControllerToCents(_salePriceController),
+        purchasePrice: fromControllerToCents(_purchasePriceController),
+        costPrice:fromControllerToCents(_costPriceController),
         taxRate: _taxRate,
         stockEnabled: _stockEnabled,
         allowNegativeStock: _allowNegativeStock,
@@ -904,26 +887,7 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                         height: 12,
                       ),
 
-                     DropDownWidget<String>(
-                              label: 'fournisseur',
-                              value: _categoryId,
-                              hint: 'Sélectionner',
-                              items: widget.categories
-                                  .map(
-                                    (category) => DropdownMenuItem<String>(
-                                      value: category.id,
-                                      child: Text(
-                                        category.name,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  _categoryId = value;
-                                });
-                              },
-                            ),
+                      _buildSelectionPlaceholder(),
                     ],
                   ),
                 ),
@@ -1564,21 +1528,9 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
                     _summaryRow(
                       'Fournisseur',
                       _display(
-                        _supplierNameController.text,
+                        getSupplierName(),
                       ),
-                    ),
-                    _summaryRow(
-                      'Référence',
-                      _display(
-                        _supplierReferenceController.text,
-                      ),
-                    ),
-                    _summaryRow(
-                      'Contact',
-                      _display(
-                        _supplierContactController.text,
-                      ),
-                    ),
+                    )
                   ],
                 ),
               ),
@@ -2032,5 +1984,167 @@ class _ProductEditorDialogState extends State<ProductEditorDialog> {
             }
           : null,
     );
+  }
+
+  Widget _buildSelectionPlaceholder() {
+    return InkWell(
+      onTap: _openTargetSelectionDialog,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: _supplierId != null
+                ? AppColors.discountPurple
+                : AppColors.discountBorder,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.category_outlined,
+                  size: 20,
+                  color: _supplierId != null
+                      ? AppColors.discountPurple
+                      : const Color(0xFF64748B),
+                ),
+                const SizedBox(width: 10),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Fournisseur concernées',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1E293B),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                         _supplierId != null
+                            ? 'Sélectionner le fournisseur concernés'
+                            : 'Fournisseur séléctionné',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color:  _supplierId != null
+                              ? const Color(0xFF64748B)
+                              : AppColors.discountPurple,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Icon(
+                  Icons.chevron_right,
+                  color: Color(0xFF94A3B8),
+                ),
+              ],
+            ),
+
+            if (_supplierId != null) ...[
+              const SizedBox(height: 12),
+              _buildSelectedTargets(),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedTargets() {
+    return _selectedChip(
+      label: getSupplierName(),
+      onRemove: () {
+        setState(() {
+          _supplierId = null;
+        });
+      }
+    );
+  }
+
+  String getSupplierName() {
+    final selectedCategory = widget.suppliers.where((category) => _supplierId == category.id).firstOrNull;
+    return selectedCategory?.name ?? '';
+  }
+
+  Widget _selectedChip({
+    required String label,
+    required VoidCallback onRemove,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 9,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.discountPurple.withValues(alpha: .08),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppColors.discountBorder,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: Color(0xFF475569),
+            ),
+          ),
+          const SizedBox(width: 5),
+          InkWell(
+            onTap: onRemove,
+            borderRadius: BorderRadius.circular(20),
+            child: const Icon(
+              Icons.close,
+              size: 14,
+              color: Color(0xFF64748B),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openTargetSelectionDialog() async {
+    final result = await showDialog<Set<String>>(
+      context: context,
+      builder: (_) {
+        return TargetSelectionDialog(
+          title: 'Sélectionner le fournisseur',
+          isUnique: true,
+          items: widget.suppliers
+                  .map(
+                    (supplier) => SelectionItem(
+                      id: supplier.id,
+                      name: supplier.name,
+                    ),
+                  )
+                  .toList(),
+
+          initialSelectedIds: widget.product?.supplier != null ? {widget.product!.supplier!.id} : {},
+        );
+      },
+    );
+
+    if (result == null) return;
+
+    setState(() {
+        _supplierId = result.firstOrNull;
+    });
   }
 }

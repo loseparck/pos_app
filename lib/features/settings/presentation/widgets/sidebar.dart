@@ -105,6 +105,22 @@ class PosSidebar extends ConsumerWidget {
                   'Réductions',
                   selected,
                 ),
+                _item(
+                  context,
+                  ref,
+                  GestionSection.customers,
+                  Icons.group_outlined,
+                  'Clients',
+                  selected,
+                ),
+                _item(
+                  context,
+                  ref,
+                  GestionSection.suppliers,
+                  Icons.local_shipping_outlined,
+                  'Fournisseurs',
+                  selected,
+                ),
 
                 const _SectionLabel('Configuration'),
 

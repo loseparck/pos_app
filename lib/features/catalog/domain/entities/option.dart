@@ -28,7 +28,7 @@ class Option {
     this.color = "0xFF7352D6",
     this.mandatory = false,
     this.minSelection = 0,
-    this.maxSelection = 0,
+    this.maxSelection = 1,
     this.allowDuplicateSelection = false,
     this.active = true,
     this.items = const [],
@@ -36,7 +36,29 @@ class Option {
     this.updatedAt,
     this.deletedAt,
     this.createdById,
-  });
+  }){
+    // --- RÈGLES DE VALIDATION MÉTIER ---
+
+    // 1. Le nom est obligatoire
+    if (name.trim().isEmpty) {
+      throw ArgumentError('Le nom de l\'option ne peut pas être vide.','name');
+    }
+
+    // 2. maxSelection ne doit jamais être inférieur à 1
+    if (maxSelection < 1) {
+      throw ArgumentError("Le maximum ne peut pas etre inférieure à 1 (il faut choisir l'option au moin une foix').",'maxSelection');
+    }
+
+    // 3. Si mandatory est true
+    if (mandatory) {
+      if (minSelection <= 0) {
+        throw ArgumentError("Si l'option est obligatoire, il faut autoriser au moins le choix d'une option",'minSelection');
+      }
+      if (minSelection > maxSelection) {
+        throw ArgumentError('Le minimum ne peut pas être supérieur au maximum.','minmax');
+      }
+    }
+  }
 
    Option copyWith({
     String? id,

@@ -303,8 +303,8 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
     );
   }
 
-  void setTableAndGroupId({String? tableId, String? groupId}) {
-    final selectedOrderId = state.orders.where((order) => (tableId !=null && order.tableId == tableId) || (groupId != null && order.groupId == groupId)).firstOrNull?.id ?? null;
+  void setTableAndGroupId({String? tableId, String? groupId, String? orderId}) {
+    final selectedOrderId = groupId != null ? orderId : state.orders.where((order) => (tableId !=null && order.tableId == tableId) || (groupId != null && order.groupId == groupId)).firstOrNull?.id ?? null;
     state = state.copyWith(
       selectedOrderId: selectedOrderId,
       tableId: tableId,
@@ -445,18 +445,21 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   void saveOrder() {
     if(state.selectedOrderId != null && state.selectedOrderId != "-1"){
       final validateOrderUseCase = ref.read(validateOrderUseCaseProvider);
-      validateOrderUseCase(state.selectedOrderId ?? '');
+      //TODO check if cuisine then put status as waitingforPreparation else preparationInProgress
+      validateOrderUseCase(state.selectedOrderId ?? '', OrderStatus.preparationInProgress);
       Order? updatedOrder = state.selectedOrder;
 
       updatedOrder = updatedOrder?.copyWith(
         items: updatedOrder.items.map((item) {
           if(item.status == OrderStatus.draft){
-            return item.copyWith(status: OrderStatus.waitingForPreparation, validatedAt: DateTime.now());
+            //TODO check if cuisine then put status as waitingforPreparation else preparationInProgress
+            return item.copyWith(status: OrderStatus.preparationInProgress, validatedAt: DateTime.now());
           } else {
             return item;
           }
         }).toList(),
-        status: OrderStatus.waitingForPreparation
+        //TODO check if cuisine then put status as waitingforPreparation else preparationInProgress
+        status: OrderStatus.preparationInProgress
       );
 
       state = state.copyWith(

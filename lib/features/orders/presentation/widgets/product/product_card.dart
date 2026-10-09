@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/core/theme/app_spacing.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 import 'package:pos_app/features/orders/presentation/dialogs/show_option_selector_dialog.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product/product_name.dart';
 import 'package:pos_app/features/orders/presentation/widgets/product/show_product_note_dialog.dart';
-import 'package:pos_app/features/plan/data/repositories/plan_provider.dart';
-import 'package:pos_app/features/plan/domain/entities/restaurant_table.dart';
 
 import '../common/pos_card.dart';
 import 'product_image.dart';
@@ -44,7 +43,7 @@ class ProductCard extends ConsumerWidget {
 
           final note = await showProductNoteDialog(context);
           ref.read(ordersProvider.notifier).addItem(product, options, note: note);
-          ref.read(planProvider.notifier).changeTableState(TableStatus.occuped);
+          //ref.read(planProvider.notifier).changeTableState(TableStatus.occuped);
         },
         onLongPress: onLongPress,
         child: Column(
@@ -65,7 +64,7 @@ class ProductCard extends ConsumerWidget {
                   ),
                   const SizedBox(height: 6),
                   ProductPrice(
-                    price: product.salePrice,
+                    price: fromCentsAsIntToDouble(product.salePrice),
                   ),
                 ],
               ),

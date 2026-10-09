@@ -3,13 +3,13 @@ import 'package:pos_app/features/payments/data/mappers/payment_converter.dart';
 
 class PaymentTransactionDrift extends Table{
 
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
 
   TextColumn get sessionId => text()();
   TextColumn get discountId => text().nullable()();
   TextColumn get paymentMethod => text().withDefault(const Constant('draft'))();
-  RealColumn get amountDue => real().withDefault(const Constant(0))();
-  RealColumn get amountReceived => real().withDefault(const Constant(0))();
+  IntColumn get amountDue => integer().withDefault(const Constant(0))();
+  IntColumn get amountReceived => integer().withDefault(const Constant(0))();
   IntColumn get paidPartCount => integer().withDefault(const Constant(0))();
   TextColumn get paidArticlesQty => text().map(const PaymentConverter())();
  

@@ -46,10 +46,6 @@ final validateOrderUseCaseProvider = Provider<ValidateOrder>((ref) {
   return ValidateOrder(ref.read(orderRepositoryProvider));
 });
 
-final updateOrderStatusUseCaseProvider = Provider<ValidateOrder>((ref) {
-  return ValidateOrder(ref.read(orderRepositoryProvider));
-});
-
 final changeOrderStatusUseCaseProvider = Provider<ChangeOrderStatus>((ref) {
   return ChangeOrderStatus(ref.read(orderRepositoryProvider));
 });

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/catalog/data/repositories/product_repository_provider.dart';
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
+import 'package:pos_app/features/discount/data/repositories/discount_repository_provider.dart';
+import 'package:pos_app/features/discount/domain/entities/discount.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/payments/data/repositories/payment_repository.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_mode.dart';
@@ -158,10 +158,10 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
     return 0;
   }
 
-  Future<PaymentSession?> addItemPayment(double givenAmount, double total, Order order, PaymentMethod paymentMethod, PaymentMode paymentMode, {Map<String, int>? itemQte}) async {
+  Future<PaymentSession?> addItemPayment(int givenAmount, int total, Order order, PaymentMethod paymentMethod, PaymentMode paymentMode, {Map<String, int>? itemQte}) async {
     if(state.discount != null && state.discount!.id == ''){
       state = state.copyWith(
-        discount: await ref.read(productsProvider.notifier).addDiscount(state.discount!)
+        discount: await ref.read(discountsProvider.notifier).addDiscount(state.discount!)
       );
     }
     
@@ -189,14 +189,14 @@ class PaymentsNotifier extends StateNotifier<PaymentsState> {
     return null;
   }
 
-  PaymentTransaction buildTransaction(PaymentSession payment,PaymentMethod paymentMethod, double total, double givenAmount, {Map<String, int>? itemQte, int? paidPartCount}){
+  PaymentTransaction buildTransaction(PaymentSession payment,PaymentMethod paymentMethod, int total, int givenAmount, {Map<String, int>? itemQte, int? paidPartCount}){
     return PaymentTransaction(
         id: Uuid().v4(),
         session: payment,
         validatedAt: DateTime.timestamp(),
         paymentMethod: paymentMethod,
-        amountDue: double.parse(total.toStringAsFixed(2)),
-        amountReceived: double.parse(givenAmount.toStringAsFixed(2)),
+        amountDue: total,
+        amountReceived: givenAmount,
         paidArticlesQty: itemQte ?? {},
         paidPartCount: paidPartCount ?? 0,
         discount: state.discount

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pos_app/core/widgets/counter_field.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/color_widget.dart';
 import 'package:pos_app/features/catalog/presentation/widgets/commun/custom_text_field.dart';
@@ -41,11 +42,11 @@ class OptionGroupDialog extends StatefulWidget {
 
 class _OptionGroupDialogState
     extends State<OptionGroupDialog> {
+  final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
   late final TextEditingController _descriptionController;
 
   late bool _required;
-  late bool _fixMaxSelection;
   late bool _allowDuplicateSelection;
   late bool _active;
 
@@ -54,6 +55,8 @@ class _OptionGroupDialogState
 
   late Color? _selectedColor;
   String? _imagePath;
+  String? errorMessage;
+  String? errorWidget;
    
   @override
   void initState() {
@@ -76,7 +79,6 @@ class _OptionGroupDialogState
 
     _minSelection = data?.minSelection ?? 0;
     _maxSelection = data?.maxSelection ?? 0;
-    _fixMaxSelection = _maxSelection > 0;
 
     _selectedColor =
         data?.color != null ? Color(int.parse(data!.color!)) : null;
@@ -99,7 +101,7 @@ class _OptionGroupDialogState
         _minSelection = 1;
       }
 
-      if (_fixMaxSelection && _maxSelection < _minSelection) {
+      if (_maxSelection < _minSelection) {
         _maxSelection = _minSelection;
       }
     });
@@ -108,7 +110,7 @@ class _OptionGroupDialogState
   void _updateMin(int value) {
     setState(() {
       _minSelection = value;
-      if (_fixMaxSelection && _maxSelection < value) {
+      if (_maxSelection < value) {
         _maxSelection = value;
       }
     });
@@ -116,52 +118,62 @@ class _OptionGroupDialogState
 
   void _updateMax(int value) {
     setState(() {
-
-      if (_maxSelection >= _minSelection) {
-        _maxSelection = value;
-      }
+      _maxSelection = value;
     });
   }
 
   void _submit() {
+    if(!_formKey.currentState!.validate()){
+      return;
+    }
+
+    errorMessage = null;
+
+    /*if (_required && _minSelection > _maxSelection) {
+      setState(() {
+        errorMessage = 'Le minimum ne peut pas être supérieur au maximum.';
+      });
+      return;
+    }
+
+    if (_required && _minSelection <= 0) {
+      setState(() {
+        errorMessage = 'Le minimum doit etre supérieure à 0 pour une option Obligatoire.';
+      });
+      return;
+    }
+
+    if (_maxSelection < 1) {
+      setState(() {
+        errorMessage = "Le maximum ne peut pas etre inférieure à 1 (il faut choisir l'option au moin une foix').";
+      });
+      return;
+    }*/
+
     final name = _nameController.text.trim();
-
-    if (name.isEmpty) {
-      _showError('Le nom du groupe est obligatoire.');
-      return;
-    }
-
-    if (_minSelection > _maxSelection) {
-      _showError(
-        'Le minimum ne peut pas être supérieur au maximum.',
+    try{
+      final result = Option(
+        id: widget.initialData?.id ?? '',
+        name: name,
+        description: _descriptionController.text.trim(),
+        image: _imagePath,
+        color: _selectedColor != null ? '${_selectedColor!.toARGB32()}': null,
+        mandatory: _required,
+        minSelection: _required ? _minSelection : 0,
+        maxSelection: _maxSelection,
+        allowDuplicateSelection:
+            _allowDuplicateSelection,
+        active: _active,
       );
-      return;
+
+      Navigator.of(context).pop(result);
+    }on ArgumentError catch(e){
+      setState(() {
+        errorMessage = e.message;
+        errorWidget = e.name;
+      });
     }
-
-    final result = Option(
-      id: widget.initialData?.id ?? '',
-      name: name,
-      description: _descriptionController.text.trim(),
-      image: _imagePath,
-      color: _selectedColor != null ? '${_selectedColor!.toARGB32()}': null,
-      mandatory: _required,
-      minSelection: _minSelection,
-      maxSelection: _maxSelection,
-      allowDuplicateSelection:
-          _allowDuplicateSelection,
-      active: _active,
-    );
-
-    Navigator.of(context).pop(result);
-  }
-
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    
   }
 
   @override
@@ -211,7 +223,10 @@ class _OptionGroupDialogState
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(28),
-                  child:  _buildView(),
+                  child: Form(
+                    key: _formKey,
+                    child: _buildView(),
+                  ),
                 ),
               ),
               const Divider(
@@ -228,6 +243,7 @@ class _OptionGroupDialogState
                       ? 'Enregistrer'
                       : 'Créer le groupe',
                   submitColor: optionPurple,
+                  errorText: errorMessage,
                 ),
               ),
             ],
@@ -286,12 +302,18 @@ class _OptionGroupDialogState
                         onChanged: _updateRequired,
                       )
                     ),
+                    
+                  ]
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                Row(
+                  children: [
                     if(_required)...[
-                      const SizedBox(
-                        width: 16,
-                      ),
                       Expanded(
                         child: SettingsCard(
+                          isError: errorWidget == "minSelection" || errorWidget == "minmax",
                           title: 'Nombre minimum à sélectionner',
                           subtitle:
                               'Minimum d’options requises',
@@ -300,57 +322,31 @@ class _OptionGroupDialogState
                           trailing: CounterField(
                             value: _minSelection,
                             min: 0,
-                            max: 99,
+                            max: 99999,
                             onChanged: _updateMin,
                           ),
                         )
                       ),
-                    ]
-                  ]
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Row(
-                  children: [
+                    ],
+                    const SizedBox(
+                      width: 16,
+                    ),
                     Expanded(
-                      child: ToggleWidget(
-                          title: 'Sélection multiple',
-                          subtitle:
-                              'Autoriser plusieurs options différentes',
-                          value: _fixMaxSelection,
-                          onChanged: (value) {
-                            setState(() {
-                              _fixMaxSelection = value;
-                              if (value) {
-                                _maxSelection = _minSelection;
-                              } else {
-                                _maxSelection = 0;
-                              }
-                            });
-                          },
-                        )
-                      ),
-                    if(_maxSelection > 0)...[
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                        child: SettingsCard(
-                          title: 'Nombre maximum à sélectionner',
-                          subtitle:
-                              'Maximum d’options autorisées',
-                          icon: Icons.tune_rounded,
-                          accentColor: optionPurple,
-                          trailing: CounterField(
-                            value: _maxSelection,
-                            min: 0,
-                            max: 99,
-                            onChanged: _updateMax,
-                          ),
-                        )
-                      ),
-                    ]
+                      child: SettingsCard(
+                        isError: errorWidget == "maxSelection" || errorWidget == "minmax",
+                        title: 'Nombre maximum à sélectionner',
+                        subtitle:
+                            'Maximum d’options autorisées',
+                        icon: Icons.tune_rounded,
+                        accentColor: optionPurple,
+                        trailing: CounterField(
+                          value: _maxSelection,
+                          min: 1,
+                          max: 9999,
+                          onChanged: _updateMax,
+                        ),
+                      )
+                    ),
                   ]
                 ),
                 const SizedBox(
@@ -403,6 +399,7 @@ class _OptionGroupDialogState
       ),
       child: Column(
         children: [
+          Text("sdfmlsdkfsdf"),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -434,6 +431,7 @@ class _OptionGroupDialogState
               ),
             ],
           ),
+        
         ],
       ),
     );

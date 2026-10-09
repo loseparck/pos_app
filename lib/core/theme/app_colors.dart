@@ -32,4 +32,9 @@ abstract final class AppColors {
   // Disabled
   static const disabled = Color(0xFF9CA3AF);
 
+  static const Color discountPurple = Color(0xFF7C3AED);
+  static const Color discountBorder = Color(0xFFE7E5EF);
+  static const Color discountPurpleLight = Color(0xFFF5F3FF);
+  static const Color discountOrange = Color(0xFFF97316);
+  static const Color discountOrangeLight = Color(0x1AF97316);
 }

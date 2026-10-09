@@ -1,10 +1,10 @@
 import 'package:drift/drift.dart';
 
 class OrderDrift extends Table{
-  TextColumn get id => text().unique()();
+  TextColumn get id => text()();
 
-  TextColumn get tableId => text()();
-  TextColumn get groupId => text()();
+  TextColumn get tableId => text().nullable()();
+  TextColumn get groupId => text().nullable()();
   TextColumn get paymentId => text().nullable()();
 
   DateTimeColumn get validatedAt => dateTime().nullable()();

@@ -1,14 +1,11 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 
-
-@JsonSerializable()
 class Item {
   final String id;
   final String name;
   final String? description;
   final String? sku;
-  final double additionalPrice;
+  final int additionalPrice;
   final double taxRate;
   final String? image;
   final String? color;
@@ -49,7 +46,7 @@ class Item {
     String? name,
     String? description,
     String? sku,
-    double? additionalPrice,
+    int? additionalPrice,
     double? taxRate,
     String? image,
     String? color,
@@ -95,7 +92,7 @@ class Item {
       name: json['name'] ?? '',
       description: json['description'] ?? '',
       sku: json['sku'] ?? '',
-      additionalPrice: (json['additionalPrice'] as num?)?.toDouble() ?? 0.0,
+      additionalPrice: (json['additionalPrice'] as num?)?.toInt() ?? 0,
       taxRate: (json['taxRate'] as num?)?.toDouble() ?? 0.0,
       image: json['image'],
       color: json['color'],

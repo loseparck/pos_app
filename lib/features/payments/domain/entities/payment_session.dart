@@ -1,4 +1,4 @@
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
+import 'package:pos_app/features/discount/domain/entities/discount.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/payments/domain/entities/payment_transaction.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -39,9 +39,9 @@ class PaymentSession {
 
   // Getters de référence basés sur l'Order injecté
   String get tableId => order.tableId ?? order.groupId ?? '';
-  double get totalOrderRaw => order.total; // Supposons que ton entité Order expose le total brut
-  double get totalAlreadyPaid => history.fold(0, (sum, tx) => sum + tx.amountDue);
-  double get remainderToPay => (totalOrderRaw - totalAlreadyPaid).clamp(0, double.infinity);
+  int get totalOrderRaw => order.total; // Supposons que ton entité Order expose le total brut
+  int get totalAlreadyPaid => history.fold(0, (sum, tx) => sum + tx.amountDue);
+  int get remainderToPay => totalOrderRaw - totalAlreadyPaid;
 
   bool get hasStartedPaying => history.isNotEmpty;
   PaymentMode? get lockedPaymentMode => hasStartedPaying ? mode : null;
@@ -101,9 +101,9 @@ class PaymentSession {
     required Map<String, Discount> selectedItemsDiscounts, // {"id_article": Discount}
   }) {
     double totalAEncaisser = 0.0;
-    
+    //TODO
     // On parcourt les articles contenus directement dans l'Order
-    for (var item in order.items) { 
+    /*for (var item in order.items) { 
       int selectedQty = selectedQuantities[item.id] ?? 0;
       
       if (selectedQty > 0) {
@@ -123,7 +123,7 @@ class PaymentSession {
         
         totalAEncaisser += (rawSelectionPrice - discountAmount).clamp(0, double.infinity);
       }
-    }
+    }*/
     return totalAEncaisser;
   }
 

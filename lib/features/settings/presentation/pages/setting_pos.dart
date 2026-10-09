@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pos_app/features/catalog/presentation/pages/product_management_view.dart';
+import 'package:pos_app/features/customer/presentation/pages/customer_view.dart';
+import 'package:pos_app/features/discount/presentation/pages/discount_view.dart';
 import 'package:pos_app/features/settings/data/dashboard_provider.dart';
+import 'package:pos_app/features/supplier/presentation/pages/supplier_view.dart';
 
 import '../widgets/dashboard_card.dart';
 import '../widgets/sidebar.dart';
@@ -33,6 +36,10 @@ class SettingPos extends ConsumerWidget {
         return 'Paramètres';
       case GestionSection.dashboard:
         return 'Dashboard';
+      case GestionSection.customers:
+        return 'Clients';
+      case GestionSection.suppliers:
+        return 'Fournisseurs';
     }
   }
 
@@ -117,17 +124,36 @@ class _GestionContent extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final section = ref.watch(gestionSectionProvider);
-    if (section == GestionSection.produits) {
+    /*if (section == GestionSection.produits) {
       return const ProductManagementView();
+    }else if(section == GestionSection.reductions){
+      return const DiscountView();
     }
     if (section != GestionSection.dashboard) {
       return _ModulePlaceholder(
         title: _title(section),
         icon: _icon(section),
       );
-    }
+    }*/
+    switch(section){
+      case GestionSection.produits: 
+        return const ProductManagementView();
+      case GestionSection.reductions: 
+        return const DiscountView();
+      case GestionSection.dashboard: 
+        return const _DashboardHome();
+      case GestionSection.customers: 
+        return const CustomerView();
+      case GestionSection.suppliers: 
+        return const SupplierView();
 
-    return const _DashboardHome();
+      default: 
+        return _ModulePlaceholder(
+        title: _title(section),
+        icon: _icon(section),
+      );
+
+    }
   }
 
   String _title(GestionSection section) {
@@ -154,6 +180,10 @@ class _GestionContent extends ConsumerWidget {
         return 'Paramètres';
       case GestionSection.dashboard:
         return 'Dashboard';
+      case GestionSection.customers:
+        return 'Clients';
+      case GestionSection.suppliers:
+        return 'Fournisseurs';
     }
   }
 
@@ -181,6 +211,10 @@ class _GestionContent extends ConsumerWidget {
         return Icons.settings;
       case GestionSection.dashboard:
         return Icons.dashboard;
+      case GestionSection.customers:
+        return Icons.people_outline;
+      case GestionSection.suppliers:
+        return Icons.people_outline;
     }
   }
 }

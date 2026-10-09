@@ -4,7 +4,7 @@ import 'package:pos_app/features/orders/domain/entities/order_item_option.dart';
 
 extension OrderItemOptionExtension on OrderItemOption {
   /// Sous-total HT
-  double get subtotal =>
+  int get subtotal =>
       unitPrice * quantity;
 
   /// TVA

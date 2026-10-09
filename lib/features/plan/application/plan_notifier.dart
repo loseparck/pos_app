@@ -35,9 +35,6 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   Future<void> load() async {
     final plans = await _repository.getPlans();
     final tables = await _repository.getTables();
-    for(RestaurantTable table in tables){
-      print("load Table(${table.id}) x,y(${table.x},${table.y})");
-    }
     state = state.copyWith(
       plans: plans,
       tables: tables
@@ -45,6 +42,14 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   }
 
   void selectPlan(String planId){
+    if(planId == state.selectedPlanId){
+      return;
+    }
+
+    if(state.tableChange){
+      cancelEditTable();
+    }
+
     state = state.copyWith(
       selectedPlanId: planId,
       resetTableId: true
@@ -52,17 +57,21 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   }
 
   void selectTable(String tableId){
+    if(tableId == state.selectedTableId){
+      return;
+    }
+
+    if(state.tableChange){
+      cancelEditTable();
+    }
+
     state= state.copyWith(
       selectedTableId: tableId,
     );
   }
 
-  void addPlan(String name){
-
-    final plan = Plan(
-      id: _uuid.v4(),
-      name: name,
-    );
+  void addPlan(Plan plan){
+    plan = plan.copyWith(id: _uuid.v4());
     
     state = state.copyWith(
       plans: [...state.plans, plan],
@@ -74,19 +83,20 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
   }
 
   void startTableChange(){
-    if(state.selectedPlanId == null){
+    Plan? plan = state.selectedPlan;
+    if(plan == null){
       return;
     }
-  
+    
     if(state.selectedTableId == null){
       draftTable = RestaurantTable(
         id:  _uuid.v4(), 
-        name: '', 
+        name: 'Table', 
         x: 100, 
         y: 100,
         seats: 2,
         shape: TableShape.circle,
-        plan: Plan(id: state.selectedPlanId ?? '', name: '')
+        plan: plan
       );
 
       state = state.copyWith(
@@ -127,7 +137,6 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
         tablesToCreate.add(state.selectedTableId!);
       }
     }
-    print("addedd Table x,y(${state.selectedTable?.x},${state.selectedTable?.y})");
     stopTableChange();
   }
 
@@ -144,8 +153,6 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     state = state.copyWith(
         tables: state.tables.map((t) => t.id == tableId ? t.copyWith(x: x, y: y) : t).toList(),
     );
-    final table = state.getTableById(tableId);
-    print("update Table x,y(${table?.x},${table?.y})");
   }
 
   void cancelEditTable(){
@@ -187,11 +194,11 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     stopTableChange();
   }
 
-  void changeTableColor(String value){
+  void changeTableColor(String? value){
     state = state.copyWith(
       tables: state.tables.map((table){
         if(table.id == state.selectedTableId){
-          return table.copyWith(color: value);
+          return table.copyWith(color: value, resetColor: value == null);
         }
         return table;
       }).toList(),
@@ -202,7 +209,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     state = state.copyWith(
       tables: state.tables.map((table){
         if(table.id == state.selectedTableId){
-          return table.copyWith(rotation: table.rotation + value);
+          return table.copyWith(rotation: value);
         }
         return table;
       }).toList(),
@@ -222,7 +229,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
   }
 
-  void scaleHorizentally(double value){
+  void scaleHorizentally(int value){
     state = state.copyWith(
       tables: state.tables.map((table){
         if(table.id == state.selectedTableId){
@@ -236,7 +243,8 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
             );
           } else{
               return table.copyWith(
-              width: table.width + value,
+              //width: table.width + value,
+              width:  value,
             );
           }
         }
@@ -245,7 +253,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
     );
   }
 
-  void scaleVertically(double value){
+  void scaleVertically(int value){
     state = state.copyWith(
       tables: state.tables.map((table){
         if(table.id == state.selectedTableId){
@@ -259,7 +267,7 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
             );
           } else{
               return table.copyWith(
-              height: table.height + value,
+              height: value,
             );
           }
         }
@@ -319,7 +327,8 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
       tables: state.tables.map((table){
         if(table.id == state.selectedTableId){
           return table.copyWith(
-            seats: table.seats + value,
+            //seats: table.seats + value,
+            seats: value,
           );
         }
         return table;
@@ -478,12 +487,6 @@ class PlanGroupNotifier extends StateNotifier<PlanGroupState>{
       }
     }
 
-    for(RestaurantTable table in tablesToCreateObject){
-      print("tablesToCreateObject(${table.id}) x,y(${table.x},${table.y})");
-    }
-    for(RestaurantTable table in tablesToUpdateObject){
-      print("tablesToUpdateObject(${table.id}) x,y(${table.x},${table.y})");
-    }
     clearQueue();
   }
 

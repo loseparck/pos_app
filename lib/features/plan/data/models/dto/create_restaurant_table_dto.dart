@@ -10,8 +10,8 @@ class CreateRestaurantTableDto {
   final TableStatus status;
   final double rotation;
   final TableShape shape;
-  final double width;
-  final double height;
+  final int width;
+  final int height;
   final String? color;
   final String planId;
   final List<String>? options;
@@ -47,8 +47,8 @@ class CreateRestaurantTableDto {
       rotation: double.tryParse(json['rotation'].toString()) ?? 0,
       shape: $enumDecodeNullable(tableShapeEnumMap, json['shape']) ??
           TableShape.circle,
-      width: double.tryParse(json['width'].toString()) ?? 0,
-      height: double.tryParse(json['height'].toString()) ?? 0,
+      width: int.tryParse(json['width'].toString()) ?? 0,
+      height: int.tryParse(json['height'].toString()) ?? 0,
       color: json['color'] as String,
       planId: json['planId'] as String,
       createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,

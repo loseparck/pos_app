@@ -6,10 +6,11 @@ class CreateProductDto {
   final String? barcode;
 
   final String? categoryId;
+  final String? supplierId;
 
-  final double salePrice;
-  final double purchasePrice;
-  final double costPrice;
+  final int salePrice;
+  final int purchasePrice;
+  final int costPrice;
   final double taxRate;
 
   final bool isActive;
@@ -41,6 +42,7 @@ class CreateProductDto {
     this.description,
     this.barcode,
     this.categoryId,
+    this.supplierId,
     this.salePrice = 0,
     this.purchasePrice = 0,
     this.costPrice = 0,
@@ -71,9 +73,10 @@ class CreateProductDto {
       description: json['description'],
       barcode: json['barcode'],
       categoryId: json['categoryId']?.toString(),
-      salePrice: (json['salePrice'] as num?)?.toDouble() ?? 0,
-      purchasePrice: (json['purchasePrice'] as num?)?.toDouble() ?? 0,
-      costPrice: (json['costPrice'] as num?)?.toDouble() ?? 0,
+      supplierId: json['supplierId']?.toString(),
+      salePrice: (json['salePrice'] as num?)?.toInt() ?? 0,
+      purchasePrice: (json['purchasePrice'] as num?)?.toInt() ?? 0,
+      costPrice: (json['costPrice'] as num?)?.toInt() ?? 0,
       taxRate: (json['taxRate'] as num?)?.toDouble() ?? 20,
       isActive: json['isActive'] ?? true,
       stockEnabled: json['stockEnabled'] ?? true,
@@ -104,6 +107,7 @@ class CreateProductDto {
       'description': description,
       'barcode': barcode,
       'categoryId': categoryId,
+      'supplierId': supplierId,
       'salePrice': salePrice,
       'purchasePrice': purchasePrice,
       'costPrice': costPrice,

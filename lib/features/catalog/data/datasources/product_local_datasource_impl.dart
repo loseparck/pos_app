@@ -2,11 +2,11 @@ import 'package:drift/drift.dart';
 import 'package:pos_app/data/local/db/app_database.dart';
 import 'package:pos_app/features/catalog/data/mappers/catalog_mappers.dart';
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
 import 'package:pos_app/features/catalog/domain/entities/item.dart';
 
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
 import 'package:pos_app/features/catalog/domain/entities/product.dart';
+import 'package:pos_app/features/supplier/domain/entities/supplier.dart';
 
 import 'product_local_datasource.dart';
 
@@ -72,7 +72,7 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
     final itemRows = await ( _db!.select( _db!.itemsDrift)
       ..where((tbl) => tbl.deletedAt.isNull()))
      .get();
-    return itemRows.map((e) { return e.toEntity(Option(name: "", items: [], id: e.optionId)); }).toList();
+    return itemRows.map((e) { return e.toEntity(Option(name: ".", items: [], id: e.optionId)); }).toList();
     }
     return [];
   }
@@ -154,7 +154,7 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
     final itemRows = await ( _db!.select( _db!.optionsDrift)
           ..where((tbl) => tbl.deletedAt.isNull()))
         .get();
-
+        
     return itemRows.map((e) { return e.toEntity(); }).toList();
   }
   
@@ -378,7 +378,7 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
       return optionRow.toEntity();
     }).toList();
 
-    return product.toEntityWithOption(product.categoryId != null ? Category(name: '', id: product.categoryId ?? ''): null, options);
+    return product.toEntityWithOption(options, category: product.categoryId != null ? Category(name: '', id: product.categoryId ?? ''): null, supplier: product.supplierId != null ? Supplier(name: '', id: product.supplierId ?? '', country: ''): null);
   }
 
   @override
@@ -386,18 +386,18 @@ class ProductLocalDataSourceImpl implements ProductLocalDataSource {
     if( _db == null){
       return [];
     }
-    print("arrive ici0");
+    
     final products = await ( _db!.select( _db!.productsDrift)
           ..where((tbl) => tbl.deletedAt.isNull()))
         .get();
-print("arrive ici1");
+
     final optionRows = await (_db!.select(_db!.optionsDrift).join([
           innerJoin(
             _db!.productsOptionsDrift,
             _db!.productsOptionsDrift.optionId.equalsExp(_db!.optionsDrift.id),
           ),
         ])).get();
-print("arrive ici2");
+
     final optionsByProductId = <String, List<Option>>{};
 
     for (final row in optionRows) {
@@ -408,9 +408,9 @@ print("arrive ici2");
           .putIfAbsent(relation.productId, () => [])
           .add(option.toEntity());
     }
-    print("arrive ici");
+    
     return products.map((e) {
-      return e.toEntityWithOption(e.categoryId != null ? Category(name: '', id: e.categoryId ?? ''): null, optionsByProductId[e.id] ?? []);
+      return e.toEntityWithOption(category: e.categoryId != null ? Category(name: '', id: e.categoryId ?? ''): null, optionsByProductId[e.id] ?? [], supplier: e.supplierId != null ? Supplier(name: '', id: e.supplierId ?? '', country: ''): null);
     }).toList();
   }
 
@@ -428,7 +428,7 @@ print("arrive ici2");
       ..where((tbl) => tbl.deletedAt.isNull() & tbl.categoryId.equals(categoryId)))
      .get();
 
-    return products.map((e) { return e.toEntity(Category(name: '', id: categoryId)); }).toList();
+    return products.map((e) { return e.toEntity(category: Category(name: '', id: categoryId), supplier: e.supplierId != null ? Supplier(name: '', id: e.supplierId ?? '', country: ''): null); }).toList();
   }
 
   @override
@@ -588,106 +588,5 @@ print("arrive ici2");
 
 
     return product;
-  }
-
-  @override
-  Future<Discount?> getDiscount(String id) async {
-    if( _db == null){
-      return null;
-    }
-    final discount = await ( _db!.select( _db!.discountsDrift)
-          ..where((tbl) => tbl.id.equals(id) & tbl.deletedAt.isNull()))
-        .getSingleOrNull();
-    return discount?.toEntity();
-  }
-
-  @override
-  Future<List<Discount>> getDiscounts() async {
-    if( _db == null){
-      return [];
-    }
-    final discounts = await ( _db!.select( _db!.discountsDrift)
-          ..where((tbl) => tbl.deletedAt.isNull()))
-        .get();
-    return discounts.map((e) { return e.toEntity(); }).toList();
-  }
-
-  @override
-  Future<void> removeDiscount(String id) async {
-    if( _db == null){
-      return;
-    }
-    await  _db?.transaction(() async {
-      final now = DateTime.now();
-
-      await ( _db!.update( _db!.discountsDrift)
-        ..where((tbl) => tbl.id.equals(id)))
-        .write(
-          DiscountsDriftCompanion(
-            deletedAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-    });
-  }
-
-  @override
-  Future<void> removeDiscounts(List<String> ids) async {
-    if( _db == null){
-      return;
-    }
-    await  _db?.transaction(() async {
-      final now = DateTime.now();
-
-      await ( _db!.update( _db!.discountsDrift)
-        ..where((tbl) => tbl.id.isIn(ids)))
-        .write(
-          DiscountsDriftCompanion(
-            deletedAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-    });
-  }
-
-  @override
-  Future<Discount?> saveDiscount(Discount discount) async {
-    if( _db == null){
-      return null;
-    }
-    await  _db?.transaction(() async {
-      await  _db!.into( _db!.discountsDrift).insert(
-        discount.toCompanion(),
-        onConflict: DoUpdate(
-          (_) => discount.toCompanion(),
-          target: [ _db!.categoriesDrift.id],
-        ),
-      );
-    });
-
-    return discount;
-  }
-  
-  @override
-  Future<Discount?> changeDiscountState(String discountId, bool newState) async {
-    if( _db == null){
-      return null;
-    }
-    
-    await  _db?.transaction(() async {
-      final localDiscount = await getDiscount(discountId);
-      if(localDiscount == null){
-        return null;
-      }
-
-      await ( _db!.update( _db!.discountsDrift)
-        ..where((tbl) => tbl.id.equals(localDiscount.id)))
-      .write( localDiscount.copyWith(updatedAt: DateTime.now(), isActive: newState).toCompanion() );
-
-      return localDiscount.copyWith(updatedAt: DateTime.now(), isActive: newState);
-    });
-
-    return null;
-  }
-  
+  } 
 }

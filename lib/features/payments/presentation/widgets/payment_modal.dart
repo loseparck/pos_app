@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:pos_app/features/catalog/domain/entities/discount.dart';
+import 'package:pos_app/core/utils/money_extension.dart';
 import 'package:pos_app/features/orders/data/repositories/order_repository_provider.dart';
 import 'package:pos_app/features/orders/domain/entities/order.dart';
 import 'package:pos_app/features/orders/domain/enums/order_status.dart';
@@ -54,7 +54,7 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
 
   double get _changeToReturn {
     double input = double.tryParse(_amountInput) ?? 0.0;
-    double result = input - getDiscountAmount();
+    double result = input - getTotalAmount();
     return result;
   }
 
@@ -94,16 +94,24 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                           color: Colors.white, 
                           padding: const EdgeInsets.all(16.0), 
                           child: RightKeypadPanel(
-                            amountToPay: getDiscountAmount(),
+                            amountToPay: fromCentsAsIntToDouble(getTotalAmount()),
                             onKeyPress: (char) => setState(() {
                               if (char == '⌫') {
-                                if (_amountInput.isNotEmpty) _amountInput = _amountInput.substring(0, _amountInput.length - 1);
+                                if(double.tryParse(_amountInput) == 0){
+                                  _amountInput = "";
+                                } else {
+                                  if (_amountInput.isNotEmpty) _amountInput = _amountInput.substring(0, _amountInput.length - 1);
+                                }
                               } else if (char == '.') {
                                 if (!_amountInput.contains('.')) _amountInput += _amountInput.isEmpty ? '0.' : '.';
                               } else if (char == 'C') {
                                 _amountInput = '';
                               }else {
-                                _amountInput += char;
+                                if(double.tryParse(_amountInput) == 0){
+                                  _amountInput = char;
+                                } else {
+                                  _amountInput += char;
+                                }
                               }
                             }),
                             onQuickAmountPress: (val) => setState(() => _amountInput = val < 0 ? "" : val.toStringAsFixed(2)),
@@ -207,7 +215,7 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(getTableName(), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text("${order!.totalItems} articles · ${order!.total} €", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+                  Text("${order!.totalItems} articles · ${fromCentstoString(order!.total)} €", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
                 ],
               ),
             ],
@@ -345,10 +353,10 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                   children: [
                     Text("Encaisser (Sans Ticket de caisse)· ", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                     if(ref.watch(paymentsProvider).discount == null) ...[
-                      Text("${getTotalAmount().toStringAsFixed(2)} €",  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      Text("${fromCentstoString(getTotalAmount())} DH",  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                     ] else ...[
                       Text(
-                        "${getTotalAmount().toStringAsFixed(2)} €", 
+                        "${fromCentstoString(getTotalAmount())} €", 
                         style: TextStyle(
                           fontWeight: FontWeight.bold, 
                           fontSize: 13, 
@@ -375,7 +383,7 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                  // setState(() {
                     Set<String> checkedList = ref.read(paymentsProvider).checkedItems;
                    final payment = await notifier.addItemPayment(
-                      double.tryParse(_amountInput) ?? 0,
+                      fromStringtoCents(_amountInput),
                       getTotalAmount(),
                       order!,
                       _paymentMethod == 'Espèces' ? PaymentMethod.cash : _paymentMethod == 'Carte' ? PaymentMethod.card : PaymentMethod.other,
@@ -395,7 +403,7 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), elevation: 0),
                 child: Wrap(
                   children: [
-                    Text("Encaisser (Avec Ticket de caisse)· ${getTotalAmount().toStringAsFixed(2)} €", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    Text("Encaisser (Avec Ticket de caisse)· ${fromCentstoString(getTotalAmount())} €", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                   ],
                 )
               )
@@ -420,15 +428,15 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
     }
   }
 
-  double getTotalAmount(){
+  int getTotalAmount(){
     final state = ref.watch(paymentsProvider);
     if(_activeTab == 0){
       return order!.total;
     } else if(_activeTab == 1){
-      return (order!.total / state.totalPartsCount) * state.qteToPay;
+      return ((order!.total / state.totalPartsCount).ceil() * state.qteToPay);
     } else {
       final order = ref.watch(ordersProvider).selectedOrder ?? Order(id: '', items: []);
-      double total = 0;
+      int total = 0;
       for (var item in order.items) {
         if(ref.watch(paymentsProvider).checkedItems.contains(item.id))
         {
@@ -439,8 +447,9 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
     }
   }
 
-  double getDiscountAmount(){
-    Discount? discount = ref.watch(paymentsProvider).discount;
+  int getDiscountAmount(){
+    return 0;//TODO
+    /*Discount? discount = ref.watch(paymentsProvider).discount;
     if(discount == null || getTotalAmount() == 0){
       return getTotalAmount();
     } else {
@@ -452,11 +461,12 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
         finalAmount = totalAmout - discount.value;
       }
       return finalAmount > 0 ? finalAmount : 0;
-    }
+    }*/
   }
 
   String getDiscountAsString(){
-    Discount? discount = ref.watch(paymentsProvider).discount;
+    return "";//TODO
+    /*Discount? discount = ref.watch(paymentsProvider).discount;
     if(discount == null || getTotalAmount() == 0){
       return '0.00 DH';
     } else {
@@ -465,14 +475,15 @@ class _PaymentModalState extends ConsumerState<PaymentModal> {
       } else {
         return '${discount.value.toStringAsFixed(2)} DH';
       }
-    }
+    }*/
   }
 
   String getTableName(){
-    if(order!.tableId != null){
+    if(order!.tableId != null && order!.tableId!.isNotEmpty){
       return 'Table: ${ref.read(planProvider).selectedTable!.name}';
-    } else if(order!.groupId != null){
-      return 'Table: ${ref.read(planProvider).selectedPlan!.name}';
+    } else if(order!.groupId != null && order!.groupId!.isNotEmpty){
+      final plan = ref.read(planProvider).selectedPlan!;
+      return '${plan.isDelivery ? "Livraison: " : ""} ${plan.name}';
     }
     return 'NaN';
   }

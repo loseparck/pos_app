@@ -26,7 +26,6 @@ final productLocalDataSourceProvider = Provider<ProductLocalDataSource>((ref) {
     );
   }
 
-  //return ProductRepositoryDrift(db);
   return ProductLocalDataSourceImpl(
     ref.watch(appDatabaseProvider)
   );

@@ -10,8 +10,8 @@ class CreatePaymentTransactionDto {
   final String sessionId;
   final String? discountId;
   final PaymentMethod paymentMethod;
-  final double amountDue;
-  final double amountReceived;
+  final int amountDue;
+  final int amountReceived;
   final int paidPartCount;
   final Map<String, int> paidArticlesQty;
   final DateTime createdAt;

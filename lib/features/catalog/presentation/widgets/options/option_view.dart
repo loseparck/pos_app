@@ -632,7 +632,6 @@ class _OptionViewState
     );
 
     if (option != null) {
-      print("nouveau group : $option");
       ref.read(productsProvider.notifier).addOption(option);
     }
   }

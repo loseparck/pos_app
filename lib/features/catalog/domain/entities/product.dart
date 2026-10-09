@@ -1,5 +1,6 @@
 import 'package:pos_app/features/catalog/domain/entities/category.dart';
 import 'package:pos_app/features/catalog/domain/entities/option.dart';
+import 'package:pos_app/features/supplier/domain/entities/supplier.dart';
 
 extension ProductImageExtension on Product {
 
@@ -22,10 +23,11 @@ class Product {
   final String? barcode;
 
   final Category? category;
+  final Supplier? supplier;
 
-  final double salePrice;
-  final double purchasePrice;
-  final double costPrice;
+  final int salePrice;
+  final int purchasePrice;
+  final int costPrice;
   final double taxRate;
 
   final bool isActive;
@@ -60,6 +62,7 @@ class Product {
     this.description,
     this.barcode,
     this.category,
+    this.supplier,
     this.salePrice = 0,
     this.purchasePrice = 0,
     this.costPrice = 0,
@@ -82,6 +85,7 @@ class Product {
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
+    
   });
 
   Product copyWith({
@@ -91,9 +95,10 @@ class Product {
     String? description,
     String? barcode,
     Category? category,
-    double? salePrice,
-    double? purchasePrice,
-    double? costPrice,
+    Supplier? supplier,
+    int? salePrice,
+    int? purchasePrice,
+    int? costPrice,
     double? taxRate,
     bool? isActive,
     bool? stockEnabled,
@@ -107,15 +112,16 @@ class Product {
     double? reorderPoint,
     String? unit,
     String? image,
-    bool resetImage = false,
-    int? color,
-    bool resetColor = false,
+    int? color, 
     List<Option>? options,
     String? createdById,
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? deletedAt,
     bool? resetCategory,
+    bool resetImage = false,
+    bool resetColor = false,
+    bool? resetSupplier,
   }) {
     return Product(
       id: id ?? this.id,
@@ -127,7 +133,7 @@ class Product {
       taxRate: taxRate ?? this.taxRate,
       stockQuantity: stockQuantity ?? this.stockQuantity,
       image: image ?? this.image,
-      color: color ?? this.color,
+      color: resetColor ? null : color ?? this.color,
       isActive: isActive ?? this.isActive,
       createdById: createdById ?? this.createdById,
       createdAt: createdAt ?? this.createdAt,
@@ -146,32 +152,9 @@ class Product {
       allowNegativeStock: allowNegativeStock ?? this.allowNegativeStock,
       reorderPoint: reorderPoint ?? this.reorderPoint,
       unit: unit ?? this.unit,
+      supplier: resetSupplier == true ? null : supplier ?? this.supplier,
     );
   }
-
-  /*Product copyCategory({
-    Category? category
-  }) {
-    return Product(
-      id: id,
-      name: name,
-      sku: sku,
-      description: description,
-      barcode: barcode,
-      price: price,
-      vat: vat,
-      stockQuantity: stockQuantity,
-      image: image,
-      color: color,
-      isActive: isActive,
-      createdById: createdById,
-      createdAt: createdAt ,
-      updatedAt: updatedAt,
-      deletedAt: deletedAt,
-      options: options,
-      category: category,
-    );
-  }*/
 
   @override
   String toString() {
@@ -187,9 +170,10 @@ class Product {
       description: json['description'],
       barcode: json['barcode'],
       category: json['category'] != null ? Category.fromJson(json['category'] as Map<String, dynamic>) : null,
-      salePrice: (json['salePrice'] as num?)?.toDouble() ?? 0,
-      purchasePrice: (json['purchasePrice'] as num?)?.toDouble() ?? 0,
-      costPrice: (json['costPrice'] as num?)?.toDouble() ?? 0,
+      supplier: json['supplier'] != null ? Supplier.fromJson(json['supplier'] as Map<String, dynamic>) : null,
+      salePrice: (json['salePrice'] as num?)?.toInt() ?? 0,
+      purchasePrice: (json['purchasePrice'] as num?)?.toInt() ?? 0,
+      costPrice: (json['costPrice'] as num?)?.toInt() ?? 0,
       taxRate: (json['taxRate'] as num?)?.toDouble() ?? 20,
       isActive: json['isActive'] ?? true,
       stockEnabled: json['stockEnabled'] ?? true,
@@ -222,6 +206,7 @@ class Product {
       'description': description,
       'barcode': barcode,
       'category': category?.toJson(),
+      'supplier': supplier?.toJson(),
       'salePrice': salePrice,
       'purchasePrice': purchasePrice,
       'costPrice': costPrice,
@@ -246,49 +231,4 @@ class Product {
       'deletedAt': deletedAt?.toIso8601String(),
     };
   }
-  
- /* factory Product.fromJson(Map<String, dynamic> json){
-    return Product(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      sku: json['sku'] as String?,
-      description: json['description'] as String?,
-      barcode: json['barcode'] as String?,
-      price: double.tryParse(json['price'].toString()) ?? 0,
-      vat: double.tryParse(json['vat'].toString()) ?? 0,
-      stockQuantity: double.tryParse(json['stockQuantity'].toString()) ?? 0,
-      color: int.tryParse(json['color'] as String? ?? ''),
-      image: json['image'] as String?,
-      isActive: (json['isActive'] as bool),
-      category: json['category'] != null ? Category.fromJson(json['category'] as Map<String, dynamic>) : null,
-      createdAt: json['createdAt'] != null ? DateTime.parse(json['createdAt']) : null,
-      deletedAt: json['deletedAt'] != null ? DateTime.parse(json['deletedAt']) : null,
-      createdById: json['createdById'] as String?,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      options: json['options'] != null ? (json['options'] as List<dynamic>).map((e) => Option.fromJson(e)).toList() : [],
-    );
-  }
-
-  Map<String, dynamic> toJson(){
-    return {
-      'id': id,
-      'name': name,
-      'sku': sku,
-      'description': description,
-      'codeBarres': codeBarres,
-      'price': price,
-      'vat': vat,
-      'stockQuantity': stockQuantity,
-      'image': image,
-      'color': color,
-      'isActive': isActive,
-      'category': category?.toJson(),
-      'createdAt': createdAt?.toIso8601String(),
-      'updatedAt': updatedAt?.toIso8601String(),
-      'deletedAt': deletedAt?.toIso8601String(),
-      'createdById': createdById,
-      'options': options?.map((e) => e.toJson()).toList(),
-    };
-  }
-*/
 }
